@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ImageView
+        android:layout_marginTop="20dp"
+        android:layout_height="80dp"
+        android:layout_width="80dp"
+        android:id="@+id/studentImage"
+        android:src="@mipmap/icon_student"
+        android:layout_marginRight="130dp"
+        android:layout_gravity="center"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:orientation="horizontal"
+        android:layout_marginTop="-70dp">
+
+        <TextView
+            android:text="Paul"
+            android:layout_marginLeft="120dp"
+            android:layout_marginRight="20dp"
+            android:textColor="@color/black"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/studentName"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif-smallcaps"
+            android:textSize="15dp" />
+
+        <TextView
+            android:text="27/07/2017"
+            android:textColor="@color/black"
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/date"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif-smallcaps"
+            android:textSize="15dp" />
+
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_marginTop="-7dp"
+        android:layout_marginLeft="120dp"
+        android:text="Hi, I would like to purchase your book...."
+        android:textColor="@color/black"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/message"
+        android:fontFamily="sans-serif-smallcaps"
+        android:textSize="15dp" />
+
+</LinearLayout>

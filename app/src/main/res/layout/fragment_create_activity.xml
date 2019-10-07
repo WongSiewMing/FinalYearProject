@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".CreateActivity"
+    android:background="@drawable/background">
+
+    <android.support.design.widget.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/create_activity_button"
+        android:layout_alignParentBottom="true"
+
+       android:layout_centerHorizontal="true"
+        android:src="@drawable/ic_ok"
+        android:tint="@color/white"
+        android:clickable="true"/>
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_alignParentStart="true"
+    android:layout_alignParentTop="true"
+    android:layout_above="@id/create_activity_button">
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:id="@+id/captureImage4"
+        android:background="@color/lightgrey"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"/>
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:id="@+id/buttonCamera4"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:clickable="true"
+        android:focusable="true"
+        android:scaleX="0.4"
+        android:scaleY="0.4"
+        android:src="@mipmap/icon_camera" />
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:layout_below="@+id/buttonCamera4"
+        android:hint="type Something"
+        android:inputType="textMultiLine"
+        android:gravity="center"
+        android:layout_marginTop="5dp"
+        android:id="@+id/create_activity_text"
+        android:maxLength="250"/>
+    <TextView
+        android:id="@+id/text3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Attach Stuff"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        android:layout_below="@id/create_activity_text"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Optional"
+        android:layout_below="@id/create_activity_text"
+        android:layout_toEndOf="@+id/text3"
+        android:textSize="18sp"
+        android:layout_marginLeft="10dp"/>
+    <TextView
+        android:id="@+id/choose_attach_stuff"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@+id/text3"
+        android:text="Click here to choose stuff"
+        android:textSize="15sp"
+        android:gravity="center"
+        android:clickable="true"
+        android:focusable="true"/>
+    <RelativeLayout
+        android:id="@+id/selectedStuffField"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/choose_attach_stuff"
+        android:visibility="gone">
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="160dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <ImageView
+                    android:layout_width="120dp"
+                    android:layout_height="150dp"
+                    android:id="@+id/selectedStuffImage"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:background="@drawable/background"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="5dp"
+                    android:scaleType="centerCrop"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Stuff Name :"
+                    android:layout_toEndOf="@+id/selectedStuffImage"
+                    android:layout_marginTop="30dp"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    android:layout_marginStart="5dp"
+                    android:id="@+id/text5"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Name here"
+                    android:maxLength="30"
+                    android:ellipsize="end"
+                    android:layout_toEndOf="@id/selectedStuffImage"
+                    android:layout_marginStart="5dp"
+                    android:layout_below="@+id/text5"
+                    android:id="@+id/selectedStuffName"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Stuff Description :"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    android:id="@+id/text4"
+                    android:layout_below="@+id/selectedStuffName"
+                    android:layout_toEndOf="@id/selectedStuffImage"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="5dp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="no description"
+                    android:layout_below="@+id/text4"
+                    android:layout_toEndOf="@id/selectedStuffImage"
+                    android:layout_marginStart="5dp"
+                    android:maxLength="50"
+                    android:ellipsize="end"
+                    android:id="@+id/selectedStuffDescription"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Remove"
+                    android:textColor="@color/blue"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:id="@+id/remove_selected_stuff"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:layout_alignParentTop="true"
+                    android:layout_toStartOf="@id/remove_selected_stuff"
+                    android:layout_marginLeft="5dp"
+                    android:id="@+id/selected_stuff_id"/>
+
+            </RelativeLayout>
+
+        </android.support.v7.widget.CardView>
+
+    </RelativeLayout>
+
+</RelativeLayout>
+
+</RelativeLayout>

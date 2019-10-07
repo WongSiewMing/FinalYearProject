@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="1">
+
+    <ImageView
+        android:layout_marginTop="20dp"
+        android:layout_height="170dp"
+        android:layout_width="170dp"
+        android:id="@+id/stuffImage"
+        android:src="@mipmap/icon_miscellaneous"
+        android:layout_marginRight="85dp"
+        android:layout_gravity="center"/>
+
+    <TextView
+        android:layout_marginTop="-150dp"
+        android:layout_marginBottom="50dp"
+        android:layout_marginLeft="80dp"
+        android:textColor="@color/black"
+        android:text="Plain T Shirt"
+        android:textAlignment="center"
+        android:layout_width="170dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:id="@+id/stuffName"
+        android:fontFamily="sans-serif-smallcaps"
+        android:textStyle="bold"
+        android:textSize="15dp" />
+
+    <TextView
+        android:layout_marginTop="-60dp"
+        android:layout_marginBottom="70dp"
+        android:layout_marginLeft="80dp"
+        android:text="Miscellaneous"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:layout_width="151dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:id="@+id/stuffCategory"
+        android:fontFamily="sans-serif-smallcaps"
+        android:textStyle="bold"
+        android:textSize="15dp" />
+
+    <TextView
+        android:layout_marginTop="-30dp"
+        android:layout_marginBottom="30dp"
+        android:layout_marginLeft="80dp"
+        android:text="RM 30.00"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:layout_width="151dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:id="@+id/stuffPrice"
+        android:fontFamily="sans-serif-smallcaps"
+        android:textStyle="bold"
+        android:textSize="15dp" />
+
+</LinearLayout>

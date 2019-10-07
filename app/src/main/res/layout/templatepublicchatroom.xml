@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:text="Paul"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginRight="20dp"
+        android:textColor="@color/black"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/studentName"
+        android:textStyle="bold"
+        android:fontFamily="sans-serif-smallcaps"
+        android:textSize="15dp" />
+
+    <TextView
+        android:text="27/07/2017"
+        android:textColor="@color/black"
+        android:layout_width="130dp"
+        android:layout_marginTop="-20dp"
+        android:layout_marginLeft="130dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/date"
+        android:textStyle="bold"
+        android:fontFamily="sans-serif-smallcaps"
+        android:textSize="15dp" />
+
+    <TextView
+        android:text="3:41 PM"
+        android:textColor="@color/black"
+        android:layout_width="103dp"
+        android:layout_marginTop="-20dp"
+        android:layout_marginLeft="270dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/time"
+        android:textStyle="bold"
+        android:fontFamily="sans-serif-smallcaps"
+        android:textSize="15dp" />
+
+    <TextView
+        android:layout_marginTop="18dp"
+        android:layout_marginLeft="20dp"
+        android:text="Hi, I would like to purchase your book...."
+        android:textColor="@color/black"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/message"
+        android:fontFamily="sans-serif-smallcaps"
+        android:textSize="15dp" />
+
+</LinearLayout>

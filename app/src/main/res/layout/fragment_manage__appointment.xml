@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ManageAppointment"
+    android:background="@color/white">
+<Button
+    android:id="@+id/btnEditAvailableTime"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="50dp"
+    android:layout_marginVertical="5dp"
+    android:background="@color/grey"
+    android:textColor="@color/white"
+    android:text="MODIFY AVAILABLE TIME"
+    android:clickable="true"
+    android:focusable="true"/>
+    <RelativeLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btnEditAvailableTime">
+        <RelativeLayout
+            android:id="@+id/appointmentField"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <TextView
+                android:id="@+id/text1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Current Appointment"
+                android:textColor="@color/black"
+                android:layout_marginStart="10dp"/>
+            <View
+                android:id="@+id/devider1"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/black"
+                android:layout_below="@id/text1"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"/>
+            <ProgressBar
+                android:id="@+id/appoinmentProgressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"/>
+            <TextView
+                android:id="@+id/noAppointmentIndicator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="No appointment.."
+                android:layout_centerInParent="true"
+                android:visibility="invisible"/>
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/appointmentRV"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/devider1"
+                android:visibility="invisible"
+                android:layout_margin="10dp">
+
+            </android.support.v7.widget.RecyclerView>
+
+        </RelativeLayout>
+
+        <View
+            android:id="@+id/devider2"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/black"
+            android:layout_below="@id/appointmentField"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"/>
+        <RelativeLayout
+            android:id="@+id/requestField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/devider2"
+            android:visibility="gone">
+            <TextView
+                android:id="@+id/text2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Current Request"
+                android:layout_marginStart="10dp"
+                android:textColor="@color/black"/>
+            <View
+                android:id="@+id/devider3"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/black"
+                android:layout_below="@id/text2"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"/>
+            <ProgressBar
+                android:id="@+id/requestProgressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"/>
+
+            <TextView
+                android:id="@+id/noRequestIndicator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="No Request.."
+                android:layout_below="@id/devider3"
+                android:layout_centerHorizontal="true"
+                android:visibility="invisible"/>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/requestRV"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/devider3"
+                android:layout_margin="10dp"
+                android:visibility="invisible">
+
+            </android.support.v7.widget.RecyclerView>
+
+        </RelativeLayout>
+
+
+
+
+    </RelativeLayout>
+
+
+
+</RelativeLayout>

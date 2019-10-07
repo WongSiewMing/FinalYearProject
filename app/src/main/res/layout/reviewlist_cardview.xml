@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="190dp"
+    xmlns:cardview="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/reviewsCardView"
+    android:layout_margin="5dp"
+    cardview:cardCornerRadius="10dp">
+
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/respondentPhoto"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@mipmap/icon_student" />
+
+    <TextView
+        android:id="@+id/respondentName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/respondentPhoto"
+        android:text="respondentName"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/timeLable"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@id/respondentPhoto"
+        android:text="Time: "
+        android:textColor="@color/black"/>
+
+    <TextView
+        android:id="@+id/respondentTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/respondentPhoto"
+        android:layout_toEndOf="@+id/timeLable"
+        android:text="respondentTime"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/respondentPhoto"
+        android:layout_centerHorizontal="true"
+        android:text="Date: "
+        android:textColor="@color/black"
+        android:id="@+id/dateLable"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/respondentPhoto"
+        android:layout_toEndOf="@+id/dateLable"
+        android:text="respondentDate"
+        android:id="@+id/respondentDate"/>
+
+
+
+    <RatingBar
+        android:id="@+id/respondentRate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@id/timeLable"
+        style="?android:attr/ratingBarStyleIndicator"
+        android:isIndicator="true" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Respondent Comment"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:layout_below="@id/respondentRate"
+        android:id="@+id/respondentComment"/>
+
+
+</RelativeLayout>
+
+</android.support.v7.widget.CardView>

@@ -1,0 +1,38 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background"
+    tools:context="com.example.raindown.finalyearproject.PrivateChatRoom">
+
+    <ListView
+        android:id="@+id/dynamicPrivateChatList"
+        android:layout_width="match_parent"
+        android:layout_height="448dp"
+        android:layout_weight="1"
+        android:drawSelectorOnTop="false"
+        ></ListView>
+
+    <EditText
+        android:id="@+id/sendMessage"
+        android:layout_width="290dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="460dp"
+        android:background="@color/lightgrey"
+        android:fontFamily="sans-serif-smallcaps"
+        android:hint="Enter your message"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textSize="15dp" />
+
+    <ImageView
+        android:id="@+id/send"
+        android:layout_width="62dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="300dp"
+        android:layout_marginTop="460dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:src="@mipmap/icon_send" />
+
+</FrameLayout>

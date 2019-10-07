@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:padding="16dp"
+    android:id="@+id/reviewBottomSheet">
+
+    <!--<TextView-->
+        <!--android:id="@+id/tryName"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="HEllo"-->
+        <!--android:textSize="25sp"/>-->
+
+
+        <TextView
+            android:id="@+id/leaveReview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Leave a review"
+            android:textStyle="italic"
+            android:textColor="@color/blue"
+            android:paddingBottom="15sp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Reviews"
+        android:textStyle="bold"
+        android:textSize="15sp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/black"
+        android:layout_margin="10dp"/>
+
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:id="@+id/reviewListrv">
+
+    </android.support.v7.widget.RecyclerView>
+
+</LinearLayout>

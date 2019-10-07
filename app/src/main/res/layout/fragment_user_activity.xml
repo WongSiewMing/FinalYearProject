@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".UserActivity"
+    android:background="@color/lightgrey">
+
+    <Button
+        android:id="@+id/create_activity"
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:text="What's on your mind?"
+        android:gravity="center"
+        android:textSize="20sp"
+        android:background="@drawable/button_style_1" />
+
+    <ProgressBar
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_centerInParent="true"
+        android:id="@+id/activityProgressBar"
+        />
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/activityListrv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/create_activity"
+        android:layout_marginTop="10dp"
+        android:background="@color/lightgrey"
+        android:visibility="gone">
+
+    </android.support.v7.widget.RecyclerView>
+
+
+
+
+
+</RelativeLayout>

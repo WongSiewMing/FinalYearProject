@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ChatRoomList_V2"
+    android:background="@drawable/background">
+
+    <android.support.v7.widget.SearchView
+        android:id="@+id/search_user"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true" />
+
+    <TextView
+        android:id="@+id/noMatchText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No match found..."
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:layout_centerInParent="true"
+        android:visibility="gone"/>
+    <RelativeLayout
+        android:id="@+id/progressField"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/search_user"
+        android:visibility="gone">
+        <TextView
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Searching..."
+            android:layout_marginStart="15dp"/>
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginEnd="10dp"/>
+
+    </RelativeLayout>
+    <ProgressBar
+        android:id="@+id/chatListProgressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/search_userList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/search_user"
+        android:visibility="gone">
+
+    </android.support.v7.widget.RecyclerView>
+    <RelativeLayout
+        android:id="@+id/chatField"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/search_user"
+        android:visibility="visible">
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <TextView
+                    android:id="@+id/privateChatText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentStart="true"
+                    android:text="Private Chat"
+                    android:textColor="@color/black"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="5dp"/>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/previousChatList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/privateChatText"
+                    android:visibility="visible">
+                </android.support.v7.widget.RecyclerView>
+
+                <View
+                    android:id="@+id/devider"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/black"
+                    android:layout_below="@id/previousChatList"
+                    android:layout_marginTop="5dp"
+                    android:layout_margin="10dp"/>
+            </RelativeLayout>
+        </ScrollView>
+
+
+
+    </RelativeLayout>
+
+
+
+
+
+</RelativeLayout>

@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".RegisterStore"
+    android:background="@drawable/background"
+    android:orientation="vertical">
+
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/register_store"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="39dp"
+        android:layout_marginBottom="133dp"
+        android:clickable="true"
+        android:src="@drawable/ic_ok"
+        android:tint="@color/white" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/captureImage3"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:background="@color/lightgrey" />
+
+        <ImageView
+            android:id="@+id/buttonCamera3"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:clickable="true"
+            android:focusable="true"
+            android:scaleX="0.4"
+            android:scaleY="0.4"
+            android:src="@mipmap/icon_camera" />
+
+        <TextView
+            android:id="@+id/storeName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/captureImage3"
+            android:text="Store name :"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/register_storeName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/storeName"
+            android:hint="Enter store name here"
+            android:inputType="textMultiLine"
+            android:maxLength="30"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/storeDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/register_storeName"
+            android:layout_marginTop="10dp"
+            android:text="Store Description :"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/register_storeDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/storeDescription"
+            android:hint="Edit your store description here"
+            android:inputType="textMultiLine"
+            android:maxLength="200"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/storeCategory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/register_storeDescription"
+            android:layout_marginTop="10dp"
+            android:text="Store Category :"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <Spinner
+            android:id="@+id/register_StoreCategory"
+            android:layout_width="160dp"
+            android:layout_height="40dp"
+            android:layout_below="@id/storeCategory"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="5dp"
+            android:background="@color/lightgrey"
+            android:popupBackground="@color/beige"
+            android:textSize="18sp"></Spinner>
+
+        <TextView
+            android:id="@+id/storeBusinessHour"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/register_StoreCategory"
+            android:layout_marginTop="10dp"
+            android:text="Business hour :"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/openText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/storeBusinessHour"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="10dp"
+            android:text="Open Time :"
+            android:textColor="@color/black"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/register_StoreOpenTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/storeBusinessHour"
+            android:layout_marginTop="10dp"
+            android:layout_toRightOf="@+id/openText"
+            android:text="0000"
+            android:textSize="15sp"
+            android:textStyle="italic" />
+
+        <TextView
+            android:id="@+id/closeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/storeBusinessHour"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:text="Close Time :"
+            android:textColor="@color/black"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/register_StoreCloseTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/storeBusinessHour"
+            android:layout_marginTop="10dp"
+            android:layout_toRightOf="@+id/closeText"
+            android:text="0000"
+            android:textSize="15sp"
+            android:textStyle="italic" />
+
+        <TextView
+            android:id="@+id/storeLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/register_StoreOpenTime"
+            android:layout_marginTop="10dp"
+            android:text="Store location :"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/register_storeLocation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/storeLocation"
+            android:hint="Describe your store location here"
+            android:inputType="textMultiLine"
+            android:maxLength="200"
+            android:textSize="18sp" />
+
+    </RelativeLayout>
+
+</RelativeLayout>

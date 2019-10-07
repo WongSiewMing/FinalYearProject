@@ -1,0 +1,50 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background"
+    tools:context="com.example.raindown.finalyearproject.PublicList">
+
+    <ImageView
+        android:visibility="gone"
+        android:src="@mipmap/icon_info"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:id="@+id/infoIcon"
+        android:layout_marginBottom="50dp"
+        android:layout_gravity="center" />
+
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/notice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-smallcaps"
+        android:text="No public chat is found !"
+        android:textStyle="bold"
+        android:layout_gravity="center"
+        android:textColor="@color/black"
+        android:textSize="15dp">
+    </TextView>
+
+
+    <ListView
+        android:id="@+id/publicChatList"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:drawSelectorOnTop="false"
+        android:listSelector="@color/lightgrey"></ListView>
+
+    <Button
+        android:id="@+id/createPublicChat"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="460dp"
+        android:background="#ffbb6d"
+        android:fontFamily="sans-serif-smallcaps"
+        android:textStyle="bold"
+        android:textSize="15dp"
+        android:text="Create New Public Chat" />
+
+</FrameLayout>

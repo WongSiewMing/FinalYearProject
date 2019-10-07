@@ -1,0 +1,45 @@
+<resources>
+    <string name="app_name">Buy + Sell</string>
+    <string name="openDrawer">Open</string>
+    <string name="closeDrawer">Close</string>
+    <string-array name="categorySpinner">
+        <item>--Category--</item>
+        <item>Books</item>
+        <item>Electronics</item>
+        <item>Furnitures</item>
+        <item>Miscellaneous</item>
+    </string-array>
+    <string-array name="conditionSpinner">
+        <item>--Condition--</item>
+        <item>New</item>
+        <item>Used</item>
+    </string-array>
+    <string-array name="storeCategorySpinner">
+        <item>--Category--</item>
+        <item>Food</item>
+        <item>Grocery</item>
+        <item>Stationary</item>
+        <item>Stall</item>
+    </string-array>
+    <string-array name="dayOfWeek">
+        <item>--ChooseDay--</item>
+        <item>Monday</item>
+        <item>Tuesday</item>
+        <item>Wednesday</item>
+        <item>Thursday</item>
+        <item>Friday</item>
+        <item>Saturday</item>
+        <item>Sunday</item>
+    </string-array>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_location">Location</string>
+    <string name="nav_more">More</string>
+    <string name="title_activity_show_all_stuff">ShowAllStuff</string>
+
+    <string name="open">Open</string>
+    <string name="close">Close</string>
+
+</resources>

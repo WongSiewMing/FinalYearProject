@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:focusable="true"
+    android:layout_margin="5dp"
+    xmlns:cardview="http://schemas.android.com/apk/res-auto"
+    cardview:cardCornerRadius="10dp"
+    android:id="@+id/userActivityCardView">
+
+    <ProgressBar
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_gravity="center"
+        android:id="@+id/userActProgressbar"/>
+
+    <RelativeLayout
+        android:id="@+id/activityHolder"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/posterPhoto"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:src="@mipmap/icon_student"
+            android:clickable="true"
+            android:focusable="true"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:text="User name"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:layout_toEndOf="@+id/posterPhoto"
+            android:id="@+id/posterName"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:text="Post date"
+            android:textColor="@color/black"
+            android:layout_toEndOf="@+id/posterPhoto"
+            android:layout_below="@id/posterName"
+            android:id="@+id/posterDate"
+            android:layout_marginStart="10dp" />
+
+        <TextView
+            android:id="@+id/btnviewStuff"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="View Stuff"
+            android:textColor="@color/blue"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@id/posterPhoto"
+            android:clickable="true"
+            android:focusable="true"/>
+
+        <TextView
+            android:id="@+id/posterCaption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Post caption"
+            android:layout_below="@+id/posterPhoto"
+            android:layout_toLeftOf="@id/btnviewStuff"
+            android:textSize="15sp"
+            android:layout_marginTop="2dp"/>
+
+        <ImageView
+            android:layout_width="280dp"
+            android:layout_height="180dp"
+            android:id="@+id/posterThumbnail"
+            android:background="@color/white"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/posterCaption"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_margin="5dp" />
+
+        <ImageView
+            android:id="@+id/likeButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_below="@id/posterThumbnail"
+            android:src="@drawable/ic_like"
+            android:tint="@color/red"
+            android:clickable="true"
+            android:focusable="true"/>
+
+
+        <ImageView
+            android:id="@+id/commentButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/ic_comment"
+            android:tint="@color/lightgrey"
+            android:layout_below="@id/posterThumbnail"
+            android:layout_toEndOf="@+id/likeButton"
+            android:layout_marginStart="5dp"
+            android:clickable="true"
+            android:focusable="true"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="likeOrNot"
+            android:id="@+id/likeConditon"
+            android:layout_below="@id/posterThumbnail"
+            android:layout_toEndOf="@id/commentButton"
+            android:visibility="invisible"/>
+
+        <ImageView
+            android:id="@+id/bookmarkButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/ic_booking"
+            android:tint="@color/lightgrey"
+            android:layout_below="@id/posterThumbnail"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="5dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:visibility="gone"/>
+        <TextView
+            android:id="@+id/likeAmount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="like amount"
+            android:maxLength="20"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:layout_below="@id/likeButton"
+            android:visibility="gone"
+            />
+        <TextView
+            android:id="@+id/commentAmount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="comment amount"
+            android:maxLength="20"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:layout_below="@id/likeButton"
+            android:layout_toEndOf="@id/likeAmount"
+            android:layout_marginStart="5dp"
+            android:visibility="gone"
+            />
+
+
+    </RelativeLayout>
+
+
+
+
+</android.support.v7.widget.CardView>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="350dp"
+    android:layout_height="150dp"
+    android:layout_gravity="center"
+    app:cardBackgroundColor="@color/pink">
+
+    <RelativeLayout
+        android:layout_width="350dp"
+        android:layout_height="150dp">
+
+        <TextView
+            android:id="@+id/popuptitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Store Rating"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:layout_centerHorizontal="true"
+            android:textColor="@color/black"/>
+
+        <TextView
+            android:layout_below="@+id/popuptitle"
+            android:id="@+id/popRating"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/text_view_circle"
+            android:gravity="center"
+            android:text="-"
+            android:textSize="15sp" />
+
+        <View
+            android:id="@+id/devider2"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@id/popRating"
+            android:layout_margin="10dp"
+            android:background="@color/black" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:text="ratingsummary"
+            android:layout_below="@id/devider2"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/ratingsummary"/>
+
+        <TextView
+            android:id="@+id/ratingDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/ratingsummary"
+            android:layout_centerHorizontal="true"
+            android:text="0 out of 5."
+            android:textColor="@color/black"
+            android:textSize="15sp" />
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>

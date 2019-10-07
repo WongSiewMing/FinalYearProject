@@ -1,0 +1,193 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background"
+    tools:context="com.example.raindown.finalyearproject.MyProfile">
+
+    <LinearLayout
+        android:background="#f2eaec"
+        android:layout_width="match_parent"
+        android:layout_height="132dp"
+        android:orientation="vertical"
+        android:weightSum="1">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/studentPhoto"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_gravity="center"
+            android:layout_marginRight="110dp"
+            android:layout_marginTop="20dp"
+            android:src="@mipmap/icon_student"
+            app:civ_border_width="3dp"
+            app:civ_border_color="@color/bgBottomNavigation"/>
+
+        <TextView
+            android:id="@+id/studentName"
+            android:layout_width="209dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="50dp"
+            android:layout_marginTop="-60dp"
+            android:fontFamily="sans-serif-smallcaps"
+            android:text="Adelina Tang Chooi Li"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="15dp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="238dp"
+            android:layout_height="36dp"
+            android:layout_marginLeft="130dp"
+            android:orientation="horizontal"
+            android:layout_weight="0.70">
+
+            <TextView
+                android:id="@+id/faculty"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="sans-serif-smallcaps"
+                android:text="FOCS"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textSize="15dp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/programme"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="sans-serif-smallcaps"
+                android:text="RSD"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textSize="15dp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/year"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="sans-serif-smallcaps"
+                android:text="Year 3"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textSize="15dp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="80dp"
+        android:orientation="horizontal"
+        android:weightSum="1">
+
+        <TextView
+            android:id="@+id/followers"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="30dp"
+            android:layout_width="120dp"
+            android:layout_height="30dp"
+            android:fontFamily="sans-serif-smallcaps"
+            android:textSize="15dp"
+            android:text="0 followers"
+            android:textStyle="bold"
+            android:layout_weight="0.13" />
+
+        <TextView
+            android:id="@+id/following"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="12dp"
+            android:layout_width="120dp"
+            android:layout_height="30dp"
+            android:fontFamily="sans-serif-smallcaps"
+            android:textSize="15dp"
+            android:text="0 following"
+            android:textStyle="bold"
+            android:layout_weight="0.13" />
+
+        <ImageView
+            android:layout_marginTop="-43dp"
+            android:id="@+id/feedback"
+            android:layout_width="58dp"
+            android:layout_height="120dp"
+            android:src="@mipmap/icon_feedback"
+            android:focusable="true"
+            android:clickable="true"
+            android:layout_weight="0.03" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/itemselling"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="-90dp"
+        android:background="@color/darkgrey"
+        android:fontFamily="sans-serif-smallcaps"
+        android:text="Stuffs Selling : 0 items"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textSize="15dp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/itemrequest"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="-70dp"
+        android:background="@color/darkgrey"
+        android:fontFamily="sans-serif-smallcaps"
+        android:text="Stuffs Request: 0 items"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textSize="15dp"
+        android:textStyle="bold" />
+
+
+    <ImageView
+        android:visibility="gone"
+        android:src="@mipmap/icon_info"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:id="@+id/infoIcon"
+        android:layout_gravity="center" />
+
+    <TextView
+        android:visibility="gone"
+        android:layout_marginTop="50dp"
+        android:id="@+id/notice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-smallcaps"
+        android:text="No item is uploaded !"
+        android:textStyle="bold"
+        android:layout_gravity="center"
+        android:textColor="@color/black"
+        android:textSize="15dp">
+    </TextView>
+
+
+    <ListView
+        android:id="@+id/myStuffList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="220dp"
+        android:layout_weight="1"
+        android:drawSelectorOnTop="false"
+        android:listSelector="@color/lightgrey"></ListView>
+
+</FrameLayout>

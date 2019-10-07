@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ImageView
+        android:layout_marginTop="10dp"
+        android:layout_height="70dp"
+        android:layout_width="70dp"
+        android:id="@+id/chatPhoto"
+        android:src="@mipmap/icon_feedback"
+        android:layout_marginRight="130dp"
+        android:layout_gravity="center"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:orientation="horizontal"
+        android:layout_marginTop="-60dp">
+
+        <TextView
+            android:text="General Discussion"
+            android:layout_marginLeft="120dp"
+            android:layout_marginRight="60dp"
+            android:textColor="@color/black"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/subject"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif-smallcaps"
+            android:textSize="15dp" />
+
+        <TextView
+            android:text=""
+            android:layout_width="wrap_content"
+            android:layout_height="22dp"
+            android:id="@+id/participationStatus"
+            android:textStyle="bold"
+            android:layout_marginTop="7dp"
+            android:fontFamily="sans-serif-smallcaps"
+            android:textSize="15dp" />
+
+
+    </LinearLayout>
+
+</LinearLayout>

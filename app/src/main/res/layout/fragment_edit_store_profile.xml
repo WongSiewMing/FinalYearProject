@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".EditStoreProfile"
+    android:background="@drawable/background"
+    android:orientation="vertical">
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/edit_StoreInformation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:clickable="true"
+        android:src="@drawable/ic_ok"
+        android:tint="@color/white" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_above="@id/edit_StoreInformation">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/captureImage2"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:background="@color/lightgrey"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentStart="true"/>
+
+            <ImageView
+                android:id="@+id/buttonCamera2"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:clickable="true"
+                android:focusable="true"
+                android:scaleX="0.4"
+                android:scaleY="0.4"
+                android:src="@mipmap/icon_camera" />
+
+            <TextView
+                android:layout_below="@id/captureImage2"
+                android:id="@+id/storeName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Store name :"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:textColor="@color/black"/>
+            <EditText
+                android:id="@+id/edit_storeName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/storeName"
+                android:textSize="18sp"
+                android:hint="Edit your store name here"
+                android:maxLength="30"
+                android:inputType="textMultiLine"/>
+            <TextView
+                android:id="@+id/storeDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Store Description :"
+                android:layout_below="@id/edit_storeName"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:textColor="@color/black"
+                android:layout_marginTop="10dp"/>
+            <EditText
+                android:id="@+id/edit_storeDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/storeDescription"
+                android:textSize="18sp"
+                android:hint="Edit your store description here"
+                android:maxLength="200"
+                android:inputType="textMultiLine" />
+            <TextView
+                android:id="@+id/storeCategory"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Store Category :"
+                android:layout_below="@id/edit_storeDescription"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:textColor="@color/black"
+                android:layout_marginTop="10dp" />
+            <Spinner
+                android:layout_width="160dp"
+                android:layout_height="40dp"
+                android:id="@+id/edit_StoreCategory"
+                android:background="@color/lightgrey"
+                android:popupBackground="@color/beige"
+                android:textSize="18sp"
+                android:layout_below="@id/storeCategory"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="5dp">
+            </Spinner>
+            <TextView
+                android:id="@+id/storeBusinessHour"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Business hour :"
+                android:layout_below="@id/edit_StoreCategory"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:textColor="@color/black"
+                android:layout_marginTop="10dp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/storeBusinessHour"
+                android:text="Open Time :"
+                android:id="@+id/openText"
+                android:textSize="15sp"
+                android:textColor="@color/black"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="5dp"/>
+            <TextView
+                android:id="@+id/edit_StoreOpenTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/storeBusinessHour"
+                android:textStyle="italic"
+                android:textSize="15sp"
+                android:text="0000"
+                android:layout_marginTop="10dp"
+                android:layout_toRightOf="@+id/openText"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Close Time :"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:id="@+id/closeText"
+                android:layout_marginTop="10dp"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/storeBusinessHour"/>
+            <TextView
+                android:id="@+id/edit_StoreCloseTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/storeBusinessHour"
+                android:textStyle="italic"
+                android:textSize="15sp"
+                android:text="0000"
+                android:layout_marginTop="10dp"
+                android:layout_toRightOf="@+id/closeText"/>
+            <TextView
+                android:id="@+id/storeLocation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Store location :"
+                android:layout_below="@id/edit_StoreOpenTime"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:textColor="@color/black"
+                android:layout_marginTop="10dp" />
+            <EditText
+                android:id="@+id/edit_storeLocation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/storeLocation"
+                android:textSize="18sp"
+                android:hint="Describe your store location here"
+                android:maxLength="200"
+                android:inputType="textMultiLine"/>
+        </RelativeLayout>
+    </ScrollView>
+
+
+
+</RelativeLayout>

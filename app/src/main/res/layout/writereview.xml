@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="350dp"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_gravity="center">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/pink">
+
+        <RatingBar
+            android:id="@+id/giveRating"
+            style="?android:attr/ratingBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:stepSize="0.5"
+            android:progressTint="@color/yellow"/>
+
+        <EditText
+            android:id="@+id/reviewComment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/giveRating"
+            android:inputType="text"
+            android:textColor="@color/black"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_marginHorizontal="20dp"
+            android:hint="Type somthing.."
+            android:maxLength="100"/>
+
+        <Button
+            android:id="@+id/submitReview"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:layout_below="@id/reviewComment"
+            android:layout_alignParentEnd="true"
+            android:text="Submit"
+            android:background="@drawable/edit_button_shape"
+            android:layout_marginEnd="5dp"/>
+
+        <Button
+            android:id="@+id/cancelReview"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:layout_below="@id/reviewComment"
+            android:layout_toLeftOf="@+id/submitReview"
+            android:text="Cancel"
+            android:background="@drawable/edit_button_shape"
+            android:layout_marginEnd="5dp"/>
+
+
+
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>

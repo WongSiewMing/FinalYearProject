@@ -1,0 +1,53 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background"
+    tools:context="com.example.raindown.finalyearproject.PublicChatRoom">
+
+    <Button
+        android:id="@+id/participateButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#70a354"
+        android:fontFamily="sans-serif-smallcaps"
+        android:textSize="15dp"
+        android:text="+ Click to join room"
+        android:textColor="#ffffff"
+        android:textStyle="bold"/>
+
+    <!--#70a354-->
+    <!--#ad1111-->
+
+    <ListView
+        android:id="@+id/dynamicPublicChat"
+        android:layout_width="match_parent"
+        android:layout_height="403dp"
+        android:layout_marginTop="49dp"
+        android:layout_weight="1"
+        android:drawSelectorOnTop="false">
+    </ListView>
+
+    <EditText
+        android:layout_width="290dp"
+        android:layout_height="50dp"
+        android:fontFamily="sans-serif-smallcaps"
+        android:textSize="15dp"
+        android:textColor="@color/black"
+        android:textAlignment="center"
+        android:hint="Enter your message"
+        android:background="@color/lightgrey"
+        android:layout_marginTop="460dp"
+        android:id="@+id/sendMessage" />
+
+    <ImageView
+        android:id="@+id/send"
+        android:layout_width="62dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="460dp"
+        android:layout_marginLeft="300dp"
+        android:src="@mipmap/icon_send"
+        android:focusable="true"
+        android:clickable="true"/>
+
+</FrameLayout>

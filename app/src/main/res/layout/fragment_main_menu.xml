@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainMenu"
+    android:id="@+id/MainMenu">
+    <TextView
+        android:id="@+id/appsTitle"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:background="@color/lightpurple"
+        android:text="Stuff Selling System"
+        android:textSize="24sp"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:gravity="bottom"
+        android:textAlignment="center" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/appsTitle"
+        android:padding="8dp"
+        android:gravity="center">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/menurv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+
+            >
+
+        </android.support.v7.widget.RecyclerView>
+    </RelativeLayout>
+
+
+</RelativeLayout>

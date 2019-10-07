@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nav_post"
+        android:icon="@drawable/home_black"
+        android:title="@string/nav_home"
+        android:color="@color/lightgreen"/>
+    <item
+        android:id="@+id/nav_shop"
+        android:icon="@drawable/location"
+        android:title="@string/nav_location"
+        android:color = "@color/lightgreen"/>
+    <item
+        android:id="@+id/nav_more"
+        android:icon="@drawable/more"
+        android:title="@string/nav_more"
+        android:color = "@color/lightgreen"/>
+</menu>
