@@ -4,7 +4,9 @@ import android.app.*;
 import android.content.*;
 import android.net.*;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.*;
 
@@ -37,14 +39,19 @@ public class Login extends AppCompatActivity {
     Button login;
     List<Student> studentList = new ArrayList<>();
     TextView showPassword;
+    String userName, userPassword;
+
+    private static final String TAG = "testData";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
         pDialog = new ProgressDialog(this);
         username = (EditText) findViewById(R.id.username);
         password = (EditText) findViewById(R.id.password);
+
         login = (Button) findViewById(R.id.btnLogin);
         login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,9 +102,28 @@ public class Login extends AppCompatActivity {
                 }
             }
         });
+
+        if (PreferenceUnits.getID(this) != null) {
+//            userName = PreferenceUnits.getID(this);
+//            userPassword = PreferenceUnits.getPassword(this);
+            getStudentData();
+        }
+
     }
 
     public void getStudentData() {
+
+        if (!username.getText().toString().matches("") || !password.getText().toString().matches("")){
+            userName = username.getText().toString();
+            userPassword = password.getText().toString();
+        }
+        else {
+            userName = PreferenceUnits.getID(this);
+            userPassword = PreferenceUnits.getPassword(this);
+        }
+
+        Log.d(TAG, "Hi, " + userName);
+
         try {
 
             ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -110,15 +136,13 @@ public class Login extends AppCompatActivity {
                 RequestQueue queue = Volley.newRequestQueue(this.getApplication());
                 if (!pDialog.isShowing())
                     pDialog.setMessage("Sync with server...");
-                pDialog.show();
-//               username.setText("18WMR08432");
+                    pDialog.show();
+//                username.setText("18WMR08432");
 //                password.setText("980905");
 
-   //             username.setText("15WMU08910");
-    //            password.setText("950525146176");
 
-                final JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Constant.serverFile + "getStudentData.php?username=" + username.getText().toString()
-                        + "&password=" + password.getText().toString(),
+                final JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Constant.serverFile + "getStudentData.php?username=" + userName
+                        + "&password=" + userPassword ,
                         new Response.Listener<JSONArray>() {
                             @Override
                             public void onResponse(JSONArray response) {
@@ -177,10 +201,13 @@ public class Login extends AppCompatActivity {
         } else {
             Intent intent = new Intent(Login.this, UpdateNavigation.class);
             intent.putExtra("Login", studentList.get(0));
+            PreferenceUnits.saveID(userName, this);
+            PreferenceUnits.savePassword(userPassword, this);
             studentList.clear();
             username.setText("");
             password.setText("");
             startActivity(intent);
+            finish();
         }
     }
 }

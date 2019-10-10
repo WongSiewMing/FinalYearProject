@@ -47,6 +47,7 @@ import org.json.JSONObject;
 
 import Helper.BottomNavigationViewHelper;
 import Helper.Constant;
+import Helper.PreferenceUnits;
 import Helper.Student;
 
 /*Author : Wong Siew Ming
@@ -194,7 +195,11 @@ public class UpdateNavigation extends AppCompatActivity implements NavigationVie
                 break;
 
             case R.id.nav_logout:
-
+                PreferenceUnits.saveID(null,this);
+                PreferenceUnits.savePassword(null,this);
+                Intent intent = new Intent(this, Login.class);
+                startActivity(intent);
+                finish();
                 break;
         }
         //close bt_navigation drawer
@@ -289,17 +294,7 @@ public class UpdateNavigation extends AppCompatActivity implements NavigationVie
     @Override
     public void onBackPressed() {
         fragmentManager = this.getSupportFragmentManager();
-        if (fragmentManager.getBackStackEntryCount() == 0){
-            if (backPressedTime + 2000 > System.currentTimeMillis()){
-                backToast.cancel();
-                super.onBackPressed();
-                return;
-            }else {
-                backToast = Toast.makeText(getBaseContext(), "Press back again to exit", Toast.LENGTH_SHORT);
-                backToast.show();
-            }
-            backPressedTime = System.currentTimeMillis();
-        }else {
+        if (fragmentManager.getBackStackEntryCount() != 1) {
             super.onBackPressed();
         }
     }

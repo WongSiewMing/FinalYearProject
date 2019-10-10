@@ -118,7 +118,7 @@ public class ManageAppointment extends Fragment {
                 myjsonObj = new JSONObject(mqttMessage.toString());
                 if (myjsonObj.getString("command").equals("30303530305F")){
                     for (int i = 0; i < appointmentList.size(); i ++){
-                        if (Conversion.hexToAscii(myjsonObj.getString("studentID")).equals(Navigation.student.getStudentID())){
+                        if (Conversion.hexToAscii(myjsonObj.getString("studentID")).equals(UpdateNavigation.student.getStudentID())){
                             if (Conversion.hexToAscii(myjsonObj.getString("appointmentID")).equals(appointmentList.get(i).getAppointmentID())){
                                 updateAppoinmentInfo(appointmentList.get(i));
 
@@ -163,13 +163,13 @@ public class ManageAppointment extends Fragment {
         }
 
         updateAppointmentInfoURL = Constant.serverFile + "updateAppointmentInfo.php?appointmentID=" + appointmentOB.getAppointmentID()
-        + "&studentID=" + appointmentOB.getStudentID().getStudentID()
-        + "&availableID=" + appointmentOB.getAvailableID().getAvailableID()
-        + "&stuffID=" + appointmentOB.getStuffID().getStuffID()
-        + "&opponentID=" + appointmentOB.getOpponentID()
-        + "&appointmentStatus=" + newAppointmentStatus
-        + "&appointmentDate=" + appointmentOB.getAppointmentDate()
-        + "&opponentRecord=" + "DELETED";
+                + "&studentID=" + appointmentOB.getStudentID().getStudentID()
+                + "&availableID=" + appointmentOB.getAvailableID().getAvailableID()
+                + "&stuffID=" + appointmentOB.getStuffID().getStuffID()
+                + "&opponentID=" + appointmentOB.getOpponentID()
+                + "&appointmentStatus=" + newAppointmentStatus
+                + "&appointmentDate=" + appointmentOB.getAppointmentDate()
+                + "&opponentRecord=" + "DELETED";
         Log.d(TAG, "Update appointment URL = " + updateAppointmentInfoURL);
         RequestQueue queue = Volley.newRequestQueue(getActivity());
         try {
@@ -190,7 +190,7 @@ public class ManageAppointment extends Fragment {
                                         if (appointmentOB.getAppointmentID().equals(appointmentList.get(ai).getAppointmentID())) {
                                             appointmentList.remove(ai);
                                         }
-                                        }
+                                    }
 
 //                                    appointmentList.remove(position);
                                     if (appointmentList.size() == 0) {
@@ -268,7 +268,7 @@ public class ManageAppointment extends Fragment {
 
                 RequestQueue queue = Volley.newRequestQueue(getActivity());
                 //http://192.168.0.106/raindown/getAppointmentList.php?studentID=17wmr05969
-                JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Constant.serverFile + "getAppointmentList.php?studentID=" + Navigation.student.getStudentID(),
+                JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Constant.serverFile + "getAppointmentList.php?studentID=" + UpdateNavigation.student.getStudentID(),
                         new Response.Listener<JSONArray>() {
                             @Override
                             public void onResponse(JSONArray response) {
