@@ -180,7 +180,7 @@ public class AppointmentListAdapter extends RecyclerView.Adapter<AppointmentList
             Log.d(TAG,"Hi");
             command = "{\"command\": \"30303530305F\", \"reserve\": \"303030303030303030303030303030303030303030303030\", " +
                     "\"appointmentID\": " + "\"" + Conversion.asciiToHex(mData.get(position).getAppointmentID()) + "\" ," +
-                    "\"studentID\": " + "\"" + Conversion.asciiToHex(Navigation.student.getStudentID()) + "\" ," +
+                    "\"studentID\": " + "\"" + Conversion.asciiToHex(UpdateNavigation.student.getStudentID()) + "\" ," +
                     "\"opponentRecord\": " + "\"" + Conversion.asciiToHex("DELETED") + "\" }";
 
             try {
