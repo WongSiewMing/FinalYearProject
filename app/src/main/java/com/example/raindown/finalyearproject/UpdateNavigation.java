@@ -170,11 +170,11 @@ public class UpdateNavigation extends AppCompatActivity implements NavigationVie
                 break;
 
             case R.id.nav_appointment:
-                ManageAppointment manageAppointment = new ManageAppointment();
+                Appointment_Menu appointment_menu = new Appointment_Menu();
                 Bundle bundle8 = new Bundle();
-                bundle8.putSerializable("manageAppointment", student);
-                manageAppointment.setArguments(bundle8);
-                loadFragment(manageAppointment);
+                bundle8.putSerializable("AppointmentMenu", student);
+                appointment_menu.setArguments(bundle8);
+                loadFragment(appointment_menu);
                 break;
 
             case R.id.nav_store:

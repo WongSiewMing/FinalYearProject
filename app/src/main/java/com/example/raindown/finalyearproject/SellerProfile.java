@@ -697,7 +697,7 @@ public class SellerProfile extends Fragment {
                                             if(NotificationService.client != null){
                                                 NotificationService.client.unsubscribe(stuff.getStudentID().getStudentID());
                                             }
-                                            //pahoMqttClient.unSubscribe(mqttAndroidClient,stuff.getStudentID().getStudentID());
+//                                            pahoMqttClient.unSubscribe(mqttAndroidClient,stuff.getStudentID().getStudentID());
                                         } else {
                                             Toast.makeText(getActivity().getApplicationContext(), "Error.", Toast.LENGTH_LONG).show();
                                         }

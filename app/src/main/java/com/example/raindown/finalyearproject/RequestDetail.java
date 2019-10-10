@@ -204,7 +204,7 @@ public class RequestDetail extends Fragment {
                                     if (appointmentOB.getAppointmentID().equals(qrcodes.valueAt(0).displayValue)) {
                                         command = "{\"command\": \"303035303064\", \"reserve\": \"303030303030303030303030303030303030303030303030\", " +
                                                 "\"appointmentID\": " + "\"" + Conversion.asciiToHex(appointmentOB.getAppointmentID()) + "\" ," +
-                                                "\"studentID\": " + "\"" + Conversion.asciiToHex(Navigation.student.getStudentID()) + "\" ," +
+                                                "\"studentID\": " + "\"" + Conversion.asciiToHex(UpdateNavigation.student.getStudentID()) + "\" ," +
                                                 "\"availableID\": " + "\"" + Conversion.asciiToHex(appointmentOB.getAvailableID().getAvailableID()) + "\" ," +
                                                 "\"stuffID\": " + "\"" + Conversion.asciiToHex(appointmentOB.getStuffID().getStuffID()) + "\" ," +
                                                 "\"opponentID\": " + "\"" + Conversion.asciiToHex(appointmentOB.getOpponentID()) + "\" ," +
@@ -286,7 +286,7 @@ public class RequestDetail extends Fragment {
                     i = i + 1;
 
                     Log.d(TAG, "Message arrived " + i);
-                    if (Conversion.hexToAscii(myjsonObj.getString("studentID")).equals(Navigation.student.getStudentID())) {
+                    if (Conversion.hexToAscii(myjsonObj.getString("studentID")).equals(UpdateNavigation.student.getStudentID())) {
                         updateRequestDetail(myjsonObj);
                     }
 
@@ -306,7 +306,7 @@ public class RequestDetail extends Fragment {
                 if (connection.equals("Connected")) {
                     ChatRoom_V2 frag = new ChatRoom_V2();
                     Bundle bundle = new Bundle();
-                    bundle.putSerializable("UserData", Navigation.student);//own data
+                    bundle.putSerializable("UserData", UpdateNavigation.student);//own data
                     bundle.putString("ClickedUserID", appointmentOB.getOpponentID());
                     frag.setArguments(bundle);
                     fragmentManager = ((AppCompatActivity) view.getContext()).getSupportFragmentManager();
@@ -387,7 +387,7 @@ public class RequestDetail extends Fragment {
                                             btnAppointmentStatus.setBackgroundColor(getResources().getColor(R.color.lightgreen));
                                             btnAppointmentStatus.setEnabled(false);
                                             command = "{\"command\": \"303035303065\", \"reserve\": \"303030303030303030303030303030303030303030303030\", " +
-                                                    "\"studentID\": " + "\"" + Conversion.asciiToHex(Navigation.student.getStudentID()) + "\" ," +
+                                                    "\"studentID\": " + "\"" + Conversion.asciiToHex(UpdateNavigation.student.getStudentID()) + "\" ," +
                                                     "\"opponentID\": " + "\"" + myjsonObj.getString("opponentID") + "\" ," +
                                                     "\"appointmentStatus\": " + "\"" + Conversion.asciiToHex("COMPLETED") + "\" ," +
                                                     "\"appointmentID\": " + "\"" + myjsonObj.getString("appointmentID") + "\" }";
@@ -465,7 +465,7 @@ public class RequestDetail extends Fragment {
             Boolean isConnected = networkInfo != null && networkInfo.isConnectedOrConnecting();
             if (isConnected) {
                 command = "{\"command\": \"303035303061\", \"reserve\": \"303030303030303030303030303030303030303030303030\", " +
-                        "\"studentID\": " + "\"" + Conversion.asciiToHex(Navigation.student.getStudentID()) + "\" ," +
+                        "\"studentID\": " + "\"" + Conversion.asciiToHex(UpdateNavigation.student.getStudentID()) + "\" ," +
                         "\"appointmentID\": " + "\"" + Conversion.asciiToHex(appointmentOB.getAppointmentID()) + "\" ," +
                         "\"stuffID\": " + "\"" + Conversion.asciiToHex(appointmentOB.getStuffID().getStuffID()) + "\" }";
 
@@ -597,7 +597,7 @@ public class RequestDetail extends Fragment {
                 if (connection.equals("Connected")) {
                     command = "{\"command\": \"303035303064\", \"reserve\": \"303030303030303030303030303030303030303030303030\", " +
                             "\"appointmentID\": " + "\"" + Conversion.asciiToHex(appointmentOB.getAppointmentID()) + "\" ," +
-                            "\"studentID\": " + "\"" + Conversion.asciiToHex(Navigation.student.getStudentID()) + "\" ," +
+                            "\"studentID\": " + "\"" + Conversion.asciiToHex(UpdateNavigation.student.getStudentID()) + "\" ," +
                             "\"availableID\": " + "\"" + Conversion.asciiToHex(appointmentOB.getAvailableID().getAvailableID()) + "\" ," +
                             "\"stuffID\": " + "\"" + Conversion.asciiToHex(appointmentOB.getStuffID().getStuffID()) + "\" ," +
                             "\"opponentID\": " + "\"" + Conversion.asciiToHex(appointmentOB.getOpponentID()) + "\" ," +
