@@ -1,6 +1,7 @@
 package com.example.raindown.finalyearproject;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
@@ -18,6 +19,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -195,11 +197,26 @@ public class UpdateNavigation extends AppCompatActivity implements NavigationVie
                 break;
 
             case R.id.nav_logout:
-                PreferenceUnits.saveID(null,this);
-                PreferenceUnits.savePassword(null,this);
-                Intent intent = new Intent(this, Login.class);
-                startActivity(intent);
-                finish();
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+                builder.setMessage("Are you sure you want to Logout ?")
+                        .setCancelable(false)
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                logOut();
+                            }
+                        })
+
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.cancel();
+                            }
+                        });
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
                 break;
         }
         //close bt_navigation drawer
@@ -213,8 +230,6 @@ public class UpdateNavigation extends AppCompatActivity implements NavigationVie
         navigationView.setNavigationItemSelectedListener(this);
     }
 
-
-
     private void loadFragment(Fragment fragment) {
         // load fragment
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -223,6 +238,13 @@ public class UpdateNavigation extends AppCompatActivity implements NavigationVie
         transaction.commit();
     }
 
+    private void logOut(){
+        PreferenceUnits.saveID(null,this);
+        PreferenceUnits.savePassword(null,this);
+        Intent intent = new Intent(this, Login.class);
+        startActivity(intent);
+        finish();
+    }
     public void getUserStoreID(){
         Fragment fragment;
         try {
