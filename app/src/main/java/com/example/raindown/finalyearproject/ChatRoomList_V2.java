@@ -99,7 +99,7 @@ public class ChatRoomList_V2 extends Fragment {
         view = inflater.inflate(R.layout.fragment_chat_room_list__v2, container, false);
         Bundle bundle = getArguments();
         s = (Student) bundle.getSerializable("chatRoomList_v2");
-//        Log.d(TAG, "Current User = " +s.getStudentName());
+        Log.d(TAG, "Current User = " +s.getStudentName());
         UserID = UserSharedPreferences.read(UserSharedPreferences.userID, null);
         searchView = view.findViewById(R.id.search_user);
         search_userListrv = view.findViewById(R.id.search_userList);
@@ -111,8 +111,10 @@ public class ChatRoomList_V2 extends Fragment {
 
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
             @Override
             public boolean onQueryTextSubmit(String query) {
+
                 Log.d(TAG, "Message =" + query);
                 progressField.setVisibility(View.VISIBLE);
                 chatField.setVisibility(View.INVISIBLE);
@@ -256,7 +258,7 @@ public class ChatRoomList_V2 extends Fragment {
 
     private void populateSearchList(String query) {
         try {
-
+            Log.d(TAG, "Hi commentID responded");
             ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
             Boolean isConnected = networkInfo != null && networkInfo.isConnectedOrConnecting();

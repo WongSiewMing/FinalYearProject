@@ -588,7 +588,7 @@ public class MaintainStuff extends Fragment {
                                                                     }
                                                                     MainMenu mainMenu = new MainMenu();
                                                                     Bundle bundle= new Bundle();
-                                                                    bundle.putSerializable("MainMenu", Navigation.student);
+                                                                    bundle.putSerializable("MainMenu", UpdateNavigation.student);
                                                                     mainMenu.setArguments(bundle);
                                                                     fragmentManager = getFragmentManager();
                                                                     fragmentManager.beginTransaction()

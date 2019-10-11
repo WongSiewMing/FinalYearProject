@@ -72,7 +72,7 @@ public class ManageAppointment extends Fragment {
     private List<AppointmentOB> appointmentList;
     private AppointmentListAdapter appointmentAdapter;
     private JSONObject myjsonObj;
-
+    Student s = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -87,6 +87,9 @@ public class ManageAppointment extends Fragment {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_manage__appointment, container, false);
         getActivity().setTitle("Manage Appointment");
+        Bundle bundle = getArguments();
+        s = (Student) bundle.getSerializable("manageAppointment");
+
         btnEditAvailableTime = view.findViewById(R.id.btnEditAvailableTime);
         appointmentProgressBar = view.findViewById(R.id.appoinmentProgressBar);
         requestProgressBar = view.findViewById(R.id.requestProgressBar);
@@ -118,7 +121,7 @@ public class ManageAppointment extends Fragment {
                 myjsonObj = new JSONObject(mqttMessage.toString());
                 if (myjsonObj.getString("command").equals("30303530305F")){
                     for (int i = 0; i < appointmentList.size(); i ++){
-                        if (Conversion.hexToAscii(myjsonObj.getString("studentID")).equals(UpdateNavigation.student.getStudentID())){
+                        if (Conversion.hexToAscii(myjsonObj.getString("studentID")).equals(s.getStudentID())){
                             if (Conversion.hexToAscii(myjsonObj.getString("appointmentID")).equals(appointmentList.get(i).getAppointmentID())){
                                 updateAppoinmentInfo(appointmentList.get(i));
 
@@ -268,7 +271,7 @@ public class ManageAppointment extends Fragment {
 
                 RequestQueue queue = Volley.newRequestQueue(getActivity());
                 //http://192.168.0.106/raindown/getAppointmentList.php?studentID=17wmr05969
-                JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Constant.serverFile + "getAppointmentList.php?studentID=" + UpdateNavigation.student.getStudentID(),
+                JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Constant.serverFile + "getAppointmentList.php?studentID=" + s.getStudentID(),
                         new Response.Listener<JSONArray>() {
                             @Override
                             public void onResponse(JSONArray response) {

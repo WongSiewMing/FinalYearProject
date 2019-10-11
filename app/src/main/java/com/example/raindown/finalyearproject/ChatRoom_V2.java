@@ -251,6 +251,7 @@ public class ChatRoom_V2 extends Fragment {
 
     private void getChatID() {
         try {
+            Log.d(TAG, "Hi mother");
             ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
             Boolean isConnected = networkInfo != null && networkInfo.isConnectedOrConnecting();
@@ -263,12 +264,12 @@ public class ChatRoom_V2 extends Fragment {
                             @Override
                             public void onResponse(JSONArray response) {
                                 try {
-                                    Log.d(TAG, "commentID responded");
+                                    Log.d(TAG, "Hi commentID responded");
                                     for (int i = 0; i < response.length(); i++) {
                                         JSONObject chatIDResponse = (JSONObject) response.get(i);
                                         currentChatID = chatIDResponse.getString("CurrentPrivateID");
                                     }
-                                    Log.d(TAG, " Current comment ID =" + currentChatID);
+                                    Log.d(TAG, "Hi Current comment ID =" + currentChatID);
 
                                     if (currentChatID.equals("0")) {
                                         newChatID = "PRI1001";
