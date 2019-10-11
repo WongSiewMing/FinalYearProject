@@ -251,7 +251,6 @@ public class ChatRoom_V2 extends Fragment {
 
     private void getChatID() {
         try {
-            Log.d(TAG, "Hi mother");
             ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
             Boolean isConnected = networkInfo != null && networkInfo.isConnectedOrConnecting();

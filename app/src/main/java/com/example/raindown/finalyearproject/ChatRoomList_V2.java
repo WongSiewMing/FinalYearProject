@@ -147,10 +147,15 @@ public class ChatRoomList_V2 extends Fragment {
                 return true;
             }
         });
+
+
         pahoMqttClient = new PahoMqttClient();
+        Log.d(TAG,"Mqtt responded?");
         mqttAndroidClient = pahoMqttClient.getMqttClient(getContext(), Constant.serverUrl);
+        Log.d(TAG,"Mqtt responded????");
 
         mqttAndroidClient.setCallback(new MqttCallbackExtended() {
+
             @Override
             public void connectComplete(boolean reconnect, String serverURI) {
                 Log.d(TAG,"Mqtt responded!");

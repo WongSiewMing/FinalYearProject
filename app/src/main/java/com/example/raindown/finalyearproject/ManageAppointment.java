@@ -102,42 +102,44 @@ public class ManageAppointment extends Fragment {
         appointmentList = new ArrayList<>();
         appointmentList.clear();
 
-        mqttAndroidClient.setCallback(new MqttCallbackExtended() {
-            @Override
-            public void connectComplete(boolean reconnect, String serverURI) {
-                connection = "Connected";
-                getAppointmentList();
+        getAppointmentList();
 
-            }
-
-            @Override
-            public void connectionLost(Throwable cause) {
-                connection = "Disconnected";
-
-            }
-
-            @Override
-            public void messageArrived(String topic, MqttMessage mqttMessage) throws Exception {
-                myjsonObj = new JSONObject(mqttMessage.toString());
-                if (myjsonObj.getString("command").equals("30303530305F")){
-                    for (int i = 0; i < appointmentList.size(); i ++){
-                        if (Conversion.hexToAscii(myjsonObj.getString("studentID")).equals(s.getStudentID())){
-                            if (Conversion.hexToAscii(myjsonObj.getString("appointmentID")).equals(appointmentList.get(i).getAppointmentID())){
-                                updateAppoinmentInfo(appointmentList.get(i));
-
-                            }
-                        }
-
-                    }
-                }
-
-            }
-
-            @Override
-            public void deliveryComplete(IMqttDeliveryToken token) {
-
-            }
-        });
+//        mqttAndroidClient.setCallback(new MqttCallbackExtended() {
+//            @Override
+//            public void connectComplete(boolean reconnect, String serverURI) {
+//                connection = "Connected";
+//                getAppointmentList();
+//
+//            }
+//
+//            @Override
+//            public void connectionLost(Throwable cause) {
+//                connection = "Disconnected";
+//
+//            }
+//
+//            @Override
+//            public void messageArrived(String topic, MqttMessage mqttMessage) throws Exception {
+//                myjsonObj = new JSONObject(mqttMessage.toString());
+//                if (myjsonObj.getString("command").equals("30303530305F")){
+//                    for (int i = 0; i < appointmentList.size(); i ++){
+//                        if (Conversion.hexToAscii(myjsonObj.getString("studentID")).equals(s.getStudentID())){
+//                            if (Conversion.hexToAscii(myjsonObj.getString("appointmentID")).equals(appointmentList.get(i).getAppointmentID())){
+//                                updateAppoinmentInfo(appointmentList.get(i));
+//
+//                            }
+//                        }
+//
+//                    }
+//                }
+//
+//            }
+//
+//            @Override
+//            public void deliveryComplete(IMqttDeliveryToken token) {
+//
+//            }
+//        });
 
         btnEditAvailableTime.setOnClickListener(new View.OnClickListener() {
             @Override

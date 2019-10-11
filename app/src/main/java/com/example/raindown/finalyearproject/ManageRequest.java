@@ -87,42 +87,45 @@ public class ManageRequest extends Fragment {
         requestRV.setVisibility(View.INVISIBLE);
 
         mqttAndroidClient = pahoMqttClient.getMqttClient(getActivity(), Constant.serverUrl, "MY/TARUC/SSS/000000001/PUB");
-        mqttAndroidClient.setCallback(new MqttCallbackExtended() {
-            @Override
-            public void connectComplete(boolean reconnect, String serverURI) {
-                connection = "Connected";
-                getRequestList();
-            }
 
-            @Override
-            public void connectionLost(Throwable cause) {
-                connection = "Disconnected";
+        getRequestList();
 
-            }
-
-            @Override
-            public void messageArrived(String topic, MqttMessage mqttMessage) throws Exception {
-                Log.d(TAG, "Message arrived!");
-                myjsonObj = new JSONObject(mqttMessage.toString());
-                if (myjsonObj.getString("command").equals("303035303063")){
-                    if (Conversion.hexToAscii(myjsonObj.getString("studentID")).equals(UpdateNavigation.student.getStudentID())){
-                        for (int i = 0; i < requestList.size(); i++) {
-                            if (Conversion.hexToAscii(myjsonObj.getString("appointmentID")).equals(requestList.get(i).getAppointmentID())) {
-
-                                updateRequestInfo(requestList.get(i));
-                            }
-                        }
-
-                    }
-                }
-
-            }
-
-            @Override
-            public void deliveryComplete(IMqttDeliveryToken token) {
-
-            }
-        });
+//        mqttAndroidClient.setCallback(new MqttCallbackExtended() {
+//            @Override
+//            public void connectComplete(boolean reconnect, String serverURI) {
+//                connection = "Connected";
+//                getRequestList();
+//            }
+//
+//            @Override
+//            public void connectionLost(Throwable cause) {
+//                connection = "Disconnected";
+//
+//            }
+//
+//            @Override
+//            public void messageArrived(String topic, MqttMessage mqttMessage) throws Exception {
+//                Log.d(TAG, "Message arrived!");
+//                myjsonObj = new JSONObject(mqttMessage.toString());
+//                if (myjsonObj.getString("command").equals("303035303063")){
+//                    if (Conversion.hexToAscii(myjsonObj.getString("studentID")).equals(UpdateNavigation.student.getStudentID())){
+//                        for (int i = 0; i < requestList.size(); i++) {
+//                            if (Conversion.hexToAscii(myjsonObj.getString("appointmentID")).equals(requestList.get(i).getAppointmentID())) {
+//
+//                                updateRequestInfo(requestList.get(i));
+//                            }
+//                        }
+//
+//                    }
+//                }
+//
+//            }
+//
+//            @Override
+//            public void deliveryComplete(IMqttDeliveryToken token) {
+//
+//            }
+//        });
 
         return view;
     }
