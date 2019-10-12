@@ -142,47 +142,49 @@ public class PrivateChatRoom extends Fragment {
             }
         });
 
-        mqttAndroidClient.setCallback(new MqttCallbackExtended() {
+        generatePrivateID();
 
-            @Override
-            public void connectComplete(boolean b, String s) {
-
-            }
-
-            @Override
-            public void connectionLost(Throwable throwable) {
-
-            }
-
-            @Override
-            public void messageArrived(String s, MqttMessage mqttMessage) throws Exception {
-
-                try {
-                    JSONObject jsonObj = new JSONObject(mqttMessage.toString());
-                    if(jsonObj.getString("command").equals("303035303019")){
-                        arrayPrivateChatNew.add(new PrivateChat(Conversion.hexToAscii(jsonObj.getString("studentID")),
-                                Conversion.hexToAscii(jsonObj.getString("studentName")), Conversion.hexToAscii(jsonObj.getString("recipient")),
-                                Conversion.hexToAscii(jsonObj.getString("message")), Conversion.hexToAscii(jsonObj.getString("postDate")),
-                                Conversion.hexToAscii(jsonObj.getString("postTime"))));
-                        newStudentID = Conversion.hexToAscii(jsonObj.getString("studentID"));
-                        newRecipient = Conversion.hexToAscii(jsonObj.getString("recipient"));
-                        newMessage = Conversion.hexToAscii(jsonObj.getString("message"));
-                        newPostDate = Conversion.hexToAscii(jsonObj.getString("postDate"));
-                        newPostTime = Conversion.hexToAscii(jsonObj.getString("postTime"));
-                        Log.d("messageArrived", mqttMessage.toString());
-                        generatePrivateID();
-                    }
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
-
-            }
-        });
+//        mqttAndroidClient.setCallback(new MqttCallbackExtended() {
+//
+//            @Override
+//            public void connectComplete(boolean b, String s) {
+//
+//            }
+//
+//            @Override
+//            public void connectionLost(Throwable throwable) {
+//
+//            }
+//
+//            @Override
+//            public void messageArrived(String s, MqttMessage mqttMessage) throws Exception {
+//
+//                try {
+//                    JSONObject jsonObj = new JSONObject(mqttMessage.toString());
+//                    if(jsonObj.getString("command").equals("303035303019")){
+//                        arrayPrivateChatNew.add(new PrivateChat(Conversion.hexToAscii(jsonObj.getString("studentID")),
+//                                Conversion.hexToAscii(jsonObj.getString("studentName")), Conversion.hexToAscii(jsonObj.getString("recipient")),
+//                                Conversion.hexToAscii(jsonObj.getString("message")), Conversion.hexToAscii(jsonObj.getString("postDate")),
+//                                Conversion.hexToAscii(jsonObj.getString("postTime"))));
+//                        newStudentID = Conversion.hexToAscii(jsonObj.getString("studentID"));
+//                        newRecipient = Conversion.hexToAscii(jsonObj.getString("recipient"));
+//                        newMessage = Conversion.hexToAscii(jsonObj.getString("message"));
+//                        newPostDate = Conversion.hexToAscii(jsonObj.getString("postDate"));
+//                        newPostTime = Conversion.hexToAscii(jsonObj.getString("postTime"));
+//                        Log.d("messageArrived", mqttMessage.toString());
+//                        generatePrivateID();
+//                    }
+//
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//
+//            @Override
+//            public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
+//
+//            }
+//        });
 
 
         return view;

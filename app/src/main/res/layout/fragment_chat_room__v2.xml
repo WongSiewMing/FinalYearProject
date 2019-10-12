@@ -44,7 +44,7 @@
             android:clickable="true"
             android:focusable="true"/>
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/Opponent_photo"
             android:layout_width="50dp"
             android:layout_height="50dp"

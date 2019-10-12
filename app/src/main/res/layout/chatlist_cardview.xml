@@ -3,55 +3,63 @@
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:id="@+id/chatList_cardView">
+
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
+
         <ImageView
             android:id="@+id/studentPhoto"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:src="@mipmap/icon_student"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="5dp"/>
+            android:layout_marginStart="21dp"
+            android:layout_marginTop="6dp"
+            android:src="@mipmap/icon_student" />
 
         <TextView
+            android:id="@+id/studentName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Name"
-            android:textColor="@color/black"
-            android:layout_toEndOf="@id/studentPhoto"
             android:layout_alignTop="@id/studentPhoto"
-            android:layout_marginTop="5dp"
             android:layout_marginStart="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_toEndOf="@id/studentPhoto"
             android:maxLength="50"
-            android:id="@+id/studentName"/>
+            android:text="Name"
+            android:textColor="@color/black" />
+
         <TextView
             android:id="@+id/studentMsg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="message"
-            android:layout_toEndOf="@id/studentPhoto"
-            android:layout_alignStart="@id/studentName"
             android:layout_below="@id/studentName"
-            android:maxLength="30"/>
+            android:layout_alignStart="@id/studentName"
+            android:layout_toEndOf="@id/studentPhoto"
+            android:maxLength="30"
+            android:text="message" />
+
         <TextView
             android:id="@+id/studentTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Time"
+            android:layout_alignTop="@id/studentName"
             android:layout_alignParentEnd="true"
-            android:layout_alignTop="@id/studentName"/>
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="20dp"
+            android:text="Time" />
+
         <TextView
             android:id="@+id/studentDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Date"
             android:layout_below="@id/studentTime"
+            android:layout_alignTop="@id/studentMsg"
             android:layout_alignParentEnd="true"
-            android:layout_alignTop="@id/studentMsg"/>
-
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="20dp"
+            android:text="Date" />
 
 
     </RelativeLayout>
