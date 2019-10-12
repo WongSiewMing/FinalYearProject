@@ -16,16 +16,26 @@
        android:tint="@color/white"
        android:layout_marginEnd="5dp"
        android:layout_marginBottom="5dp"/>
+
     <EditText
         android:id="@+id/edit_message"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="380dp"
+        android:layout_height="45dp"
         android:layout_alignParentBottom="true"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="2dp"
+        android:layout_marginBottom="16dp"
         android:layout_toStartOf="@id/btn_send_message"
-        android:layout_margin="5dp"
-        android:layout_marginBottom="5dp"
+        android:drawableLeft="@drawable/ic_camera"
+        android:drawablePadding="10dp"
+        android:fontFamily="sans-serif-smallcaps"
+        android:background="@drawable/shapeid"
+        android:hint="Type a message..."
+        android:textColorHint="@color/black"
         android:inputType="text"
-        android:maxLength="250"/>
+        android:maxLength="250" />
+
     <RelativeLayout
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"

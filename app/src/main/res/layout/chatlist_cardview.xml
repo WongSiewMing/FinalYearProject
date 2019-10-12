@@ -14,8 +14,9 @@
             android:layout_height="50dp"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:layout_marginStart="21dp"
-            android:layout_marginTop="6dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
             android:src="@mipmap/icon_student" />
 
         <TextView
@@ -26,6 +27,7 @@
             android:layout_marginStart="10dp"
             android:layout_marginTop="5dp"
             android:layout_toEndOf="@id/studentPhoto"
+            android:fontFamily="sans-serif-smallcaps"
             android:maxLength="50"
             android:text="Name"
             android:textColor="@color/black" />
@@ -36,6 +38,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/studentName"
             android:layout_alignStart="@id/studentName"
+            android:fontFamily="sans-serif-smallcaps"
             android:layout_toEndOf="@id/studentPhoto"
             android:maxLength="30"
             android:text="message" />
@@ -46,8 +49,9 @@
             android:layout_height="wrap_content"
             android:layout_alignTop="@id/studentName"
             android:layout_alignParentEnd="true"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="20dp"
+            android:layout_marginTop="21dp"
+            android:layout_marginEnd="17dp"
+            android:fontFamily="sans-serif-smallcaps"
             android:text="Time" />
 
         <TextView
@@ -57,8 +61,9 @@
             android:layout_below="@id/studentTime"
             android:layout_alignTop="@id/studentMsg"
             android:layout_alignParentEnd="true"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="20dp"
+            android:layout_marginTop="-22dp"
+            android:layout_marginEnd="17dp"
+            android:fontFamily="sans-serif-smallcaps"
             android:text="Date" />
 
 
