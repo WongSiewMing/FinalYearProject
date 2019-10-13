@@ -2,15 +2,20 @@ package com.example.raindown.finalyearproject;
 /*Author : Lee Thian Xin
 Programme : RSD3
 Year : 2018*/
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -22,6 +27,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -77,10 +83,14 @@ public class ChatRoom_V2 extends Fragment {
     private PahoMqttClient pahoMqttClient;
     private String command;
     private JSONObject jsonObj;
+    private Intent cameraIntent, photoPickerIntent, CropIntent;
+    public static final int CAMERA_REQUEST = 10;
+    public static final int IMAGE_GALLERY_REQUEST = 20;
 
     private Student myInfo;
     private String opponentID;
     private FloatingActionButton btnSendMessage;
+    private ImageView btnSendImage;
     private EditText editMessage;
     private ImageView opponentPhoto, btnBack;
     private TextView opponentName, opponentStatus, messageStatus;
@@ -96,7 +106,7 @@ public class ChatRoom_V2 extends Fragment {
     private String formattedDate, formattedTime;
     private JSONObject jsonObject;
     private String status = "ACTIVE";
-
+    private int RequestCameraPermissionID = 1001;
 
     private static final String TAG = "Chat Room in";
 
@@ -123,6 +133,7 @@ public class ChatRoom_V2 extends Fragment {
 
 
         btnSendMessage = view.findViewById(R.id.btn_send_message);
+        btnSendImage = view.findViewById(R.id.btnSendImage);
         editMessage = view.findViewById(R.id.edit_message);
         opponentPhoto = view.findViewById(R.id.Opponent_photo);
         btnBack = view.findViewById(R.id.back);
@@ -138,7 +149,7 @@ public class ChatRoom_V2 extends Fragment {
             }
         });
         opponentStatus.setText("Offline");
-        opponentStatus.setTextColor(getResources().getColor(R.color.red));
+        opponentStatus.setTextColor(getResources().getColor(R.color.white));
         getOpponentBasicInfo();
 
         btnSendMessage.setOnClickListener(new View.OnClickListener() {
@@ -164,6 +175,44 @@ public class ChatRoom_V2 extends Fragment {
 
 
                 }
+            }
+        });
+
+        btnSendImage.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                final CharSequence[] options = {"Take Photo", "Choose From Gallery", "Cancel"};
+                final AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
+                builder.setTitle("Choose Your Action");
+                builder.setItems(options, new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int selection) {
+
+                        if (options[selection] == "Take Photo") {
+                            if (ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
+                                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA}, RequestCameraPermissionID);
+                                Log.d(TAG,"Permission requested");
+                                return;
+                            }else {
+                                Log.d(TAG,"Permission ady granted");
+                            }
+                            cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                            startActivityForResult(cameraIntent, CAMERA_REQUEST);
+
+                        } else if (options[selection] == "Choose From Gallery") {
+                            photoPickerIntent = new Intent();
+                            photoPickerIntent.setType("image/*");
+                            photoPickerIntent.setAction(Intent.ACTION_GET_CONTENT);
+                            startActivityForResult(Intent.createChooser(photoPickerIntent, "Select Image From Gallary"), IMAGE_GALLERY_REQUEST);
+                        } else if (options[selection] == "Cancel") {
+                            dialog.dismiss();
+                        }
+                    }
+                });
+                builder.show();
+
             }
         });
 

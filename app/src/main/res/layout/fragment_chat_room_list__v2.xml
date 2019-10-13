@@ -71,22 +71,11 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-                <TextView
-                    android:id="@+id/privateChatText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentStart="true"
-                    android:text="Private Chat"
-                    android:textColor="@color/black"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginTop="5dp"/>
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/previousChatList"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/privateChatText"
                     android:visibility="visible">
                 </android.support.v7.widget.RecyclerView>
 

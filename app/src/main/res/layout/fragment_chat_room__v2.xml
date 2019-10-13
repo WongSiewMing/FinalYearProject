@@ -1,40 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ChatRoom_V2"
-    android:background="@drawable/background">
+    android:background="@color/white">
 
-   <android.support.design.widget.FloatingActionButton
-       android:id="@+id/btn_send_message"
-       android:layout_width="70dp"
-       android:layout_height="70dp"
-       android:layout_alignParentEnd="true"
-       android:layout_alignParentBottom="true"
-       android:src="@drawable/ic_ok"
-       android:tint="@color/white"
-       android:layout_marginEnd="5dp"
-       android:layout_marginBottom="5dp"/>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/btn_send_message"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="11dp"
+        android:layout_marginBottom="15dp"
+        android:src="@drawable/ic_send"
+        android:tint="@color/white" />
 
     <EditText
         android:id="@+id/edit_message"
-        android:layout_width="380dp"
-        android:layout_height="45dp"
+        android:layout_width="319dp"
+        android:layout_height="54dp"
         android:layout_alignParentBottom="true"
         android:layout_marginStart="5dp"
         android:layout_marginTop="5dp"
-        android:layout_marginEnd="2dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="14dp"
+        android:layout_marginBottom="18dp"
         android:layout_toStartOf="@id/btn_send_message"
-        android:drawableLeft="@drawable/ic_camera"
+        android:background="@drawable/shapeid"
         android:drawablePadding="10dp"
         android:fontFamily="sans-serif-smallcaps"
-        android:background="@drawable/shapeid"
         android:hint="Type a message..."
-        android:textColorHint="@color/black"
         android:inputType="text"
-        android:maxLength="250" />
+        android:maxLength="250"
+        android:paddingLeft="20dp"
+        android:textColorHint="@color/black" />
 
     <RelativeLayout
         android:layout_alignParentStart="true"
@@ -42,14 +43,16 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:id="@+id/Opponent_info_field"
-        android:background="@color/tiffanyblue">
+        android:background="@color/bgBottomNavigation">
 
         <ImageView
             android:id="@+id/back"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
             android:src="@drawable/ic_arrow_back"
-            android:tint="@color/lightgrey"
+            android:tint="@color/black"
             android:layout_centerVertical="true"
             android:clickable="true"
             android:focusable="true"/>
@@ -67,22 +70,26 @@
             android:id="@+id/Opponent_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Opponent Name"
-            android:textColor="@color/black"
-            android:layout_toEndOf="@id/Opponent_photo"
             android:layout_alignTop="@id/Opponent_photo"
-            android:layout_marginTop="5dp"
-            android:layout_marginStart="5dp"
-            android:maxLength="40"/>
+            android:layout_marginStart="11dp"
+            android:layout_marginTop="4dp"
+            android:layout_toEndOf="@id/Opponent_photo"
+            android:fontFamily="sans-serif-smallcaps"
+            android:maxLength="40"
+            android:text="Opponent Name"
+            android:textColor="@color/black" />
+
         <TextView
             android:id="@+id/Opponent_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="status"
-            android:textColor="@color/black"
-            android:layout_toEndOf="@id/Opponent_photo"
             android:layout_below="@id/Opponent_name"
-            android:layout_marginStart="5dp"/>
+            android:layout_marginStart="9dp"
+            android:layout_marginTop="4dp"
+            android:layout_toEndOf="@id/Opponent_photo"
+            android:fontFamily="sans-serif-smallcaps"
+            android:text="status"
+            android:textColor="@color/black" />
 
         <TextView
             android:id="@+id/message_status"
@@ -94,6 +101,17 @@
             android:layout_alignParentEnd="true"
             android:layout_below="@id/Opponent_name"
             android:layout_marginEnd="10dp"/>
+
+        <ImageView
+            android:id="@+id/btnSendImage"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="11dp"
+            android:layout_marginEnd="12dp"
+            android:clickable="true"
+            android:src="@drawable/ic_camera_white" />
 
     </RelativeLayout>
 
