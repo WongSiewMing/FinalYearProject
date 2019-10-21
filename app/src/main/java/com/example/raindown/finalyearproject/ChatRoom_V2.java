@@ -250,13 +250,17 @@ public class ChatRoom_V2 extends Fragment {
                             Log.d(TAG, "Array size =" + arrayPrivateChat.size());
                             arrayPrivateChat.add(new PrivateChatOB(Conversion.hexToAscii(myjsonObj.getString("privateID")),Conversion.hexToAscii(myjsonObj.getString("studentID")),
                                     Conversion.hexToAscii(myjsonObj.getString("studentName")), Conversion.hexToAscii(myjsonObj.getString("recipient")),
-                                    Conversion.hexToAscii(myjsonObj.getString("message")), Conversion.hexToAscii(myjsonObj.getString("postDate")),
+                                    Conversion.hexToAscii(myjsonObj.getString("message")),
+                                    Conversion.hexToAscii(myjsonObj.getString("image")),
+                                    Conversion.hexToAscii(myjsonObj.getString("postDate")),
                                     Conversion.hexToAscii(myjsonObj.getString("postTime"))));
                             populateChatRecyclerView();
                         } else if (Conversion.hexToAscii(myjsonObj.getString("studentID")).equals(opponentID) && Conversion.hexToAscii(myjsonObj.getString("recipient")).equals(myInfo.getStudentID())) {
                             arrayPrivateChat.add(new PrivateChatOB(Conversion.hexToAscii(myjsonObj.getString("privateID")),Conversion.hexToAscii(myjsonObj.getString("studentID")),
                                     Conversion.hexToAscii(myjsonObj.getString("studentName")), Conversion.hexToAscii(myjsonObj.getString("recipient")),
-                                    Conversion.hexToAscii(myjsonObj.getString("message")), Conversion.hexToAscii(myjsonObj.getString("postDate")),
+                                    Conversion.hexToAscii(myjsonObj.getString("message")),
+                                    Conversion.hexToAscii(myjsonObj.getString("image")),
+                                    Conversion.hexToAscii(myjsonObj.getString("postDate")),
                                     Conversion.hexToAscii(myjsonObj.getString("postTime"))));
                             populateChatRecyclerView();
 
@@ -365,6 +369,7 @@ public class ChatRoom_V2 extends Fragment {
                     "\"studentName\": " + "\"" + Conversion.asciiToHex(myInfo.getStudentName()) + "\" ," +
                     "\"recipient\": " + "\"" + Conversion.asciiToHex(opponentID) + "\" ," +
                     "\"message\": " + "\"" + Conversion.asciiToHex(editMessage.getText().toString().trim()) + "\" ," +
+                    "\"image\": " + "\"" + "" + "\" ," +
                     "\"postDate\": " + "\"" + Conversion.asciiToHex(formattedDate) + "\" ," +
                     "\"postTime\": " + "\"" + Conversion.asciiToHex(formattedTime) + "\"}";
             messageStatus.setText("Sending text to server...");
@@ -381,10 +386,11 @@ public class ChatRoom_V2 extends Fragment {
                 }
             }
 
+            String image = "ff";
 
             //192.168.0.107/raindown/insertCommentData.php?commentID=cmt1002&activityID=1&studentID=2&commentText=3&commentTime=4&commentDate=5
             insertMessageUrl = Constant.serverFile + "insertPrivateData.php?privateID=" + newChatID + "&studentID=" + myInfo.getStudentID() + "&recipient=" +
-                    opponentID + "&message=" + encodedMessage + "&postDate=" + formattedDate + "&postTime=" +
+                    opponentID + "&message=" + encodedMessage + "&image=" + image + "&postDate=" + formattedDate + "&postTime=" +
                     formattedTime;
 
             Log.d(TAG, "Add Comment URL = " + insertMessageUrl);
@@ -433,6 +439,7 @@ public class ChatRoom_V2 extends Fragment {
                         params.put("studentID", myInfo.getStudentID());
                         params.put("recipient", opponentID);
                         params.put("message", editMessage.getText().toString().trim());
+                        params.put("image", "gg");
                         params.put("postDate", formattedDate);
                         params.put("postTime", formattedTime);
 
@@ -556,8 +563,12 @@ public class ChatRoom_V2 extends Fragment {
                                     for (int i = 0; i < response.length(); i++) {
                                         JSONObject privateChatResponse = (JSONObject) response.get(i);
                                         arrayPrivateChat.add(new PrivateChatOB(
-                                                privateChatResponse.getString("privateID"), privateChatResponse.getString("studentID"), privateChatResponse.getString("studentName"),
-                                                privateChatResponse.getString("recipient"), privateChatResponse.getString("message"),
+                                                privateChatResponse.getString("privateID"),
+                                                privateChatResponse.getString("studentID"),
+                                                privateChatResponse.getString("studentName"),
+                                                privateChatResponse.getString("recipient"),
+                                                privateChatResponse.getString("message"),
+                                                privateChatResponse.getString("image"),
                                                 privateChatResponse.getString("postDate"), privateChatResponse.getString("postTime")));
                                     }
                                     if (response.length() == 0) {

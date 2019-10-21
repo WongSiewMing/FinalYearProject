@@ -204,6 +204,7 @@ public class ChatRoomList_V2 extends Fragment {
                                         for (int i = 0; i < response.length(); i++) {
                                             JSONObject privatelistResponse = (JSONObject) response.get(i);
                                             privateChatList.add(new PrivateChatOB(privatelistResponse.getString("message"),
+                                                    privatelistResponse.getString("image"),
                                                     privatelistResponse.getString("postDate"),
                                                     privatelistResponse.getString("postTime"),
                                                     new Student(privatelistResponse.getString("studentID"),

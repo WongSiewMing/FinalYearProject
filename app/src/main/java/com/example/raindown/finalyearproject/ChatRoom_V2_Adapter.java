@@ -166,6 +166,7 @@ public class ChatRoom_V2_Adapter extends RecyclerView.Adapter {
                     "\"studentID\": " + "\"" + Conversion.asciiToHex(msg.getStudentID()) + "\" ," +
                     "\"recipient\": " + "\"" + Conversion.asciiToHex(msg.getRecipient()) + "\" ," +
                     "\"message\": " + "\"" + Conversion.asciiToHex(msg.getMessage()) + "\" ," +
+                    "\"image\": " + "\"" + Conversion.asciiToHex(msg.getImage()) + "\" ," +
                     "\"postDate\": " + "\"" + Conversion.asciiToHex(msg.getPostDate()) + "\" ," +
                     "\"postTime\": " + "\"" + Conversion.asciiToHex(msg.getPostTime()) + "\" }";
             Log.d(TAG,"student ID =" + msg.getPriChatID());

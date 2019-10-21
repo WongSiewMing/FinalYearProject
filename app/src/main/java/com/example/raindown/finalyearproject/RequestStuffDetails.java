@@ -439,6 +439,7 @@ public class RequestStuffDetails extends Fragment {
                                             arrayPrivateChat.add(new PrivateChat(
                                                     privateChatResponse.getString("studentID"), privateChatResponse.getString("studentName"),
                                                     privateChatResponse.getString("recipient"), privateChatResponse.getString("message"),
+                                                    privateChatResponse.getString("image"),
                                                     privateChatResponse.getString("postDate"), privateChatResponse.getString("postTime")));
                                         }
                                         if (pDialog.isShowing())
