@@ -45,6 +45,8 @@ import Helper.PrivateChatOB;
 public class ChatRoom_V2_Adapter extends RecyclerView.Adapter {
     private static final int VIEW_TYPE_MESSAGE_SENT = 1;
     private static final int VIEW_TYPE_MESSAGE_RECEIVED = 2;
+    private static final int VIEW_TYPE_IMAGE_SENT = 3;
+    private static final int VIEW_TYPE_IMAGE_RECEIVED = 4;
 
     private static final String TAG = "ChatRoomAdapter";
     private String command;
@@ -67,10 +69,16 @@ public class ChatRoom_V2_Adapter extends RecyclerView.Adapter {
     public int getItemViewType(int position) {
         String UserID = UserSharedPreferences.read(UserSharedPreferences.userID, null);
         String messageUserID = mData.get(position).getStudentID();
-        if (UserID.equals(messageUserID)){
+        String imageSent = mData.get(position).getImage();
+        String messageSent = mData.get(position).getMessage();
+        if (UserID.equals(messageUserID) && imageSent.equals("empty")){
             return VIEW_TYPE_MESSAGE_SENT;
-        }else{
+        }else if (!UserID.equals(messageUserID) && imageSent.equals("empty")){
             return VIEW_TYPE_MESSAGE_RECEIVED;
+        }else if (UserID.equals(messageUserID) && messageSent.equals("[Image]")){
+            return VIEW_TYPE_IMAGE_SENT;
+        } else {
+            return VIEW_TYPE_IMAGE_RECEIVED;
         }
     }
 
@@ -84,6 +92,12 @@ public class ChatRoom_V2_Adapter extends RecyclerView.Adapter {
         }else  if (viewType == VIEW_TYPE_MESSAGE_RECEIVED){
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.received_message_cardview, parent, false);
             return new ReceivedMessageHolder(view);
+        } else if (viewType == VIEW_TYPE_IMAGE_SENT){
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_sender_image_cardview, parent, false);
+            return  new SentImageHolder(view);
+        } else if (viewType == VIEW_TYPE_IMAGE_RECEIVED){
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_receive_image_cardview, parent, false);
+            return new ReceivedImageHolder(view);
         }
 
         return null;
@@ -99,6 +113,12 @@ public class ChatRoom_V2_Adapter extends RecyclerView.Adapter {
                 break;
             case  VIEW_TYPE_MESSAGE_RECEIVED :
                 ((ReceivedMessageHolder) holder).bind(message);
+                break;
+            case VIEW_TYPE_IMAGE_SENT :
+                ((SentImageHolder) holder).bind(message);
+                break;
+            case VIEW_TYPE_IMAGE_RECEIVED :
+                ((ReceivedImageHolder) holder).bind(message);
                 break;
         }
 
@@ -154,6 +174,55 @@ public class ChatRoom_V2_Adapter extends RecyclerView.Adapter {
                     return true;
                 }
             });
+
+        }
+    }
+
+    private class SentImageHolder extends  RecyclerView.ViewHolder {
+
+        CardView userMsgCardView;
+        ImageView senderImage;
+        TextView sendTime;
+
+        public SentImageHolder(View itemView) {
+            super(itemView);
+            userMsgCardView = itemView.findViewById(R.id.receivedImage_CardView);
+            senderImage = itemView.findViewById(R.id.sender_image_view);
+            sendTime = itemView.findViewById(R.id.sender_time_image);
+        }
+
+        void bind(final PrivateChatOB message){
+            Picasso.with(mContext).load(message.getImage()).memoryPolicy(MemoryPolicy.NO_CACHE).networkPolicy(NetworkPolicy.NO_CACHE).into(senderImage);
+            sendTime.setText(message.getPostTime());
+//            userMsgCardView.setOnLongClickListener(new View.OnLongClickListener() {
+//                @Override
+//                public boolean onLongClick(View v) {
+//                    Log.d(TAG, "LONG pressed detected");
+//                    if (senderMessage.getText().toString().equals("Message unsended")){
+//
+//                    }else {
+//                        final CharSequence[] options = {"Unsend Message", "Cancel"};
+//                        final AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
+//                        builder.setTitle("Choose your action");
+//                        builder.setItems(options, new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                if (options[which] == "Unsend Message"){
+//                                    UnsendMsg(message, senderMessage);
+//
+//                                }else if (options[which] == "Cancel"){
+//                                    dialog.dismiss();
+//                                }
+//
+//                            }
+//                        });
+//                        builder.show();
+//                    }
+//
+//
+//                    return true;
+//                }
+//            });
 
         }
     }
@@ -262,6 +331,27 @@ public class ChatRoom_V2_Adapter extends RecyclerView.Adapter {
             Picasso.with(mContext).load(photo).memoryPolicy(MemoryPolicy.NO_CACHE).networkPolicy(NetworkPolicy.NO_CACHE).into(opponentPhoto);
             opponentName.setText(message.getStudentName());
             opponentMessage.setText(message.getMessage());
+            opponentMsgReceivedTime.setText(message.getPostTime());
+        }
+    }
+
+    private class ReceivedImageHolder extends RecyclerView.ViewHolder {
+
+        ImageView opponentPhoto, opponentImage;
+        TextView opponentName, opponentMsgReceivedTime;
+
+        public ReceivedImageHolder(View itemView) {
+            super(itemView);
+            opponentPhoto = itemView.findViewById(R.id.Opponent_photo_image);
+            opponentName = itemView.findViewById(R.id.Opponent_name_image);
+            opponentImage = itemView.findViewById(R.id.received_image_view);
+            opponentMsgReceivedTime = itemView.findViewById(R.id.Opponent_msg_received_time_image);
+        }
+
+        void bind(PrivateChatOB message){
+            Picasso.with(mContext).load(photo).memoryPolicy(MemoryPolicy.NO_CACHE).networkPolicy(NetworkPolicy.NO_CACHE).into(opponentPhoto);
+            opponentName.setText(message.getStudentName());
+            Picasso.with(mContext).load(message.getImage()).memoryPolicy(MemoryPolicy.NO_CACHE).networkPolicy(NetworkPolicy.NO_CACHE).into(opponentImage);
             opponentMsgReceivedTime.setText(message.getPostTime());
         }
     }

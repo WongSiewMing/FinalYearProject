@@ -8,6 +8,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -21,6 +24,9 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -55,6 +61,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
@@ -74,6 +82,7 @@ import Helper.StoreBasicInfoOB;
 import Helper.Student;
 import Helper.StudentBasicInfoOB;
 
+import static android.app.Activity.RESULT_OK;
 import static android.content.Context.INPUT_METHOD_SERVICE;
 
 
@@ -90,10 +99,10 @@ public class ChatRoom_V2 extends Fragment {
     private Student myInfo;
     private String opponentID;
     private FloatingActionButton btnSendMessage;
-    private ImageView btnSendImage;
+    private ImageView btnSendImage, sendImagePreview;
     private EditText editMessage;
     private ImageView opponentPhoto, btnBack;
-    private TextView opponentName, opponentStatus, messageStatus;
+    private TextView opponentName, opponentStatus, messageStatus, sendImageCaption;
     private RecyclerView messageListrv;
     private FragmentManager fragmentManager;
     private ProgressBar messageProgressBar;
@@ -107,6 +116,8 @@ public class ChatRoom_V2 extends Fragment {
     private JSONObject jsonObject;
     private String status = "ACTIVE";
     private int RequestCameraPermissionID = 1001;
+    private Bitmap imagePreview;
+    private String converted = "";
 
     private static final String TAG = "Chat Room in";
 
@@ -134,6 +145,7 @@ public class ChatRoom_V2 extends Fragment {
 
         btnSendMessage = view.findViewById(R.id.btn_send_message);
         btnSendImage = view.findViewById(R.id.btnSendImage);
+        sendImagePreview = view.findViewById(R.id.send_image_preview);
         editMessage = view.findViewById(R.id.edit_message);
         opponentPhoto = view.findViewById(R.id.Opponent_photo);
         btnBack = view.findViewById(R.id.back);
@@ -142,6 +154,7 @@ public class ChatRoom_V2 extends Fragment {
         messageListrv = view.findViewById(R.id.message_rv);
         messageProgressBar = view.findViewById(R.id.messageProgressBar);
         messageStatus = view.findViewById(R.id.message_status);
+        sendImageCaption = view.findViewById(R.id.send_image_caption);
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -151,18 +164,21 @@ public class ChatRoom_V2 extends Fragment {
         opponentStatus.setText("Offline");
         opponentStatus.setTextColor(getResources().getColor(R.color.white));
         getOpponentBasicInfo();
+        sendImagePreview.setVisibility(View.INVISIBLE);
+        sendImageCaption.setVisibility(View.INVISIBLE);
+
+        btnSendMessage.setEnabled(false);
+        editMessage.addTextChangedListener(msgTextWatcher);
+        sendImagePreview.setImageResource(R.drawable.ic_camera);
 
         btnSendMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (checkSubmitField()) {
                     c = Calendar.getInstance().getTime();
                     df = new SimpleDateFormat("dd/MM/yyyy");
                     formattedDate = df.format(c);
                     df = new SimpleDateFormat("HH:mm");
                     formattedTime = df.format(c);
-                    Log.d(TAG, "Date = " + formattedDate);
-                    Log.d(TAG, "Time = " + formattedTime);
                     getChatID();
 
                     try {
@@ -175,7 +191,6 @@ public class ChatRoom_V2 extends Fragment {
 
 
                 }
-            }
         });
 
         btnSendImage.setOnClickListener(new View.OnClickListener() {
@@ -316,12 +331,12 @@ public class ChatRoom_V2 extends Fragment {
                             @Override
                             public void onResponse(JSONArray response) {
                                 try {
-                                    Log.d(TAG, "Hi commentID responded");
+                                    Log.d(TAG, "commentID responded");
                                     for (int i = 0; i < response.length(); i++) {
                                         JSONObject chatIDResponse = (JSONObject) response.get(i);
                                         currentChatID = chatIDResponse.getString("CurrentPrivateID");
                                     }
-                                    Log.d(TAG, "Hi Current comment ID =" + currentChatID);
+                                    Log.d(TAG, "Current comment ID =" + currentChatID);
 
                                     if (currentChatID.equals("0")) {
                                         newChatID = "PRI1001";
@@ -369,7 +384,6 @@ public class ChatRoom_V2 extends Fragment {
                     "\"studentName\": " + "\"" + Conversion.asciiToHex(myInfo.getStudentName()) + "\" ," +
                     "\"recipient\": " + "\"" + Conversion.asciiToHex(opponentID) + "\" ," +
                     "\"message\": " + "\"" + Conversion.asciiToHex(editMessage.getText().toString().trim()) + "\" ," +
-                    "\"image\": " + "\"" + "" + "\" ," +
                     "\"postDate\": " + "\"" + Conversion.asciiToHex(formattedDate) + "\" ," +
                     "\"postTime\": " + "\"" + Conversion.asciiToHex(formattedTime) + "\"}";
             messageStatus.setText("Sending text to server...");
@@ -386,12 +400,19 @@ public class ChatRoom_V2 extends Fragment {
                 }
             }
 
-            String image = "ff";
-
             //192.168.0.107/raindown/insertCommentData.php?commentID=cmt1002&activityID=1&studentID=2&commentText=3&commentTime=4&commentDate=5
-            insertMessageUrl = Constant.serverFile + "insertPrivateData.php?privateID=" + newChatID + "&studentID=" + myInfo.getStudentID() + "&recipient=" +
-                    opponentID + "&message=" + encodedMessage + "&image=" + image + "&postDate=" + formattedDate + "&postTime=" +
-                    formattedTime;
+            if (sendImagePreview.getDrawable().getConstantState() == getResources().getDrawable(R.drawable.ic_camera).getConstantState()){
+                insertMessageUrl = Constant.serverFile + "insertPrivateData.php?privateID=" + newChatID + "&studentID=" + myInfo.getStudentID() + "&recipient=" +
+                        opponentID + "&message=" + encodedMessage + "&image=" + "empty" + "&postDate=" + formattedDate + "&postTime=" +
+                        formattedTime;
+            }
+            else
+            {
+                insertMessageUrl = Constant.serverFile + "insertPrivateData.php?privateID=" + newChatID + "&studentID=" + myInfo.getStudentID() + "&recipient=" +
+                        opponentID + "&message=" + "[Image]" + "&image=" + "" + "&postDate=" + formattedDate + "&postTime=" +
+                        formattedTime;
+            }
+
 
             Log.d(TAG, "Add Comment URL = " + insertMessageUrl);
 
@@ -418,6 +439,9 @@ public class ChatRoom_V2 extends Fragment {
 
 
                                     editMessage.setText("");
+                                    sendImagePreview.setVisibility(view.INVISIBLE);
+                                    sendImageCaption.setVisibility(view.INVISIBLE);
+                                    sendImagePreview.setImageResource(R.drawable.ic_camera);
 
                                 } catch (JSONException e) {
                                     e.printStackTrace();
@@ -439,7 +463,7 @@ public class ChatRoom_V2 extends Fragment {
                         params.put("studentID", myInfo.getStudentID());
                         params.put("recipient", opponentID);
                         params.put("message", editMessage.getText().toString().trim());
-                        params.put("image", "gg");
+                        params.put("image", converted);
                         params.put("postDate", formattedDate);
                         params.put("postTime", formattedTime);
 
@@ -466,27 +490,27 @@ public class ChatRoom_V2 extends Fragment {
 
     }
 
-    private boolean checkSubmitField() {
-        String error = "";
-        boolean indicator = true;
-        if (editMessage.getText().toString().trim().equals("")) {
-            error += "- Message is require.\n";
-            indicator = false;
-        }
-        if (indicator == false) {
-            AlertDialog.Builder sent = new AlertDialog.Builder(getActivity());
-            sent.setTitle("Invalid input");
-            sent.setMessage(error);
-            sent.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-
-                }
-            });
-            sent.show();
-        }
-        return indicator;
-    }
+//    private boolean checkSubmitField() {
+//        String error = "";
+//        boolean indicator = true;
+//        if (editMessage.getText().toString().trim().equals("")) {
+//            error += "- Message is require.\n";
+//            indicator = false;
+//        }
+//        if (indicator == false) {
+//            AlertDialog.Builder sent = new AlertDialog.Builder(getActivity());
+//            sent.setTitle("Invalid input");
+//            sent.setMessage(error);
+//            sent.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+//                @Override
+//                public void onClick(DialogInterface dialog, int which) {
+//
+//                }
+//            });
+//            sent.show();
+//        }
+//        return indicator;
+//    }
 
 
     private void getOpponentBasicInfo() {
@@ -569,7 +593,8 @@ public class ChatRoom_V2 extends Fragment {
                                                 privateChatResponse.getString("recipient"),
                                                 privateChatResponse.getString("message"),
                                                 privateChatResponse.getString("image"),
-                                                privateChatResponse.getString("postDate"), privateChatResponse.getString("postTime")));
+                                                privateChatResponse.getString("postDate"),
+                                                privateChatResponse.getString("postTime")));
                                     }
                                     if (response.length() == 0) {
                                         messageProgressBar.setVisibility(View.GONE);
@@ -684,8 +709,84 @@ public class ChatRoom_V2 extends Fragment {
 
     public void onActivityResult(int requestCode, int resultCode, Intent data)
     {
+        converted = "";
         super.onActivityResult(requestCode, resultCode, data);
 
+        if (resultCode == RESULT_OK) {
+            if (requestCode == CAMERA_REQUEST) {
+                imagePreview = (Bitmap) data.getExtras().get("data");
+                ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+                imagePreview.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+                sendImagePreview.setVisibility(View.VISIBLE);
+                sendImageCaption.setVisibility(View.VISIBLE);
+                sendImagePreview.setImageBitmap(imagePreview);
+                editMessage.setText("");
+                editMessage.setFocusable(false);
+                converted = bitmapToString(imagePreview);
+                btnSendMessage.setEnabled(true);
 
+            }
+
+            if (requestCode == IMAGE_GALLERY_REQUEST) {
+                Bitmap bm = null;
+                if (data != null){
+                    try {
+                        bm = MediaStore.Images.Media.getBitmap(getActivity().getApplicationContext().getContentResolver(), data.getData());
+                        sendImagePreview.setImageBitmap(getResizedBitmap(bm, 500, 500));
+                        sendImagePreview.setVisibility(View.VISIBLE);
+                        sendImageCaption.setVisibility(View.VISIBLE);
+                        converted = bitmapToString(getResizedBitmap(bm, 500,500));
+                        editMessage.setText("");
+                        editMessage.setFocusable(false);
+                        btnSendMessage.setEnabled(true);
+
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+        }
+        }
     }
+
+    public String bitmapToString(Bitmap image) {
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        byte[] arr = baos.toByteArray();
+        String result = Base64.encodeToString(arr, Base64.DEFAULT);
+        return result;
+    }
+
+    private Bitmap getResizedBitmap(Bitmap bm, int newHeight, int newWidth){
+        int width = bm.getWidth();
+        int height = bm.getHeight();
+        float scaleWidth = ((float) newWidth) / width;
+        float scaleHeight = ((float) newHeight) / height;
+        Matrix matrix = new Matrix();
+        matrix.postScale(scaleWidth, scaleHeight);
+        Bitmap resizedBitmap = Bitmap.createBitmap(bm, 0, 0, width, height,
+                matrix, false);
+
+        return resizedBitmap;
+    }
+
+    private TextWatcher msgTextWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            String msg = editMessage.getText().toString().trim();
+
+            btnSendMessage.setEnabled(!msg.isEmpty());
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+
+        }
+    };
+
 }
