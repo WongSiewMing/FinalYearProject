@@ -106,10 +106,10 @@ public class StoreList extends Fragment {
             }
         });
 
-//        populateStoreInfoList();
+            populateStoreInfoList();
 
-//        pahoMqttClient = new PahoMqttClient();
-//        mqttAndroidClient = pahoMqttClient.getMqttClient(getContext(), Constant.serverUrl);
+            pahoMqttClient = new PahoMqttClient();
+            mqttAndroidClient = pahoMqttClient.getMqttClient(getContext(), Constant.serverUrl);
 
 
         return view;
@@ -211,7 +211,7 @@ public class StoreList extends Fragment {
         super.onDestroy();
 
         try {
-         //   pahoMqttClient.unSubscribe(mqttAndroidClient, "MY/TARUC/SSS/000000001/PUB");
+            pahoMqttClient.unSubscribe(mqttAndroidClient, "MY/TARUC/SSS/000000001/PUB");
             pahoMqttClient.disconnect(mqttAndroidClient);
         } catch (Exception e) {
 
@@ -225,7 +225,7 @@ public class StoreList extends Fragment {
         super.onDestroyView();
 
         try {
-          //  pahoMqttClient.unSubscribe(mqttAndroidClient, "MY/TARUC/SSS/000000001/PUB");
+            pahoMqttClient.unSubscribe(mqttAndroidClient, "MY/TARUC/SSS/000000001/PUB");
             pahoMqttClient.disconnect(mqttAndroidClient);
         } catch (Exception e) {
 

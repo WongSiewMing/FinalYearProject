@@ -7,33 +7,33 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -49,16 +49,11 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
-import org.eclipse.paho.client.mqttv3.MqttException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -86,6 +81,7 @@ public class RegisterStore extends Fragment {
     private Spinner registerStoreCategory;
     private TextView registerOpenTime, registerCloseTime, openText, closeText;
     private FloatingActionButton submitRegister;
+    private Button AddRow, SelectStuff;
     private MqttAndroidClient mqttAndroidClient;
     private PahoMqttClient pahoMqttClient;
     FragmentManager fragmentManager;
@@ -97,7 +93,9 @@ public class RegisterStore extends Fragment {
     private Uri uri;
     private Intent cameraIntent, photoPickerIntent, CropIntent;
     private int RequestCameraPermissionID = 1001;
+    private int FRAGMENT_REQUEST_CODE = 1000;
     private Bitmap cameraImage;
+    private int rowA = 1;
 
     View view;
 
@@ -130,6 +128,8 @@ public class RegisterStore extends Fragment {
         submitRegister = view.findViewById(R.id.register_store);
         openText = view.findViewById(R.id.openText);
         closeText = view.findViewById(R.id.closeText);
+
+        SelectStuff = view.findViewById(R.id.btnSelectStuff);
 
         ArrayAdapter<CharSequence> adapterStoreCategory = ArrayAdapter.createFromResource(getActivity().getBaseContext(), R.array.storeCategorySpinner,
                 android.R.layout.simple_spinner_dropdown_item);
@@ -226,6 +226,14 @@ public class RegisterStore extends Fragment {
             }
         });
 
+        SelectStuff.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+            }
+        });
+
         submitRegister = view.findViewById(R.id.register_store);
         submitRegister.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -249,6 +257,31 @@ public class RegisterStore extends Fragment {
         mqttAndroidClient = pahoMqttClient.getMqttClient(getContext(), Constant.serverUrl);
 
         return view;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState){
+        super.onActivityCreated(savedInstanceState);
+
+        final LinearLayout stuffLinearLayout = view.findViewById(R.id.stuffLL);
+        AddRow = view.findViewById(R.id.btnAddRow);
+
+        AddRow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                final View rowView = inflater.inflate(R.layout.storestufflist, null);
+                TextView stuffNum = (TextView)rowView.findViewById(R.id.txtStuffNum);
+                TextView stuffName = (TextView)rowView.findViewById(R.id.txtStuffNum);
+                rowA++;
+                stuffNum.setText(rowA + ".");
+                stuffName.setId(rowA);
+                Toast.makeText(getActivity().getApplication(), "Row Added : " + stuffName.getId(), Toast.LENGTH_LONG).show();
+                stuffLinearLayout.addView(rowView, stuffLinearLayout.getChildCount() - 1);
+            }
+        });
+
+
     }
 
     @Override

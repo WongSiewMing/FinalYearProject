@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 26
-    buildToolsVersion '28.0.2'
+    buildToolsVersion '28.0.3'
     defaultConfig {
         applicationId "com.example.raindown.finalyearproject"
         //minSdkVersion 9
@@ -11,7 +11,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        multiDexEnabled true;
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -28,7 +28,6 @@ repositories {
 }
 
 
-
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
@@ -36,9 +35,9 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
-    compile 'com.android.support:appcompat-v7:24.2.1'
-    compile 'com.android.support:design:24.2.1'
-    testCompile 'junit:junit:4.12'
+    implementation 'com.android.support:appcompat-v7:24.2.1'
+    implementation 'com.android.support:design:24.2.1'
+    testImplementation 'junit:junit:4.12'
 
     implementation files('libs/volley.jar')
     // implementation 'com.squareup.picasso:picasso:2.5.2'
@@ -59,12 +58,12 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     testImplementation 'junit:junit:4.12'
     implementation 'com.android.support:appcompat-v7:25.0.0'
-    compile 'com.android.support:design:25.0.0'
+    implementation 'com.android.support:design:25.0.0'
 
     implementation 'de.hdodenhof:circleimageview:3.0.1'
 
-    compile 'com.android.support:design:25.3.1'
-    compile 'com.android.support:support-vector-drawable:25.3.1'
+    implementation 'com.android.support:design:25.3.1'
+    implementation 'com.android.support:support-vector-drawable:25.3.1'
 
     testImplementation 'junit:junit:4.12'
 }
