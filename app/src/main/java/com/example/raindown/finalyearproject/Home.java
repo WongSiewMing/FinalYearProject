@@ -153,7 +153,17 @@ public class Home extends Fragment {
                             .replace(R.id.update_fragmentHolder, frag)
                             .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                             .commit();
-                }
+                }else if (arrayHomeOption.get(position).getHomeOptionName().equals("Trade Stuffs")) {
+                Trade_Menu  frag = new Trade_Menu();
+                Bundle bundle5 = new Bundle();
+                    bundle5.putSerializable("TradeStuff", s);
+                frag.setArguments(bundle5);
+                fragmentManager = getFragmentManager();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.update_fragmentHolder, frag)
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                        .commit();
+            }
             }
         });
     }

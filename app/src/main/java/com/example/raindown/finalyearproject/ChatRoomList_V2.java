@@ -100,7 +100,6 @@ public class ChatRoomList_V2 extends Fragment {
         view = inflater.inflate(R.layout.fragment_chat_room_list__v2, container, false);
         Bundle bundle = getArguments();
         s = (Student) bundle.getSerializable("chatRoomList_v2");
-        Log.d(TAG, "Current User = " +s.getStudentName());
         UserID = UserSharedPreferences.read(UserSharedPreferences.userID, null);
         searchView = view.findViewById(R.id.search_user);
         search_userListrv = view.findViewById(R.id.search_userList);
@@ -282,7 +281,7 @@ public class ChatRoomList_V2 extends Fragment {
                         encodedSearchText += URLEncoder.encode(s, "UTF-8");
                     }
                 }
-                //http://192.168.0.101/raindown/getSearchUser.php?searchText=Thian+Xin
+
                 searchUserUrl = Constant.serverFile + "getSearchUser.php?searchText=" + encodedSearchText;
                 Log.d(TAG, "Search user url = " + searchUserUrl);
 
@@ -293,7 +292,6 @@ public class ChatRoomList_V2 extends Fragment {
                             @Override
                             public void onResponse(JSONArray response) {
                                 try {
-                                    Log.d(TAG,"Responded!");
                                     searchList.clear();
                                     for (int i = 0; i< response.length(); i++){
                                         JSONObject searchResponse = (JSONObject) response.get(i);
