@@ -561,6 +561,7 @@ public class SellStuff extends Fragment {
                                         e.printStackTrace();
                                     } catch (MqttException e) {
                                         e.printStackTrace();
+                                        e.printStackTrace();
                                     }
                                 }
                             },

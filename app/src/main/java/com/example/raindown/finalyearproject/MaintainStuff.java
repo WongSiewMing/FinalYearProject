@@ -173,6 +173,7 @@ public class MaintainStuff extends Fragment {
         });
 
         update = (ImageView) view.findViewById(R.id.update);
+
         update.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
