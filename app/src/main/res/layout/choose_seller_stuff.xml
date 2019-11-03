@@ -1,0 +1,133 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background"
+    tools:context="com.example.raindown.finalyearproject.ChooseSellerStuff">
+
+    <android.support.constraint.ConstraintLayout
+        android:background="#f2eaec"
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:orientation="vertical"
+        android:weightSum="1">
+
+        <ImageView
+            android:id="@+id/sellerPhoto"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="28dp"
+            android:src="@mipmap/icon_student"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.044"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/sellerName"
+            android:layout_width="209dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="sans-serif-smallcaps"
+            android:text="Adelina Tang Chooi Li"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="15dp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.533"
+            app:layout_constraintStart_toEndOf="@+id/sellerPhoto"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.714" />
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="238dp"
+            android:layout_height="70dp"
+            android:layout_weight="0.47"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/sellerPhoto"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.627">
+
+            <TextView
+                android:id="@+id/sellerFaculty"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="sans-serif-smallcaps"
+                android:text="FOCS"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textSize="15dp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/sellerProgramme"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="sans-serif-smallcaps"
+                android:text="RSD"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textSize="15dp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/sellerYear"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="sans-serif-smallcaps"
+                android:text="Year 3"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textSize="15dp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+
+    </android.support.constraint.ConstraintLayout>
+
+
+    <ListView
+        android:id="@+id/sellerTradeList"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:layout_marginTop="220dp"
+        android:layout_weight="1"
+        android:drawSelectorOnTop="false"
+        android:listSelector="@color/lightgrey"></ListView>
+
+    <ImageView
+        android:visibility="gone"
+        android:src="@mipmap/icon_info"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:id="@+id/infoIcon"
+        android:layout_gravity="center" />
+
+    <TextView
+        android:visibility="gone"
+        android:layout_marginTop="50dp"
+        android:id="@+id/notice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-smallcaps"
+        android:text="No item is uploaded !"
+        android:textStyle="bold"
+        android:layout_gravity="center"
+        android:textColor="@color/black"
+        android:textSize="15dp">
+    </TextView>
+
+
+</FrameLayout>
