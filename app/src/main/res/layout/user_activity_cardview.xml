@@ -28,132 +28,133 @@
             android:layout_alignParentStart="true"
             android:layout_marginStart="5dp"
             android:layout_marginTop="5dp"
-            android:src="@mipmap/icon_student"
             android:clickable="true"
-            android:focusable="true"/>
+            android:focusable="true"
+            android:src="@mipmap/icon_student" />
 
         <TextView
+            android:id="@+id/posterName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="15sp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_toEndOf="@+id/posterPhoto"
             android:text="User name"
             android:textColor="@color/black"
-            android:textStyle="bold"
-            android:layout_toEndOf="@+id/posterPhoto"
-            android:id="@+id/posterName"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"/>
+            android:textSize="15sp"
+            android:textStyle="bold" />
 
         <TextView
+            android:id="@+id/posterDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="15sp"
+            android:layout_below="@id/posterName"
+            android:layout_marginStart="10dp"
+            android:layout_toEndOf="@+id/posterPhoto"
             android:text="Post date"
             android:textColor="@color/black"
-            android:layout_toEndOf="@+id/posterPhoto"
-            android:layout_below="@id/posterName"
-            android:id="@+id/posterDate"
-            android:layout_marginStart="10dp" />
+            android:textSize="15sp" />
 
         <TextView
             android:id="@+id/btnviewStuff"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="View Stuff"
-            android:textColor="@color/blue"
-            android:layout_alignParentEnd="true"
             android:layout_below="@id/posterPhoto"
+            android:layout_alignParentEnd="true"
             android:clickable="true"
-            android:focusable="true"/>
+            android:focusable="true"
+            android:text="View Stuff"
+            android:textColor="@color/blue" />
 
         <TextView
             android:id="@+id/posterCaption"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Post caption"
             android:layout_below="@+id/posterPhoto"
+            android:layout_marginTop="2dp"
             android:layout_toLeftOf="@id/btnviewStuff"
-            android:textSize="15sp"
-            android:layout_marginTop="2dp"/>
+            android:text="Post caption"
+            android:textSize="15sp" />
 
         <ImageView
+            android:id="@+id/posterThumbnail"
             android:layout_width="280dp"
             android:layout_height="180dp"
-            android:id="@+id/posterThumbnail"
-            android:background="@color/white"
-            android:layout_centerHorizontal="true"
             android:layout_below="@+id/posterCaption"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="5dp"
+            android:background="@color/white"
             android:clickable="true"
-            android:focusable="true"
-            android:layout_margin="5dp" />
+            android:focusable="true" />
 
         <ImageView
             android:id="@+id/likeButton"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_below="@id/posterThumbnail"
-            android:src="@drawable/ic_like"
-            android:tint="@color/red"
             android:clickable="true"
-            android:focusable="true"/>
+            android:focusable="true"
+            android:src="@drawable/ic_like"
+            android:tint="@color/red" />
 
 
         <ImageView
             android:id="@+id/commentButton"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:src="@drawable/ic_comment"
-            android:tint="@color/lightgrey"
             android:layout_below="@id/posterThumbnail"
-            android:layout_toEndOf="@+id/likeButton"
             android:layout_marginStart="5dp"
+            android:layout_toEndOf="@+id/likeButton"
             android:clickable="true"
-            android:focusable="true"/>
+            android:focusable="true"
+            android:src="@drawable/ic_comment"
+            android:tint="@color/lightgrey" />
+
         <TextView
+            android:id="@+id/likeConditon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="likeOrNot"
-            android:id="@+id/likeConditon"
             android:layout_below="@id/posterThumbnail"
             android:layout_toEndOf="@id/commentButton"
-            android:visibility="invisible"/>
+            android:text="likeOrNot"
+            android:visibility="invisible" />
 
         <ImageView
             android:id="@+id/bookmarkButton"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:src="@drawable/ic_booking"
-            android:tint="@color/lightgrey"
             android:layout_below="@id/posterThumbnail"
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="5dp"
             android:clickable="true"
             android:focusable="true"
-            android:visibility="gone"/>
+            android:src="@drawable/ic_booking"
+            android:tint="@color/lightgrey"
+            android:visibility="gone" />
+
         <TextView
             android:id="@+id/likeAmount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="like amount"
+            android:layout_below="@id/likeButton"
+            android:ellipsize="end"
             android:maxLength="20"
             android:maxLines="1"
-            android:ellipsize="end"
-            android:layout_below="@id/likeButton"
-            android:visibility="gone"
-            />
+            android:text="like amount"
+            android:visibility="gone" />
+
         <TextView
             android:id="@+id/commentAmount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="comment amount"
+            android:layout_below="@id/likeButton"
+            android:layout_marginStart="5dp"
+            android:layout_toEndOf="@id/likeAmount"
+            android:ellipsize="end"
             android:maxLength="20"
             android:maxLines="1"
-            android:ellipsize="end"
-            android:layout_below="@id/likeButton"
-            android:layout_toEndOf="@id/likeAmount"
-            android:layout_marginStart="5dp"
-            android:visibility="gone"
-            />
+            android:text="comment amount"
+            android:visibility="gone" />
 
 
     </RelativeLayout>

@@ -111,11 +111,11 @@ public class Login extends AppCompatActivity {
                 if (!pDialog.isShowing())
                     pDialog.setMessage("Sync with server...");
                     pDialog.show();
-                    username.setText("17WMR05969");
-                    password.setText("zxc");
+                    //username.setText("17WMR05969");
+                    //password.setText("zxc");
 
-                    //username.setText("18WMR08432");
-                    //password.setText("980905");
+                    username.setText("18WMR08432");
+                    password.setText("980905");
 
                 final JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Constant.serverFile + "getStudentData.php?username=" + username.getText().toString()
                         + "&password=" + password.getText().toString(),

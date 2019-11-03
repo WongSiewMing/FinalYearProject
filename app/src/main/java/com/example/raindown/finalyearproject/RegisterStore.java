@@ -18,6 +18,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -47,25 +48,36 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.squareup.picasso.MemoryPolicy;
+import com.squareup.picasso.NetworkPolicy;
+import com.squareup.picasso.Picasso;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.ByteArrayOutputStream;
 import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
 import Helper.Constant;
 import Helper.Conversion;
 import Helper.PahoMqttClient;
+import Helper.Student;
+import Helper.Stuff;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -75,8 +87,10 @@ public class RegisterStore extends Fragment {
     private static final int CAMERA_REQUEST = 10;
     private static final int IMAGE_GALLERY_REQUEST = 20;
     private static final int CROP_REQUEST = 30;
+    private static final int RequestCameraPermissionID = 1001;
+    private static final int RequestStuffCode = 1002;
     private ImageView captureImage, buttonCamera;
-    private String converted, userID;
+    private String converted;
     private EditText registerStoreName, registerStoreDescription, registerStoreLocation;
     private Spinner registerStoreCategory;
     private TextView registerOpenTime, registerCloseTime, openText, closeText;
@@ -92,10 +106,11 @@ public class RegisterStore extends Fragment {
     private JSONObject jsonObj;
     private Uri uri;
     private Intent cameraIntent, photoPickerIntent, CropIntent;
-    private int RequestCameraPermissionID = 1001;
-    private int FRAGMENT_REQUEST_CODE = 1000;
+    private List<Stuff> stuffList = new ArrayList<>();
+
     private Bitmap cameraImage;
-    private int rowA = 1;
+    private int rowA = 0;
+    private String userID = "";
 
     View view;
 
@@ -226,14 +241,6 @@ public class RegisterStore extends Fragment {
             }
         });
 
-        SelectStuff.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-
-            }
-        });
-
         submitRegister = view.findViewById(R.id.register_store);
         submitRegister.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -269,18 +276,36 @@ public class RegisterStore extends Fragment {
         AddRow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                final View rowView = inflater.inflate(R.layout.storestufflist, null);
-                TextView stuffNum = (TextView)rowView.findViewById(R.id.txtStuffNum);
-                TextView stuffName = (TextView)rowView.findViewById(R.id.txtStuffNum);
-                rowA++;
-                stuffNum.setText(rowA + ".");
-                stuffName.setId(rowA);
-                Toast.makeText(getActivity().getApplication(), "Row Added : " + stuffName.getId(), Toast.LENGTH_LONG).show();
-                stuffLinearLayout.addView(rowView, stuffLinearLayout.getChildCount() - 1);
+                StoreStuffFragment storeStuffFragment = new StoreStuffFragment();
+                storeStuffFragment.setTargetFragment(RegisterStore.this, RequestStuffCode);
+                Bundle bundle1 = new Bundle();
+                bundle1.putString("selectStuff", userID);
+                storeStuffFragment.setArguments(bundle1);
+
+                fragmentManager = getFragmentManager();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.update_fragmentHolder, storeStuffFragment)
+                        .addToBackStack(storeStuffFragment.getClass().getName())
+                        .commit();
+
             }
         });
-
+        if (!stuffList.isEmpty()){
+            LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            final View rowView = inflater.inflate(R.layout.storestufflist, null);
+            ImageView stuffImage = (ImageView)rowView.findViewById(R.id.StuffImageView);
+            TextView stuffNum = (TextView)rowView.findViewById(R.id.txtStuffNum);
+            TextView stuffName = (TextView)rowView.findViewById(R.id.txtStuffName);
+            TextView stuffPrice = (TextView)rowView.findViewById(R.id.txtStuffPrice);
+            rowA++;
+            stuffNum.setText(rowA + ".");
+            stuffName.setId(rowA);
+            stuffName.setText(stuffList.get(rowA - 1).getStuffName());
+            stuffPrice.setText(Double.toString(stuffList.get(rowA - 1).getStuffPrice()));
+            Picasso.with(getActivity()).load(stuffList.get(rowA-1).getStuffImage()).memoryPolicy(MemoryPolicy.NO_CACHE).networkPolicy(NetworkPolicy.NO_CACHE).into(stuffImage);
+            Toast.makeText(getActivity().getApplication(), "Row Added : " + stuffName.getId(), Toast.LENGTH_LONG).show();
+            stuffLinearLayout.addView(rowView, stuffLinearLayout.getChildCount() - 1);
+        }
 
     }
 
@@ -310,6 +335,12 @@ public class RegisterStore extends Fragment {
                         e.printStackTrace();
                     }
                 }
+            }
+            if (requestCode == RequestStuffCode){
+                Stuff selectedStuff = (Stuff)data.getSerializableExtra("selectedStuff");
+                Toast.makeText(getActivity().getApplication(), "Selected Stuff : " + selectedStuff.getStuffID(), Toast.LENGTH_LONG).show();
+                stuffList.add(selectedStuff);
+                Log.d(TAG, "Stuff ID fetched at Register=" + selectedStuff.getStuffID());
             }
         }
 
