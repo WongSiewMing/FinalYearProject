@@ -3,15 +3,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".StoreCategory"
+    android:background="@drawable/background"
+    android:dividerPadding="5dp"
     android:padding="8dp"
-    android:background="@drawable/background">
+    tools:context=".StoreCategory">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/storeCategoryrv"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
+        android:layout_height="match_parent">
 
     </android.support.v7.widget.RecyclerView>
 

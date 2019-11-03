@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 26
-    buildToolsVersion '28.0.2'
+    buildToolsVersion '28.0.3'
     defaultConfig {
         applicationId "com.example.raindown.finalyearproject"
         //minSdkVersion 9
@@ -11,7 +11,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        multiDexEnabled true;
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -28,10 +28,10 @@ repositories {
 }
 
 
-
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
+    implementation 'android.arch.lifecycle:extensions:1.1.1'
     androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
@@ -65,9 +65,10 @@ dependencies {
 
     implementation 'com.android.support:design:25.3.1'
     implementation 'com.android.support:support-vector-drawable:25.3.1'
-    compile files('libs/activation.jar')
-    compile files('libs/additional.jar')
-    compile files('libs/mail.jar')
+
+    implementation files('libs/activation.jar')
+    implementation files('libs/additional.jar')
+    implementation files('libs/mail.jar')
 
     testImplementation 'junit:junit:4.12'
 }

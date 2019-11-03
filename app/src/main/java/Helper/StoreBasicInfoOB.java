@@ -10,14 +10,14 @@ public class StoreBasicInfoOB implements Serializable {
     private String StoreImg;
     private String StoreName;
     private String StoreDetail;
-    private String StoreCreator;
+    private String StudentID;
 
-    public StoreBasicInfoOB(String storeID, String storeImg, String storeName, String storeDetail, String storeCreator) {
+    public StoreBasicInfoOB(String storeID, String storeImg, String storeName, String storeDetail, String studentID) {
         StoreID = storeID;
         StoreImg = storeImg;
         StoreName = storeName;
         StoreDetail = storeDetail;
-        StoreCreator = storeCreator;
+        StudentID = studentID;
     }
 
     public String getStoreID() {
@@ -36,7 +36,7 @@ public class StoreBasicInfoOB implements Serializable {
         return StoreDetail;
     }
 
-    public String getStoreCreator() {
-        return StoreCreator;
+    public String getStudentID() {
+        return StudentID;
     }
 }

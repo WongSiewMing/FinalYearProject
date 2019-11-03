@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="120dp"
-    android:id="@+id/storeCardView"
-    android:layout_height="190dp"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:cardview="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/storeCardView"
+    android:layout_width="match_parent"
+    android:layout_height="190dp"
     android:layout_margin="5dp"
-    cardview:cardCornerRadius="10dp"
-    android:clickable="true">
+    android:clickable="true"
+    cardview:cardCornerRadius="10dp">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -16,17 +17,17 @@
             android:id="@+id/store_img"
             android:layout_width="match_parent"
             android:layout_height="160dp"
-            android:scaleType="centerCrop"
-            android:background="@color/black"/>
+            android:background="@color/black"
+            android:scaleType="centerCrop" />
 
         <TextView
             android:id="@+id/store_title"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:textColor="#2d2d2d"
-            android:textSize="13sp"
             android:gravity="center"
-            android:text="Shop Title"/>
+            android:text="Shop Title"
+            android:textColor="#2d2d2d"
+            android:textSize="13sp" />
     </LinearLayout>
 
 </android.support.v7.widget.CardView>

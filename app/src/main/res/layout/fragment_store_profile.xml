@@ -90,29 +90,30 @@
                     android:layout_marginStart="7dp"
                     android:layout_marginTop="2dp"
                     android:text="Rating" />
+
                 <Button
                     android:id="@+id/viewReview"
                     android:layout_width="150dp"
                     android:layout_height="40dp"
+                    android:layout_below="@id/textView"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_toEndOf="@id/shopImage"
                     android:background="@drawable/edit_button_shape"
                     android:text="Reviews"
-                    android:textSize="15sp"
-                    android:layout_toEndOf="@id/shopImage"
-                    android:layout_below="@id/textView"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginStart="5dp"/>
+                    android:textSize="15sp" />
 
                 <Button
                     android:id="@+id/editProfile"
                     android:layout_width="150dp"
                     android:layout_height="40dp"
+                    android:layout_below="@id/viewReview"
+                    android:layout_alignStart="@id/viewReview"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/edit_button_shape"
                     android:text="Edit Profile"
                     android:textSize="15sp"
-                    android:background="@drawable/edit_button_shape"
-                    android:visibility="gone"
-                    android:layout_alignStart="@id/viewReview"
-                    android:layout_below="@id/viewReview"
-                    android:layout_marginTop="5dp"/>
+                    android:visibility="gone" />
 
 
             </RelativeLayout>
@@ -120,16 +121,18 @@
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="5dp"
-            app:cardCornerRadius="10dp"
             android:id="@+id/Store_information"
-            android:layout_below="@id/storeProfileCardView">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/storeProfileCardView"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
+            app:cardCornerRadius="10dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <RelativeLayout
@@ -140,6 +143,7 @@
                         android:id="@+id/businessHour"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
                         android:text="Business Hour"
                         android:textColor="@color/black"
                         android:textSize="20sp"
@@ -150,6 +154,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/businessHour"
+                        android:layout_marginLeft="10dp"
                         android:text="Open Time: "
                         android:textColor="@color/black"
                         android:textSize="15sp"
@@ -159,102 +164,209 @@
                         android:id="@+id/OpenTime"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_toEndOf="@id/oTime"
                         android:layout_alignTop="@+id/oTime"
+                        android:layout_toEndOf="@id/oTime"
                         android:text="00:00"
+                        android:textColor="@color/red"
                         android:textSize="15sp"
-                        android:textStyle="italic"
-                        android:textColor="@color/red"/>
+                        android:textStyle="italic" />
 
                     <TextView
                         android:id="@+id/cTime"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/businessHour"
+                        android:layout_centerHorizontal="true"
                         android:layout_marginStart="50dp"
                         android:layout_marginTop="0dp"
                         android:layout_toEndOf="@id/OpenTime"
                         android:text="Close Time :"
                         android:textColor="@color/black"
                         android:textSize="15sp"
-                        android:textStyle="bold"
-                        android:layout_centerHorizontal="true"/>
+                        android:textStyle="bold" />
+
                     <TextView
+                        android:id="@+id/CloseTime"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="00:00"
-                        android:textStyle="italic"
-                        android:textColor="@color/red"
-                        android:layout_toEndOf="@id/cTime"
                         android:layout_below="@id/businessHour"
+                        android:layout_toEndOf="@id/cTime"
+                        android:text="00:00"
+                        android:textColor="@color/red"
                         android:textSize="15sp"
-                        android:id="@+id/CloseTime" />
+                        android:textStyle="italic" />
+
                     <TextView
                         android:id="@+id/storeStatus"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_below="@id/oTime"
+                        android:layout_marginLeft="10dp"
                         android:text="condition"
                         android:textColor="@color/brightgreeen"
-                        android:textSize="15sp"
-                        android:layout_below="@id/oTime"/>
+                        android:textSize="15sp" />
 
                     <View
                         android:id="@+id/devider1"
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:background="@color/black"
                         android:layout_below="@id/storeStatus"
-                        android:layout_margin="10dp"/>
+                        android:layout_margin="10dp"
+                        android:background="@color/black" />
 
                     <TextView
                         android:id="@+id/about"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_below="@id/devider1"
+                        android:layout_alignStart="@id/businessHour"
                         android:text="About"
                         android:textColor="@color/black"
-                        android:textStyle="bold"
                         android:textSize="20sp"
-                        android:layout_below="@id/devider1"
-                        android:layout_alignStart="@id/businessHour"/>
+                        android:textStyle="bold" />
+
                     <TextView
                         android:id="@+id/storeDescription"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_below="@id/about"
+                        android:layout_marginLeft="10dp"
                         android:text="storeDescription"
                         android:textColor="@color/black"
-                        android:textSize="15sp"
-                        android:layout_below="@id/about"/>
+                        android:textSize="15sp" />
 
                     <View
                         android:id="@+id/devider2"
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:background="@color/black"
                         android:layout_below="@id/storeDescription"
-                        android:layout_margin="10dp"/>
+                        android:layout_margin="10dp"
+                        android:background="@color/black" />
 
                     <TextView
+                        android:id="@+id/venue"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/venue"
                         android:layout_below="@id/devider2"
-                        android:textColor="@color/black"
-                        android:textStyle="bold"
-                        android:textSize="20sp"
+                        android:layout_marginLeft="10dp"
                         android:text="Location"
-                        />
+                        android:textColor="@color/black"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
                     <TextView
                         android:id="@+id/storeLocation"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_below="@id/venue"
+                        android:layout_marginLeft="10dp"
                         android:text="LocationDetail"
                         android:textColor="@color/black"
-                        android:textSize="15sp"
-                        android:layout_below="@id/venue"/>
+                        android:textSize="15sp" />
 
                 </RelativeLayout>
+
             </LinearLayout>
 
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/storeStuffCardView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/Store_information"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
+            app:cardCornerRadius="10dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/stuffForSale"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:text="Stuff for Sales"
+                    android:textColor="@color/black"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/txtStuffNum"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_weight="0.5"
+                        android:text="1. "
+                        android:textColor="@color/black"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:id="@+id/StuffImageView"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_weight="3"
+                        android:src="@mipmap/applogo" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="5"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/txtStuffName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginTop="16dp"
+                            android:layout_marginEnd="5dp"
+                            android:layout_weight="1"
+                            android:text="No Stuff Found"
+                            android:textColor="@color/black"
+                            android:textSize="20sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/txtStuffPrice"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginTop="16dp"
+                            android:layout_marginEnd="5dp"
+                            android:layout_weight="8"
+                            android:text="No Price Found"
+                            android:textColor="@color/black" />
+
+                        <Button
+                            android:id="@+id/btnSelectStuff"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginTop="16dp"
+                            android:layout_marginEnd="5dp"
+                            android:layout_marginBottom="10dp"
+                            android:layout_weight="1"
+                            android:text="View Stuff Details" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
         </android.support.v7.widget.CardView>
 
     </RelativeLayout>

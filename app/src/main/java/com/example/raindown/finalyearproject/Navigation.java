@@ -269,6 +269,7 @@ public class Navigation extends AppCompatActivity implements AdapterView.OnItemC
                                         if (userStoreID.equals("empty")){
                                             Log.d(TAG, "This user had no registed store.");
                                             RegisterStore registerStore = new RegisterStore();
+
                                             fragmentTransaction = fragmentManager.beginTransaction();
                                             fragmentTransaction.replace(R.id.fragmentHolder, registerStore);
                                             fragmentTransaction.addToBackStack(null);

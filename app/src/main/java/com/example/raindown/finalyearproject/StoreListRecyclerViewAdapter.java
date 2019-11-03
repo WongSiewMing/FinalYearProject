@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +31,8 @@ public class StoreListRecyclerViewAdapter extends RecyclerView.Adapter<StoreList
     private List<StoreBasicInfoOB> mData;
     FragmentManager fragmentManager;
 
+    private static final String TAG = "StoreListAdapter";
+
     public StoreListRecyclerViewAdapter(Context mContext, List<StoreBasicInfoOB> mData) {
         this.mContext = mContext;
         this.mData = mData;
@@ -49,8 +52,7 @@ public class StoreListRecyclerViewAdapter extends RecyclerView.Adapter<StoreList
         Picasso.with(mContext).load(mData.get(position).getStoreImg()).memoryPolicy(MemoryPolicy.NO_CACHE).networkPolicy(NetworkPolicy.NO_CACHE).into(holder.shop_image);
         holder.shop_name.setText(mData.get(position).getStoreName());
         holder.shop_detail.setText(mData.get(position).getStoreDetail());
-        holder.shop_rating.setText("");
-        holder.shop_creator.setText(mData.get(position).getStoreCreator());
+        holder.shop_creator.setText(mData.get(position).getStudentID());
         holder.shoplist_cardview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -85,7 +87,6 @@ public class StoreListRecyclerViewAdapter extends RecyclerView.Adapter<StoreList
         ImageView shop_image;
         TextView shop_name;
         TextView shop_detail;
-        TextView shop_rating;
         TextView shop_creator;
 
         public MyviewHolder(View itemView) {
@@ -95,7 +96,6 @@ public class StoreListRecyclerViewAdapter extends RecyclerView.Adapter<StoreList
             shop_image = (ImageView) itemView.findViewById(R.id.storeList_img);
             shop_name = (TextView) itemView.findViewById(R.id.store_name);
             shop_detail = (TextView) itemView.findViewById(R.id.store_detail);
-            shop_rating = (TextView) itemView.findViewById(R.id.store_rating);
             shop_creator = (TextView) itemView.findViewById(R.id.creator_name);
         }
     }
