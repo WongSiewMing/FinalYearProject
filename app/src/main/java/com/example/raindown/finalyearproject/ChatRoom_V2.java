@@ -106,7 +106,6 @@ public class ChatRoom_V2 extends Fragment {
     private ImageView opponentPhoto, btnBack;
     private TextView opponentName, opponentStatus, messageStatus, sendImageCaption;
     private RecyclerView messageListrv;
-    private FragmentManager fragmentManager;
     private ProgressBar messageProgressBar;
     private List<StudentBasicInfoOB> opponentBasicInfo = new ArrayList<>();
     private List<PrivateChatOB> arrayPrivateChat = new ArrayList<>();
@@ -296,9 +295,8 @@ public class ChatRoom_V2 extends Fragment {
                                     Conversion.hexToAscii(myjsonObj.getString("postTime"))));
                             populateChatRecyclerView();
 
-                        } else if (Conversion.hexToAscii(myjsonObj.getString("studentID")).equals(opponentID)
-                                && Conversion.hexToAscii(myjsonObj.getString("recipient")).equals(myInfo.getStudentID())
-                                && temporaryImageHolder.getDrawable().getConstantState() != getResources().getDrawable(R.drawable.ic_camera).getConstantState()) {
+                        } else if (Conversion.hexToAscii(myjsonObj.getString("studentID")).equals(myInfo.getStudentID())
+                                && Conversion.hexToAscii(myjsonObj.getString("recipient")).equals(opponentID)) {
                             arrayPrivateChat.add(new PrivateChatOB(Conversion.hexToAscii(myjsonObj.getString("privateID")),
                                     Conversion.hexToAscii(myjsonObj.getString("studentID")),
                                     Conversion.hexToAscii(myjsonObj.getString("studentName")),
@@ -310,8 +308,7 @@ public class ChatRoom_V2 extends Fragment {
                             populateChatRecyclerView();
 
                         } else if (Conversion.hexToAscii(myjsonObj.getString("studentID")).equals(opponentID)
-                                && Conversion.hexToAscii(myjsonObj.getString("recipient")).equals(myInfo.getStudentID())
-                                && temporaryImageHolder.getDrawable().getConstantState() != getResources().getDrawable(R.drawable.ic_camera).getConstantState()) {
+                                && Conversion.hexToAscii(myjsonObj.getString("recipient")).equals(myInfo.getStudentID())) {
                             arrayPrivateChat.add(new PrivateChatOB(Conversion.hexToAscii(myjsonObj.getString("privateID")),
                                     Conversion.hexToAscii(myjsonObj.getString("studentID")),
                                     Conversion.hexToAscii(myjsonObj.getString("studentName")),
