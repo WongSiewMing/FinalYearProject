@@ -38,7 +38,7 @@ dependencies {
 
     implementation 'com.android.support:appcompat-v7:24.2.1'
     implementation 'com.android.support:design:24.2.1'
-    testCompile 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.12'
 
     implementation files('libs/volley.jar')
     // implementation 'com.squareup.picasso:picasso:2.5.2'
@@ -65,6 +65,9 @@ dependencies {
 
     implementation 'com.android.support:design:25.3.1'
     implementation 'com.android.support:support-vector-drawable:25.3.1'
+    compile files('libs/activation.jar')
+    compile files('libs/additional.jar')
+    compile files('libs/mail.jar')
 
     testImplementation 'junit:junit:4.12'
 }

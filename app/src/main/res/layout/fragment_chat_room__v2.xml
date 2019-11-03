@@ -133,4 +133,42 @@
 
     </android.support.v7.widget.RecyclerView>
 
+    <ImageView
+        android:id="@+id/send_image_preview"
+        android:layout_width="337dp"
+        android:layout_height="348dp"
+        android:layout_below="@+id/Opponent_info_field"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="37dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginEnd="37dp"
+        android:background="@drawable/image_border"
+        android:src="@drawable/ic_camera" />
+
+    <TextView
+        android:id="@+id/send_image_caption"
+        android:layout_width="337dp"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/send_image_preview"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="72dp"
+        android:layout_marginEnd="69dp"
+        android:layout_marginBottom="9dp"
+        android:background="@color/bgBottomNavigation"
+        android:fontFamily="sans-serif-smallcaps"
+        android:gravity="center"
+        android:text="Press the send button to send the image"
+        android:textColor="@color/white"
+        android:textSize="12dp"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/temporaryImageHolder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_camera"
+        android:visibility="gone"/>
+
 </RelativeLayout>

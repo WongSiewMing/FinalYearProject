@@ -38,7 +38,7 @@ public class Login extends AppCompatActivity {
     EditText username, password;
     Button login;
     List<Student> studentList = new ArrayList<>();
-    TextView showPassword;
+    TextView showPassword, forgotPassword;
     String userName, userPassword;
 
     private static final String TAG = "testData";
@@ -60,6 +60,7 @@ public class Login extends AppCompatActivity {
             }
         });
         showPassword = (TextView) findViewById(R.id.showPassword);
+        forgotPassword = (TextView) findViewById(R.id.forgot_password);
 
         showPassword.setVisibility(View.GONE);
         password.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
@@ -103,9 +104,16 @@ public class Login extends AppCompatActivity {
             }
         });
 
+        forgotPassword.setOnClickListener(new View.OnClickListener(){
+
+            public void onClick(View view){
+                Intent intent = new Intent(Login.this, PasswordValidation.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
         if (PreferenceUnits.getID(this) != null) {
-//            userName = PreferenceUnits.getID(this);
-//            userPassword = PreferenceUnits.getPassword(this);
             getStudentData();
         }
 
@@ -122,8 +130,6 @@ public class Login extends AppCompatActivity {
             userPassword = PreferenceUnits.getPassword(this);
         }
 
-        Log.d(TAG, "Hi, " + userName);
-
         try {
 
             ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -137,9 +143,6 @@ public class Login extends AppCompatActivity {
                 if (!pDialog.isShowing())
                     pDialog.setMessage("Sync with server...");
                     pDialog.show();
-//                username.setText("18WMR08432");
-//                password.setText("980905");
-
 
                 final JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Constant.serverFile + "getStudentData.php?username=" + userName
                         + "&password=" + userPassword ,

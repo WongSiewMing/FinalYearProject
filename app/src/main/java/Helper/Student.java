@@ -54,6 +54,10 @@ public class Student implements Serializable {
         return photo;
     }
 
+    public String getClientID(){
+        return clientID;
+    }
+
     public String getStudentName() {
         return studentName;
     }
