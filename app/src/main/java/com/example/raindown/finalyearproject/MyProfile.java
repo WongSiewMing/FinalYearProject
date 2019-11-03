@@ -381,7 +381,7 @@ public class MyProfile extends Fragment {
     public void populateListView() {
 
         ArrayAdapter<Stuff> adapter = new MyListAdapter();
-        ListView list = (ListView) view.findViewById(R.id.myStuffList);
+        ListView list = (ListView) view.findViewById(R.id.favouriteList);
         list.setAdapter(adapter);
     }
 
@@ -420,7 +420,7 @@ public class MyProfile extends Fragment {
 
     public void registerClickCallBack() {
 
-        ListView list = (ListView) view.findViewById(R.id.myStuffList);
+        ListView list = (ListView) view.findViewById(R.id.favouriteList);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View viewClicked, int position, long id) {
@@ -459,7 +459,7 @@ public class MyProfile extends Fragment {
     public void requestListView() {
 
         ArrayAdapter<Requests> adapter = new ListAdapter();
-        ListView list = (ListView) view.findViewById(R.id.myStuffList);
+        ListView list = (ListView) view.findViewById(R.id.favouriteList);
         list.setAdapter(adapter);
     }
 

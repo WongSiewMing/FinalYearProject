@@ -53,7 +53,7 @@ import Helper.StoreOB;
 public class StoreProfile extends Fragment{
     View view;
     List<StoreOB> storeProfile;
-    private TextView shopName, followerCount, avgRating, openTime, closeTime, condition, storeDescription, ratDrscription, popRating, ratSummary, storeLocation;
+    private TextView shopName, avgRating, openTime, closeTime, condition, storeDescription, ratDrscription, popRating, ratSummary, storeLocation;
     private ImageView shopImage, back;
     private Button editProfile, viewReview;
     private String selectedStoreID, ratingTotalNum, currentTime, UserID;
@@ -81,7 +81,6 @@ public class StoreProfile extends Fragment{
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_store_profile, container, false);
         shopName = (TextView) view.findViewById(R.id.shopName);
-        //followerCount = (TextView) view.findViewById(R.id.followerCount);
         avgRating = (TextView) view.findViewById(R.id.avgRating);
         openTime = (TextView) view.findViewById(R.id.OpenTime);
         closeTime = (TextView) view.findViewById(R.id.CloseTime);
@@ -104,7 +103,7 @@ public class StoreProfile extends Fragment{
 
 
 
-//        shopName.setText(UserSharedPreferences.read(UserSharedPreferences.userName, null));
+        shopName.setText(UserSharedPreferences.read(UserSharedPreferences.userName, null));
         storeProfile = new ArrayList<>();
         Bundle bundle = getArguments();
         selectedStoreID = bundle.getString("storeID");
@@ -113,7 +112,8 @@ public class StoreProfile extends Fragment{
         final Date d = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("HHmm");
         currentTime = sdf.format(d);
-//        populateStoreInfo();
+        //make changes here (populate)
+          populateStoreInfo();
 
         pahoMqttClient = new PahoMqttClient();
         mqttAndroidClient = pahoMqttClient.getMqttClient(getActivity(), Constant.serverUrl);
@@ -122,7 +122,7 @@ public class StoreProfile extends Fragment{
             @Override
             public void connectComplete(boolean reconnect, String serverURI) {
                 Log.d(TAG, "Mqtt Connected");
-                getAvgRating();
+
                 populateStoreInfo();
             }
 
@@ -188,6 +188,7 @@ public class StoreProfile extends Fragment{
                 popRating = popUpRating.findViewById(R.id.popRating);
                 ratSummary = popUpRating.findViewById(R.id.ratingsummary);
 
+
                 try {
                     ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
                     NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
@@ -208,7 +209,8 @@ public class StoreProfile extends Fragment{
                                                 ratDrscription.setText("Number of review received: " + ratingTotalNum);
                                                 popRating.setText(String.format("%.2f", avgRate));
                                                 ratSummary.setText(String.format("%.2f", avgRate) + " out of 5.");
-                                                //avgRating.setText(String.format("%.2f", avgRate));
+                                                //make changes here (avgRating)
+                                                avgRating.setText(String.format("%.2f", avgRate));
                                             }
 
                                         }catch (Exception e){
@@ -234,8 +236,9 @@ public class StoreProfile extends Fragment{
                             Toast.LENGTH_LONG).show();
                 }
 
-//                popRating.setText(avgRating.getText().toString());
-//                ratSummary.setText(avgRating.getText() + " out of 5.");
+                //make changes here (popRating & ratSummary)
+                 popRating.setText(avgRating.getText().toString());
+                ratSummary.setText(avgRating.getText() + " out of 5.");
 
                 popUpRating.show();
 
@@ -248,7 +251,7 @@ public class StoreProfile extends Fragment{
         return view;
     }
 
-    private void getAvgRating() {
+    public void getAvgRating() {
         command = "{\"command\": \"303035303057\", \"reserve\": \"303030303030303030303030303030303030303030303030\", " +
                 "\"studentID\": " + "\"" + Conversion.asciiToHex(UserID) + "\" ," +
                 "\"storeID\": " + "\"" + Conversion.asciiToHex(selectedStoreID) + "\"}";
@@ -278,7 +281,8 @@ public class StoreProfile extends Fragment{
                                         Log.d(TAG, "Rating sum up =" + totalRate);
                                         avgRate = totalRate / response.length();
                                         Log.d(TAG, "Avg Rating =" + avgRate);
-//                                        avgRating.setText(String.valueOf(avgRate));
+                                        //make changes here (avgRating)
+                                        avgRating.setText(String.valueOf(avgRate));
                                         avgRating.setText(String.format("%.2f", avgRate));
 
 
@@ -372,9 +376,8 @@ public class StoreProfile extends Fragment{
 
         shopName.setText(storeProfile.get(0).getStoreName());
         Picasso.with(getActivity()).load(storeProfile.get(0).getStoreImage()).memoryPolicy(MemoryPolicy.NO_CACHE).networkPolicy(NetworkPolicy.NO_CACHE).transform(new CircleTransform()).into(shopImage);
-        //followerCount.setText();
-
-           // avgRating.setText("-");
+        getAvgRating();
+        avgRating.setText(String.format("%.2f", avgRate));
 
 
         openTime.setText(storeProfile.get(0).getOpenTime());
@@ -393,11 +396,6 @@ public class StoreProfile extends Fragment{
         progressBar.setVisibility(View.GONE);
         body.setVisibility(View.VISIBLE);
 
-
-    }
-
-
-    public void onButtonPressed(Uri uri) {
 
     }
 
@@ -433,7 +431,7 @@ public class StoreProfile extends Fragment{
         super.onDestroy();
         Log.d(TAG, "You leaved");
         try {
-          //  pahoMqttClient.unSubscribe(mqttAndroidClient, "MY/TARUC/SSS/000000001/PUB");
+           pahoMqttClient.unSubscribe(mqttAndroidClient, "MY/TARUC/SSS/000000001/PUB");
             pahoMqttClient.disconnect(mqttAndroidClient);
         } catch (Exception e) {
 
@@ -447,7 +445,7 @@ public class StoreProfile extends Fragment{
         super.onDestroyView();
         Log.d(TAG, "You leaved");
         try {
-          //  pahoMqttClient.unSubscribe(mqttAndroidClient, "MY/TARUC/SSS/000000001/PUB");
+            pahoMqttClient.unSubscribe(mqttAndroidClient, "MY/TARUC/SSS/000000001/PUB");
             pahoMqttClient.disconnect(mqttAndroidClient);
         } catch (Exception e) {
 
