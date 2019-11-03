@@ -1,6 +1,7 @@
 package com.example.raindown.finalyearproject;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
@@ -18,6 +19,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -47,6 +49,7 @@ import org.json.JSONObject;
 
 import Helper.BottomNavigationViewHelper;
 import Helper.Constant;
+import Helper.PreferenceUnits;
 import Helper.Student;
 
 /*Author : Wong Siew Ming
@@ -117,7 +120,7 @@ public class UpdateNavigation extends AppCompatActivity implements NavigationVie
         UserSharedPreferences.write(UserSharedPreferences.userName, student.getStudentName());
         UserSharedPreferences.write(UserSharedPreferences.userPhoto, student.getPhoto());
         UserSharedPreferences.write(UserSharedPreferences.userProgramme, student.getStudentProgramme());
-        startService(new Intent(this, ServiceCenter.class));
+        startService(new Intent(UpdateNavigation.this, ServiceCenter.class));
 
     }
 
@@ -169,11 +172,11 @@ public class UpdateNavigation extends AppCompatActivity implements NavigationVie
                 break;
 
             case R.id.nav_appointment:
-                ManageAppointment manageAppointment = new ManageAppointment();
+                Appointment_Menu appointment_menu = new Appointment_Menu();
                 Bundle bundle8 = new Bundle();
-                bundle8.putSerializable("manageAppointment", student);
-                manageAppointment.setArguments(bundle8);
-                loadFragment(manageAppointment);
+                bundle8.putSerializable("AppointmentMenu", student);
+                appointment_menu.setArguments(bundle8);
+                loadFragment(appointment_menu);
                 break;
 
             case R.id.nav_store:
@@ -195,6 +198,25 @@ public class UpdateNavigation extends AppCompatActivity implements NavigationVie
 
             case R.id.nav_logout:
 
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+                builder.setMessage("Are you sure you want to Logout ?")
+                        .setCancelable(false)
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                logOut();
+                            }
+                        })
+
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.cancel();
+                            }
+                        });
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
                 break;
         }
         //close bt_navigation drawer
@@ -208,8 +230,6 @@ public class UpdateNavigation extends AppCompatActivity implements NavigationVie
         navigationView.setNavigationItemSelectedListener(this);
     }
 
-
-
     private void loadFragment(Fragment fragment) {
         // load fragment
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -218,6 +238,13 @@ public class UpdateNavigation extends AppCompatActivity implements NavigationVie
         transaction.commit();
     }
 
+    private void logOut(){
+        PreferenceUnits.saveID(null,this);
+        PreferenceUnits.savePassword(null,this);
+        Intent intent = new Intent(this, Login.class);
+        startActivity(intent);
+        finish();
+    }
     public void getUserStoreID(){
         Fragment fragment;
         try {
@@ -289,17 +316,7 @@ public class UpdateNavigation extends AppCompatActivity implements NavigationVie
     @Override
     public void onBackPressed() {
         fragmentManager = this.getSupportFragmentManager();
-        if (fragmentManager.getBackStackEntryCount() == 0){
-            if (backPressedTime + 2000 > System.currentTimeMillis()){
-                backToast.cancel();
-                super.onBackPressed();
-                return;
-            }else {
-                backToast = Toast.makeText(getBaseContext(), "Press back again to exit", Toast.LENGTH_SHORT);
-                backToast.show();
-            }
-            backPressedTime = System.currentTimeMillis();
-        }else {
+        if (fragmentManager.getBackStackEntryCount() != 1) {
             super.onBackPressed();
         }
     }

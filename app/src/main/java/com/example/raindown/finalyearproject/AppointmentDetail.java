@@ -173,7 +173,7 @@ public class AppointmentDetail extends Fragment {
 
                 myjsonObj = new JSONObject(mqttMessage.toString());
                 if (myjsonObj.getString("command").equals("303035303062")){
-                    if (Conversion.hexToAscii(myjsonObj.getString("opponentID")).equals(Navigation.student.getStudentID())){
+                    if (Conversion.hexToAscii(myjsonObj.getString("opponentID")).equals(UpdateNavigation.student.getStudentID())){
                         updateAppointmentDetail(myjsonObj);
                     }
 
@@ -181,7 +181,7 @@ public class AppointmentDetail extends Fragment {
                     Log.d(TAG, "opponentID =" + Conversion.hexToAscii(myjsonObj.getString("opponentID")));
                     Log.d(TAG, "appointment ID =" + Conversion.hexToAscii(myjsonObj.getString("appointmentID")));
 
-                    if (Conversion.hexToAscii(myjsonObj.getString("opponentID")).equals(Navigation.student.getStudentID()) && Conversion.hexToAscii(myjsonObj.getString("appointmentID")).equals(appointmentOB.getAppointmentID())){
+                    if (Conversion.hexToAscii(myjsonObj.getString("opponentID")).equals(UpdateNavigation.student.getStudentID()) && Conversion.hexToAscii(myjsonObj.getString("appointmentID")).equals(appointmentOB.getAppointmentID())){
                         btnAppointmentStatus.setText(Conversion.hexToAscii(myjsonObj.getString("appointmentStatus")));
                         btnAppointmentStatus.setBackgroundColor(getResources().getColor(R.color.lightgreen));
                         btnAppointmentStatus.setEnabled(false);
@@ -217,7 +217,7 @@ public class AppointmentDetail extends Fragment {
                 if (connection.equals("Connected")) {
                     ChatRoom_V2 frag = new ChatRoom_V2();
                     Bundle bundle = new Bundle();
-                    bundle.putSerializable("UserData", Navigation.student);//own data
+                    bundle.putSerializable("UserData", UpdateNavigation.student);//own data
                     bundle.putString("ClickedUserID", appointmentOB.getStudentID().getStudentID());
                     frag.setArguments(bundle);
                     fragmentManager = ((AppCompatActivity) view.getContext()).getSupportFragmentManager();
@@ -244,7 +244,7 @@ public class AppointmentDetail extends Fragment {
             Boolean isConnected = networkInfo != null && networkInfo.isConnectedOrConnecting();
             if (isConnected) {
                 command = "{\"command\": \"303035303061\", \"reserve\": \"303030303030303030303030303030303030303030303030\", " +
-                        "\"studentID\": " + "\"" + Conversion.asciiToHex(Navigation.student.getStudentID()) + "\" ," +
+                        "\"studentID\": " + "\"" + Conversion.asciiToHex(UpdateNavigation.student.getStudentID()) + "\" ," +
                         "\"appointmentID\": " + "\"" + Conversion.asciiToHex(appointmentOB.getAppointmentID()) + "\" ," +
                         "\"stuffID\": " + "\"" + Conversion.asciiToHex(appointmentOB.getStuffID().getStuffID()) + "\" }";
 

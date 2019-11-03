@@ -1,5 +1,7 @@
 package Helper;
 
+import android.widget.ImageView;
+
 import java.io.Serializable;
 
 public class PrivateChatOB implements Serializable {
@@ -8,22 +10,37 @@ public class PrivateChatOB implements Serializable {
     private String studentName;
     private String recipient;
     private String message;
+    private String image;
     private String postDate;
     private String postTime;
     private Student recipient2;
+    private ImageView temporaryImage;
 
-    public PrivateChatOB(String priChatID, String studentID, String studentName, String recipient, String message, String postDate, String postTime) {
+    public PrivateChatOB(String priChatID, String studentID, String studentName, String recipient, String message, String image, String postDate, String postTime) {
         this.priChatID = priChatID;
         this.studentID = studentID;
         this.studentName = studentName;
         this.recipient = recipient;
         this.message = message;
+        this.image = image;
         this.postDate = postDate;
         this.postTime = postTime;
     }
 
-    public PrivateChatOB(String message, String postDate, String postTime, Student recipient2) {
+    public PrivateChatOB(String priChatID, String studentID, String studentName, String recipient, String message, ImageView temporaryImage, String postDate, String postTime) {
+        this.priChatID = priChatID;
+        this.studentID = studentID;
+        this.studentName = studentName;
+        this.recipient = recipient;
         this.message = message;
+        this.temporaryImage = temporaryImage;
+        this.postDate = postDate;
+        this.postTime = postTime;
+    }
+
+    public PrivateChatOB(String message, String image, String postDate, String postTime, Student recipient2) {
+        this.message = message;
+        this.image = image;
         this.postDate = postDate;
         this.postTime = postTime;
         this.recipient2 = recipient2;
@@ -55,6 +72,14 @@ public class PrivateChatOB implements Serializable {
 
     public String getMessage() {
         return message;
+    }
+
+    public String getImage(){
+        return image;
+    }
+
+    public ImageView getTemporaryImage(){
+        return temporaryImage;
     }
 
     public String getPostDate() {

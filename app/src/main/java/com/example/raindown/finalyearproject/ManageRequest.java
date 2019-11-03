@@ -87,6 +87,7 @@ public class ManageRequest extends Fragment {
         requestRV.setVisibility(View.INVISIBLE);
 
         mqttAndroidClient = pahoMqttClient.getMqttClient(getActivity(), Constant.serverUrl, "MY/TARUC/SSS/000000001/PUB");
+
         mqttAndroidClient.setCallback(new MqttCallbackExtended() {
             @Override
             public void connectComplete(boolean reconnect, String serverURI) {
@@ -105,7 +106,7 @@ public class ManageRequest extends Fragment {
                 Log.d(TAG, "Message arrived!");
                 myjsonObj = new JSONObject(mqttMessage.toString());
                 if (myjsonObj.getString("command").equals("303035303063")){
-                    if (Conversion.hexToAscii(myjsonObj.getString("studentID")).equals(Navigation.student.getStudentID())){
+                    if (Conversion.hexToAscii(myjsonObj.getString("studentID")).equals(UpdateNavigation.student.getStudentID())){
                         for (int i = 0; i < requestList.size(); i++) {
                             if (Conversion.hexToAscii(myjsonObj.getString("appointmentID")).equals(requestList.get(i).getAppointmentID())) {
 
@@ -240,7 +241,7 @@ public class ManageRequest extends Fragment {
 
                 RequestQueue queue = Volley.newRequestQueue(getActivity());
                 //http://192.168.0.106/raindown/getRequestList.php?studentID=17WMR05969
-                JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Constant.serverFile + "getRequestList.php?studentID=" + Navigation.student.getStudentID(),
+                JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Constant.serverFile + "getRequestList.php?studentID=" + UpdateNavigation.student.getStudentID(),
                         new Response.Listener<JSONArray>() {
                             @Override
                             public void onResponse(JSONArray response) {

@@ -19,6 +19,7 @@
             android:textSize="18sp"
             android:textColor="@color/white"
             android:background="@drawable/user_message_textstyle"
+            android:fontFamily="sans-serif-smallcaps"
             android:gravity="center"
             android:layout_alignParentEnd="true"/>
         <TextView

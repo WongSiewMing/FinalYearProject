@@ -133,7 +133,7 @@ public class SelectAvailableTime_Adapter extends RecyclerView.Adapter<SelectAvai
                     try {
                         command = "{\"command\": \"30303530305D\", \"reserve\": \"303030303030303030303030303030303030303030303030\", " +
                                 "\"availableID\": " + "\"" + Conversion.asciiToHex(mData.get(position).getAvailableID()) + "\" ," +
-                                "\"studentID\": " + "\"" + Conversion.asciiToHex(Navigation.student.getStudentID()) + "\" ," +
+                                "\"studentID\": " + "\"" + Conversion.asciiToHex(UpdateNavigation.student.getStudentID()) + "\" ," +
                                 "\"targetUserID\": " + "\"" + Conversion.asciiToHex(mData.get(position).getStudentID()) + "\" ," +
                                 "\"availableDate\": " + "\"" + Conversion.asciiToHex(holder.appointmentDate.getText().toString().trim()) + "\" ," +
                                 "\"availableDayOfWeek\": " + "\"" + Conversion.asciiToHex(mData.get(position).getAvailableDate()) + "\" ," +

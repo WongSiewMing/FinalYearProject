@@ -124,6 +124,7 @@ public class PrivateList extends Fragment {
                                                     privatelistResponse.getString("studentName"),privatelistResponse.getString("icNo"),
                                                     privatelistResponse.getString("studentProgramme"),privatelistResponse.getString("studentFaculty"),
                                                     privatelistResponse.getInt("yearOfStudy")),privatelistResponse.getString("message"),
+                                                    privatelistResponse.getString("image"),
                                                     privatelistResponse.getString("postDate"),privatelistResponse.getString("postTime")));
                                         }
                                         populateListView();
@@ -316,6 +317,7 @@ public class PrivateList extends Fragment {
                                             arrayPrivateChat.add(new PrivateChat(
                                                     privateChatResponse.getString("studentID"), privateChatResponse.getString("studentName"),
                                                     privateChatResponse.getString("recipient"), privateChatResponse.getString("message"),
+                                                    privateChatResponse.getString("image"),
                                                     privateChatResponse.getString("postDate"), privateChatResponse.getString("postTime")));
                                         }
                                         if (pDialog.isShowing())

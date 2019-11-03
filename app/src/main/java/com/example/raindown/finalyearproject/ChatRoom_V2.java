@@ -2,26 +2,40 @@ package com.example.raindown.finalyearproject;
 /*Author : Lee Thian Xin
 Programme : RSD3
 Year : 2018*/
+
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -49,6 +63,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
@@ -68,6 +84,7 @@ import Helper.StoreBasicInfoOB;
 import Helper.Student;
 import Helper.StudentBasicInfoOB;
 
+import static android.app.Activity.RESULT_OK;
 import static android.content.Context.INPUT_METHOD_SERVICE;
 
 
@@ -77,13 +94,17 @@ public class ChatRoom_V2 extends Fragment {
     private PahoMqttClient pahoMqttClient;
     private String command;
     private JSONObject jsonObj;
+    private Intent cameraIntent, photoPickerIntent, CropIntent;
+    public static final int CAMERA_REQUEST = 10;
+    public static final int IMAGE_GALLERY_REQUEST = 20;
 
     private Student myInfo;
     private String opponentID;
     private FloatingActionButton btnSendMessage;
+    private ImageView btnSendImage, sendImagePreview, temporaryImageHolder;
     private EditText editMessage;
     private ImageView opponentPhoto, btnBack;
-    private TextView opponentName, opponentStatus, messageStatus;
+    private TextView opponentName, opponentStatus, messageStatus, sendImageCaption;
     private RecyclerView messageListrv;
     private FragmentManager fragmentManager;
     private ProgressBar messageProgressBar;
@@ -96,7 +117,9 @@ public class ChatRoom_V2 extends Fragment {
     private String formattedDate, formattedTime;
     private JSONObject jsonObject;
     private String status = "ACTIVE";
-
+    private int RequestCameraPermissionID = 1001;
+    private Bitmap imagePreview;
+    private String converted = "";
 
     private static final String TAG = "Chat Room in";
 
@@ -123,6 +146,8 @@ public class ChatRoom_V2 extends Fragment {
 
 
         btnSendMessage = view.findViewById(R.id.btn_send_message);
+        btnSendImage = view.findViewById(R.id.btnSendImage);
+        sendImagePreview = view.findViewById(R.id.send_image_preview);
         editMessage = view.findViewById(R.id.edit_message);
         opponentPhoto = view.findViewById(R.id.Opponent_photo);
         btnBack = view.findViewById(R.id.back);
@@ -131,6 +156,10 @@ public class ChatRoom_V2 extends Fragment {
         messageListrv = view.findViewById(R.id.message_rv);
         messageProgressBar = view.findViewById(R.id.messageProgressBar);
         messageStatus = view.findViewById(R.id.message_status);
+        sendImageCaption = view.findViewById(R.id.send_image_caption);
+        temporaryImageHolder = view.findViewById(R.id.temporaryImageHolder);
+        temporaryImageHolder.setImageResource(R.drawable.ic_camera);
+
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -138,39 +167,79 @@ public class ChatRoom_V2 extends Fragment {
             }
         });
         opponentStatus.setText("Offline");
-        opponentStatus.setTextColor(getResources().getColor(R.color.red));
+        opponentStatus.setTextColor(getResources().getColor(R.color.white));
         getOpponentBasicInfo();
+        sendImagePreview.setVisibility(View.INVISIBLE);
+        sendImageCaption.setVisibility(View.INVISIBLE);
+
+        btnSendMessage.setEnabled(false);
+        editMessage.addTextChangedListener(msgTextWatcher);
+        sendImagePreview.setImageResource(R.drawable.ic_camera);
 
         btnSendMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (checkSubmitField()) {
-                    c = Calendar.getInstance().getTime();
-                    df = new SimpleDateFormat("dd/MM/yyyy");
-                    formattedDate = df.format(c);
-                    df = new SimpleDateFormat("HH:mm");
-                    formattedTime = df.format(c);
-                    Log.d(TAG, "Date = " + formattedDate);
-                    Log.d(TAG, "Time = " + formattedTime);
-                    getChatID();
+                c = Calendar.getInstance().getTime();
+                df = new SimpleDateFormat("dd/MM/yyyy");
+                formattedDate = df.format(c);
+                df = new SimpleDateFormat("HH:mm");
+                formattedTime = df.format(c);
+                getChatID();
 
-                    try {
-                        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(INPUT_METHOD_SERVICE);
-                        imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
+                try {
+                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
 
-                    } catch (Exception e) {
-
-                    }
-
+                } catch (Exception e) {
 
                 }
+
+
+            }
+        });
+
+        btnSendImage.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                final CharSequence[] options = {"Take Photo", "Choose From Gallery", "Cancel"};
+                final AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
+                builder.setTitle("Choose Your Action");
+                builder.setItems(options, new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int selection) {
+
+                        if (options[selection] == "Take Photo") {
+                            if (ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA}, RequestCameraPermissionID);
+                                Log.d(TAG, "Permission requested");
+                                return;
+                            } else {
+                                Log.d(TAG, "Permission ady granted");
+                            }
+                            cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                            startActivityForResult(cameraIntent, CAMERA_REQUEST);
+
+                        } else if (options[selection] == "Choose From Gallery") {
+                            photoPickerIntent = new Intent();
+                            photoPickerIntent.setType("image/*");
+                            photoPickerIntent.setAction(Intent.ACTION_GET_CONTENT);
+                            startActivityForResult(Intent.createChooser(photoPickerIntent, "Select Image From Gallary"), IMAGE_GALLERY_REQUEST);
+                        } else if (options[selection] == "Cancel") {
+                            dialog.dismiss();
+                        }
+                    }
+                });
+                builder.show();
+
             }
         });
 
         mqttAndroidClient.setCallback(new MqttCallbackExtended() {
 
             @Override
-                public void connectComplete(boolean b, String s) {
+            public void connectComplete(boolean b, String s) {
 
                 Log.d(TAG, "Connection established.");
                 try {
@@ -180,7 +249,7 @@ public class ChatRoom_V2 extends Fragment {
                             "\"status\": " + "\"" + Conversion.asciiToHex(status) + "\" }";
 
                     pahoMqttClient.publishMessage(mqttAndroidClient, statusCommand, 1, "MY/TARUC/SSS/000000001/PUB");
-                }catch (Exception e){
+                } catch (Exception e) {
 
                 }
 
@@ -193,21 +262,63 @@ public class ChatRoom_V2 extends Fragment {
 
             @Override
             public void messageArrived(String s, MqttMessage mqttMessage) throws Exception {
+
                 try {
+
                     JSONObject myjsonObj = new JSONObject(mqttMessage.toString());
                     if (myjsonObj.getString("command").equals("303035303019")) {
-                        if (Conversion.hexToAscii(myjsonObj.getString("studentID")).equals(myInfo.getStudentID()) && Conversion.hexToAscii(myjsonObj.getString("recipient")).equals(opponentID)) {
+
+                        if (Conversion.hexToAscii(myjsonObj.getString("studentID")).equals(myInfo.getStudentID())
+                                && Conversion.hexToAscii(myjsonObj.getString("recipient")).equals(opponentID)
+                        && temporaryImageHolder.getDrawable().getConstantState() == getResources().getDrawable(R.drawable.ic_camera).getConstantState()) {
                             Log.d(TAG, "This is message that I send");
                             Log.d(TAG, "Array size =" + arrayPrivateChat.size());
-                            arrayPrivateChat.add(new PrivateChatOB(Conversion.hexToAscii(myjsonObj.getString("privateID")),Conversion.hexToAscii(myjsonObj.getString("studentID")),
-                                    Conversion.hexToAscii(myjsonObj.getString("studentName")), Conversion.hexToAscii(myjsonObj.getString("recipient")),
-                                    Conversion.hexToAscii(myjsonObj.getString("message")), Conversion.hexToAscii(myjsonObj.getString("postDate")),
+                            arrayPrivateChat.add(new PrivateChatOB(
+                                    Conversion.hexToAscii(myjsonObj.getString("privateID")),
+                                    Conversion.hexToAscii(myjsonObj.getString("studentID")),
+                                    Conversion.hexToAscii(myjsonObj.getString("studentName")),
+                                    Conversion.hexToAscii(myjsonObj.getString("recipient")),
+                                    Conversion.hexToAscii(myjsonObj.getString("message")),
+                                    "empty",
+                                    Conversion.hexToAscii(myjsonObj.getString("postDate")),
                                     Conversion.hexToAscii(myjsonObj.getString("postTime"))));
                             populateChatRecyclerView();
-                        } else if (Conversion.hexToAscii(myjsonObj.getString("studentID")).equals(opponentID) && Conversion.hexToAscii(myjsonObj.getString("recipient")).equals(myInfo.getStudentID())) {
-                            arrayPrivateChat.add(new PrivateChatOB(Conversion.hexToAscii(myjsonObj.getString("privateID")),Conversion.hexToAscii(myjsonObj.getString("studentID")),
-                                    Conversion.hexToAscii(myjsonObj.getString("studentName")), Conversion.hexToAscii(myjsonObj.getString("recipient")),
-                                    Conversion.hexToAscii(myjsonObj.getString("message")), Conversion.hexToAscii(myjsonObj.getString("postDate")),
+                        } else if (Conversion.hexToAscii(myjsonObj.getString("studentID")).equals(opponentID)
+                                && Conversion.hexToAscii(myjsonObj.getString("recipient")).equals(myInfo.getStudentID())
+                                && temporaryImageHolder.getDrawable().getConstantState() == getResources().getDrawable(R.drawable.ic_camera).getConstantState()) {
+                            arrayPrivateChat.add(new PrivateChatOB(Conversion.hexToAscii(myjsonObj.getString("privateID")),
+                                    Conversion.hexToAscii(myjsonObj.getString("studentID")),
+                                    Conversion.hexToAscii(myjsonObj.getString("studentName")),
+                                    Conversion.hexToAscii(myjsonObj.getString("recipient")),
+                                    Conversion.hexToAscii(myjsonObj.getString("message")),
+                                    "empty",
+                                    Conversion.hexToAscii(myjsonObj.getString("postDate")),
+                                    Conversion.hexToAscii(myjsonObj.getString("postTime"))));
+                            populateChatRecyclerView();
+
+                        } else if (Conversion.hexToAscii(myjsonObj.getString("studentID")).equals(opponentID)
+                                && Conversion.hexToAscii(myjsonObj.getString("recipient")).equals(myInfo.getStudentID())
+                                && temporaryImageHolder.getDrawable().getConstantState() != getResources().getDrawable(R.drawable.ic_camera).getConstantState()) {
+                            arrayPrivateChat.add(new PrivateChatOB(Conversion.hexToAscii(myjsonObj.getString("privateID")),
+                                    Conversion.hexToAscii(myjsonObj.getString("studentID")),
+                                    Conversion.hexToAscii(myjsonObj.getString("studentName")),
+                                    Conversion.hexToAscii(myjsonObj.getString("recipient")),
+                                    "[Temporary Image]",
+                                    temporaryImageHolder,
+                                    Conversion.hexToAscii(myjsonObj.getString("postDate")),
+                                    Conversion.hexToAscii(myjsonObj.getString("postTime"))));
+                            populateChatRecyclerView();
+
+                        } else if (Conversion.hexToAscii(myjsonObj.getString("studentID")).equals(opponentID)
+                                && Conversion.hexToAscii(myjsonObj.getString("recipient")).equals(myInfo.getStudentID())
+                                && temporaryImageHolder.getDrawable().getConstantState() != getResources().getDrawable(R.drawable.ic_camera).getConstantState()) {
+                            arrayPrivateChat.add(new PrivateChatOB(Conversion.hexToAscii(myjsonObj.getString("privateID")),
+                                    Conversion.hexToAscii(myjsonObj.getString("studentID")),
+                                    Conversion.hexToAscii(myjsonObj.getString("studentName")),
+                                    Conversion.hexToAscii(myjsonObj.getString("recipient")),
+                                    "[Temporary Image]",
+                                    temporaryImageHolder,
+                                    Conversion.hexToAscii(myjsonObj.getString("postDate")),
                                     Conversion.hexToAscii(myjsonObj.getString("postTime"))));
                             populateChatRecyclerView();
 
@@ -221,10 +332,10 @@ public class ChatRoom_V2 extends Fragment {
                                 opponentStatus.setTextColor(getResources().getColor(R.color.brightgreeen));
                             }
                         }
-                    }else if (myjsonObj.getString("command").equals("303035303056")){
-                        if (Conversion.hexToAscii(myjsonObj.getString("recipient")).equals(Navigation.student.getStudentID())){
-                            for (int i = 0; i < arrayPrivateChat.size(); i++){
-                                if (arrayPrivateChat.get(i).getPriChatID().equals(Conversion.hexToAscii(myjsonObj.getString("privateID")))){
+                    } else if (myjsonObj.getString("command").equals("303035303056")) {
+                        if (Conversion.hexToAscii(myjsonObj.getString("recipient")).equals(UpdateNavigation.student.getStudentID())) {
+                            for (int i = 0; i < arrayPrivateChat.size(); i++) {
+                                if (arrayPrivateChat.get(i).getPriChatID().equals(Conversion.hexToAscii(myjsonObj.getString("privateID")))) {
                                     Log.d(TAG, "Delete msg");
                                     arrayPrivateChat.remove(i);
                                     populateChatRecyclerView();
@@ -268,7 +379,7 @@ public class ChatRoom_V2 extends Fragment {
                                         JSONObject chatIDResponse = (JSONObject) response.get(i);
                                         currentChatID = chatIDResponse.getString("CurrentPrivateID");
                                     }
-                                    Log.d(TAG, " Current comment ID =" + currentChatID);
+                                    Log.d(TAG, "Current comment ID =" + currentChatID);
 
                                     if (currentChatID.equals("0")) {
                                         newChatID = "PRI1001";
@@ -332,13 +443,15 @@ public class ChatRoom_V2 extends Fragment {
                 }
             }
 
-
-            //192.168.0.107/raindown/insertCommentData.php?commentID=cmt1002&activityID=1&studentID=2&commentText=3&commentTime=4&commentDate=5
-            insertMessageUrl = Constant.serverFile + "insertPrivateData.php?privateID=" + newChatID + "&studentID=" + myInfo.getStudentID() + "&recipient=" +
-                    opponentID + "&message=" + encodedMessage + "&postDate=" + formattedDate + "&postTime=" +
-                    formattedTime;
-
-            Log.d(TAG, "Add Comment URL = " + insertMessageUrl);
+            if (sendImagePreview.getDrawable().getConstantState() == getResources().getDrawable(R.drawable.ic_camera).getConstantState()) {
+                insertMessageUrl = Constant.serverFile + "insertPrivateData.php?privateID=" + newChatID + "&studentID=" + myInfo.getStudentID() + "&recipient=" +
+                        opponentID + "&message=" + encodedMessage + "&image=" + "empty" + "&postDate=" + formattedDate + "&postTime=" +
+                        formattedTime;
+            } else {
+                insertMessageUrl = Constant.serverFile + "insertPrivateData.php?privateID=" + newChatID + "&studentID=" + myInfo.getStudentID() + "&recipient=" +
+                        opponentID + "&message=" + "[Image]" + "&image=" + "" + "&postDate=" + formattedDate + "&postTime=" +
+                        formattedTime;
+            }
 
             RequestQueue queue = Volley.newRequestQueue(getActivity());
             try {
@@ -363,6 +476,10 @@ public class ChatRoom_V2 extends Fragment {
 
 
                                     editMessage.setText("");
+                                    sendImagePreview.setVisibility(view.INVISIBLE);
+                                    sendImageCaption.setVisibility(view.INVISIBLE);
+                                    sendImagePreview.setImageResource(R.drawable.ic_camera);
+                                    //temporaryImageHolder.setImageResource(R.drawable.ic_camera);
 
                                 } catch (JSONException e) {
                                     e.printStackTrace();
@@ -384,6 +501,7 @@ public class ChatRoom_V2 extends Fragment {
                         params.put("studentID", myInfo.getStudentID());
                         params.put("recipient", opponentID);
                         params.put("message", editMessage.getText().toString().trim());
+                        params.put("image", converted);
                         params.put("postDate", formattedDate);
                         params.put("postTime", formattedTime);
 
@@ -407,31 +525,7 @@ public class ChatRoom_V2 extends Fragment {
             if (isAdded()) {
             }
         }
-
     }
-
-    private boolean checkSubmitField() {
-        String error = "";
-        boolean indicator = true;
-        if (editMessage.getText().toString().trim().equals("")) {
-            error += "- Message is require.\n";
-            indicator = false;
-        }
-        if (indicator == false) {
-            AlertDialog.Builder sent = new AlertDialog.Builder(getActivity());
-            sent.setTitle("Invalid input");
-            sent.setMessage(error);
-            sent.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-
-                }
-            });
-            sent.show();
-        }
-        return indicator;
-    }
-
 
     private void getOpponentBasicInfo() {
         try {
@@ -439,7 +533,7 @@ public class ChatRoom_V2 extends Fragment {
             NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
             Boolean isConnected = networkInfo != null && networkInfo.isConnectedOrConnecting();
             if (isConnected) {
-                //192.168.0.101/raindown/getUserBasicInfo.php?studentID=17WMR05969
+
                 RequestQueue queue = Volley.newRequestQueue(getActivity());
 
                 JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Constant.serverFile + "getUserBasicInfo.php?studentID=" + opponentID,
@@ -507,9 +601,14 @@ public class ChatRoom_V2 extends Fragment {
                                     for (int i = 0; i < response.length(); i++) {
                                         JSONObject privateChatResponse = (JSONObject) response.get(i);
                                         arrayPrivateChat.add(new PrivateChatOB(
-                                                privateChatResponse.getString("privateID"), privateChatResponse.getString("studentID"), privateChatResponse.getString("studentName"),
-                                                privateChatResponse.getString("recipient"), privateChatResponse.getString("message"),
-                                                privateChatResponse.getString("postDate"), privateChatResponse.getString("postTime")));
+                                                privateChatResponse.getString("privateID"),
+                                                privateChatResponse.getString("studentID"),
+                                                privateChatResponse.getString("studentName"),
+                                                privateChatResponse.getString("recipient"),
+                                                privateChatResponse.getString("message"),
+                                                privateChatResponse.getString("image"),
+                                                privateChatResponse.getString("postDate"),
+                                                privateChatResponse.getString("postTime")));
                                     }
                                     if (response.length() == 0) {
                                         messageProgressBar.setVisibility(View.GONE);
@@ -621,4 +720,88 @@ public class ChatRoom_V2 extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        converted = "";
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == RESULT_OK) {
+            if (requestCode == CAMERA_REQUEST) {
+                imagePreview = (Bitmap) data.getExtras().get("data");
+                ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+                imagePreview.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+                temporaryImageHolder.setImageBitmap(imagePreview);
+                sendImagePreview.setVisibility(View.VISIBLE);
+                sendImageCaption.setVisibility(View.VISIBLE);
+                sendImagePreview.setImageBitmap(imagePreview);
+                editMessage.setText("");
+                editMessage.setFocusable(false);
+                converted = bitmapToString(imagePreview);
+                btnSendMessage.setEnabled(true);
+
+            }
+
+            if (requestCode == IMAGE_GALLERY_REQUEST) {
+                Bitmap bm = null;
+                if (data != null) {
+                    try {
+                        bm = MediaStore.Images.Media.getBitmap(getActivity().getApplicationContext().getContentResolver(), data.getData());
+                        sendImagePreview.setImageBitmap(getResizedBitmap(bm, 500, 500));
+                        sendImagePreview.setVisibility(View.VISIBLE);
+                        sendImageCaption.setVisibility(View.VISIBLE);
+                        temporaryImageHolder.setImageBitmap(getResizedBitmap(bm, 500, 500));
+                        converted = bitmapToString(getResizedBitmap(bm, 500, 500));
+                        editMessage.setText("");
+                        editMessage.setFocusable(false);
+                        btnSendMessage.setEnabled(true);
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+    }
+
+    public String bitmapToString(Bitmap image) {
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        byte[] arr = baos.toByteArray();
+        String result = Base64.encodeToString(arr, Base64.DEFAULT);
+        return result;
+    }
+
+    private Bitmap getResizedBitmap(Bitmap bm, int newHeight, int newWidth) {
+        int width = bm.getWidth();
+        int height = bm.getHeight();
+        float scaleWidth = ((float) newWidth) / width;
+        float scaleHeight = ((float) newHeight) / height;
+        Matrix matrix = new Matrix();
+        matrix.postScale(scaleWidth, scaleHeight);
+        Bitmap resizedBitmap = Bitmap.createBitmap(bm, 0, 0, width, height,
+                matrix, false);
+
+        return resizedBitmap;
+    }
+
+    private TextWatcher msgTextWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            String msg = editMessage.getText().toString().trim();
+
+            btnSendMessage.setEnabled(!msg.isEmpty());
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+
+        }
+    };
+
 }

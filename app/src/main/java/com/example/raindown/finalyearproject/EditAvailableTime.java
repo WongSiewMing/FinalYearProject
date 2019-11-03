@@ -241,7 +241,7 @@ public class EditAvailableTime extends Fragment {
 
                 RequestQueue queue = Volley.newRequestQueue(getActivity());
                 //http://192.168.0.103/raindown/getAvailableTimeList.php?studentID=17wmr05969
-                JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Constant.serverFile + "getAvailableTimeList.php?studentID=" + Navigation.student.getStudentID(),
+                JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Constant.serverFile + "getAvailableTimeList.php?studentID=" + UpdateNavigation.student.getStudentID(),
                         new Response.Listener<JSONArray>() {
                             @Override
                             public void onResponse(JSONArray response) {
@@ -373,7 +373,7 @@ public class EditAvailableTime extends Fragment {
         try {
             command = "{\"command\": \"303035303059\", \"reserve\": \"303030303030303030303030303030303030303030303030\", " +
                     "\"availableID\": " + "\"" + Conversion.asciiToHex(newAvailableID) + "\" ," +
-                    "\"studentID\": " + "\"" + Conversion.asciiToHex(Navigation.student.getStudentID()) + "\" ," +
+                    "\"studentID\": " + "\"" + Conversion.asciiToHex(UpdateNavigation.student.getStudentID()) + "\" ," +
                     "\"availableDate\": " + "\"" + Conversion.asciiToHex(dayOfWeek.getSelectedItem().toString().trim()) + "\" ," +
                     "\"startTime\": " + "\"" + Conversion.asciiToHex(startTime.getText().toString().trim()) + "\" ," +
                     "\"endTime\": " + "\"" + Conversion.asciiToHex(endTime.getText().toString().trim()) + "\" }";
@@ -398,7 +398,7 @@ public class EditAvailableTime extends Fragment {
 
             //http://192.168.0.103/raindown/insertAvailableTime.php?availableID=avai1002&studentID=17WMR05969&availableDate=Thursday&startTime=0300&endTime=0625
             insertAvailableTimeUrl = Constant.serverFile + "insertAvailableTime.php?availableID=" + newAvailableID
-                    + "&studentID=" + Navigation.student.getStudentID()
+                    + "&studentID=" + UpdateNavigation.student.getStudentID()
                     + "&availableDate=" + dayOfWeek.getSelectedItem().toString().trim()
                     + "&startTime=" + newStartTimeFormat
                     + "&endTime=" + newEndTimeFormat;
@@ -424,7 +424,7 @@ public class EditAvailableTime extends Fragment {
 
                                     if (success.equals("1")) {
                                         arrayAvailableTime.add(new AvailableTimeOB(newAvailableID,
-                                                Navigation.student.getStudentID(),
+                                                UpdateNavigation.student.getStudentID(),
                                                 dayOfWeek.getSelectedItem().toString().trim(),
                                                 newStartTimeFormat,
                                                 newEndTimeFormat,
@@ -477,7 +477,7 @@ public class EditAvailableTime extends Fragment {
                     protected Map<String, String> getParams() {
                         Map<String, String> params = new HashMap<>();
                         params.put("availableID", newAvailableID);
-                        params.put("studentID", Navigation.student.getStudentID());
+                        params.put("studentID", UpdateNavigation.student.getStudentID());
                         params.put("availableDate", dayOfWeek.getSelectedItem().toString().trim());
                         params.put("startTime", newStartTimeFormat);
                         params.put("endTime", newEndTimeFormat);

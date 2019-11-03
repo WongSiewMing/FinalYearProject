@@ -153,7 +153,7 @@ public class MakeAppointment extends Fragment {
 
                     myjsonObj = new JSONObject(mqttMessage.toString());
                     if (myjsonObj.getString("command").equals("30303530305D")){
-                        if (Conversion.hexToAscii(myjsonObj.getString("studentID")).equals(Navigation.student.getStudentID())){
+                        if (Conversion.hexToAscii(myjsonObj.getString("studentID")).equals(UpdateNavigation.student.getStudentID())){
                             Log.d(TAG, "Message received!");
                             availableDayOfWeek.setText(Conversion.hexToAscii(myjsonObj.getString("availableDayOfWeek")));
                             meetDate.setText(Conversion.hexToAscii(myjsonObj.getString("availableDate")));
@@ -294,7 +294,7 @@ public class MakeAppointment extends Fragment {
         try {
             command = "{\"command\": \"30303530305E\", \"reserve\": \"303030303030303030303030303030303030303030303030\", " +
                     "\"appointmentID\": " + "\"" + Conversion.asciiToHex(newAppointmentID) + "\" ," +
-                    "\"studentID\": " + "\"" + Conversion.asciiToHex(Navigation.student.getStudentID().trim()) + "\" ," +
+                    "\"studentID\": " + "\"" + Conversion.asciiToHex(UpdateNavigation.student.getStudentID().trim()) + "\" ," +
                     "\"availableID\": " + "\"" + myjsonObj.getString("availableID") + "\" ," +
                     "\"availableDate\": " + "\"" + myjsonObj.getString("availableDate") + "\" ," +
                     "\"stuffID\": " + "\"" + Conversion.asciiToHex(stuff.getStuffID()) + "\" ," +
@@ -304,7 +304,7 @@ public class MakeAppointment extends Fragment {
             pahoMqttClient.publishMessage(mqttAndroidClient, command, 1, "MY/TARUC/SSS/000000001/PUB");
 
             insertAppoinmentURL = Constant.serverFile + "insertAppointmentData.php?appointmentID=" + newAppointmentID
-                    + "&studentID=" + Navigation.student.getStudentID()
+                    + "&studentID=" + UpdateNavigation.student.getStudentID()
                     + "&availableID=" + Conversion.hexToAscii(myjsonObj.getString("availableID"))
                     + "&stuffID=" + stuff.getStuffID()
                     + "&opponentID=" + stuff.getStudentID().getStudentID()
@@ -338,8 +338,7 @@ public class MakeAppointment extends Fragment {
 //                                                        getFragmentManager().popBackStack();
                                                         btnMakeAppointment.setText("APPOINTMENT MADE");
                                                         btnMakeAppointment.setClickable(false);
-                                                        btnMakeAppointment.setFocusable(false
-                                                        );
+                                                        btnMakeAppointment.setFocusable(false);
 
                                                         break;
                                                 }
@@ -376,7 +375,7 @@ public class MakeAppointment extends Fragment {
                         Map<String, String> params = new HashMap<>();
                         try {
                         params.put("appointmentID", newAppointmentID);
-                        params.put("studentID", Navigation.student.getStudentID());
+                        params.put("studentID", UpdateNavigation.student.getStudentID());
                         params.put("availableID", Conversion.hexToAscii(myjsonObj.getString("availableID")));
                         params.put("stuffID", stuff.getStuffID());
                         params.put("opponentID", stuff.getStudentID().getStudentID());

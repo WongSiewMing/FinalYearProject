@@ -167,7 +167,9 @@ public class PrivateChatRoom2 extends Fragment {
                     if (jsonObj.getString("command").equals("303035303019")) {
                         arrayPrivateChatNew.add(new PrivateChat(Conversion.hexToAscii(jsonObj.getString("studentID")),
                                 Conversion.hexToAscii(jsonObj.getString("studentName")), Conversion.hexToAscii(jsonObj.getString("recipient")),
-                                Conversion.hexToAscii(jsonObj.getString("message")), Conversion.hexToAscii(jsonObj.getString("postDate")),
+                                Conversion.hexToAscii(jsonObj.getString("message")),
+                                Conversion.hexToAscii(jsonObj.getString("image")),
+                                Conversion.hexToAscii(jsonObj.getString("postDate")),
                                 Conversion.hexToAscii(jsonObj.getString("postTime"))));
                         newStudentID = Conversion.hexToAscii(jsonObj.getString("studentID"));
                         newRecipient = Conversion.hexToAscii(jsonObj.getString("recipient"));

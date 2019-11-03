@@ -173,6 +173,7 @@ public class MaintainStuff extends Fragment {
         });
 
         update = (ImageView) view.findViewById(R.id.update);
+
         update.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -588,7 +589,7 @@ public class MaintainStuff extends Fragment {
                                                                     }
                                                                     MainMenu mainMenu = new MainMenu();
                                                                     Bundle bundle= new Bundle();
-                                                                    bundle.putSerializable("MainMenu", Navigation.student);
+                                                                    bundle.putSerializable("MainMenu", UpdateNavigation.student);
                                                                     mainMenu.setArguments(bundle);
                                                                     fragmentManager = getFragmentManager();
                                                                     fragmentManager.beginTransaction()

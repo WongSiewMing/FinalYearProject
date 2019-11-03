@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -89,9 +90,9 @@ public class ChatRoomList_V2 extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActivity().setTitle("Chat Room");
+        getActivity().setTitle("Private Chat");
 
-    }
+        }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -99,7 +100,6 @@ public class ChatRoomList_V2 extends Fragment {
         view = inflater.inflate(R.layout.fragment_chat_room_list__v2, container, false);
         Bundle bundle = getArguments();
         s = (Student) bundle.getSerializable("chatRoomList_v2");
-//        Log.d(TAG, "Current User = " +s.getStudentName());
         UserID = UserSharedPreferences.read(UserSharedPreferences.userID, null);
         searchView = view.findViewById(R.id.search_user);
         search_userListrv = view.findViewById(R.id.search_userList);
@@ -111,8 +111,10 @@ public class ChatRoomList_V2 extends Fragment {
 
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
             @Override
             public boolean onQueryTextSubmit(String query) {
+
                 Log.d(TAG, "Message =" + query);
                 progressField.setVisibility(View.VISIBLE);
                 chatField.setVisibility(View.INVISIBLE);
@@ -145,10 +147,14 @@ public class ChatRoomList_V2 extends Fragment {
                 return true;
             }
         });
+
+
         pahoMqttClient = new PahoMqttClient();
         mqttAndroidClient = pahoMqttClient.getMqttClient(getContext(), Constant.serverUrl);
 
         mqttAndroidClient.setCallback(new MqttCallbackExtended() {
+
+
             @Override
             public void connectComplete(boolean reconnect, String serverURI) {
                 Log.d(TAG,"Mqtt responded!");
@@ -197,6 +203,7 @@ public class ChatRoomList_V2 extends Fragment {
                                         for (int i = 0; i < response.length(); i++) {
                                             JSONObject privatelistResponse = (JSONObject) response.get(i);
                                             privateChatList.add(new PrivateChatOB(privatelistResponse.getString("message"),
+                                                    privatelistResponse.getString("image"),
                                                     privatelistResponse.getString("postDate"),
                                                     privatelistResponse.getString("postTime"),
                                                     new Student(privatelistResponse.getString("studentID"),
@@ -256,7 +263,7 @@ public class ChatRoomList_V2 extends Fragment {
 
     private void populateSearchList(String query) {
         try {
-
+            Log.d(TAG, "Hi commentID responded");
             ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
             Boolean isConnected = networkInfo != null && networkInfo.isConnectedOrConnecting();
@@ -274,7 +281,7 @@ public class ChatRoomList_V2 extends Fragment {
                         encodedSearchText += URLEncoder.encode(s, "UTF-8");
                     }
                 }
-                //http://192.168.0.101/raindown/getSearchUser.php?searchText=Thian+Xin
+
                 searchUserUrl = Constant.serverFile + "getSearchUser.php?searchText=" + encodedSearchText;
                 Log.d(TAG, "Search user url = " + searchUserUrl);
 
@@ -285,7 +292,6 @@ public class ChatRoomList_V2 extends Fragment {
                             @Override
                             public void onResponse(JSONArray response) {
                                 try {
-                                    Log.d(TAG,"Responded!");
                                     searchList.clear();
                                     for (int i = 0; i< response.length(); i++){
                                         JSONObject searchResponse = (JSONObject) response.get(i);
