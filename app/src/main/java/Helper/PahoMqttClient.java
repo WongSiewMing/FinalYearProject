@@ -220,7 +220,7 @@ public class PahoMqttClient {
                 CountDownTimer countDownTimer = new CountDownTimer(3000, 1000) {
                     @Override
                     public void onTick(long millisUntilFinished) {
-                        chatStatus.setText("Message send successfully...");
+                        chatStatus.setText("Message send successfully.");
                     }
 
                     @Override

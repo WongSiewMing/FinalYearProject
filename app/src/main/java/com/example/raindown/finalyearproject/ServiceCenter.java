@@ -84,7 +84,7 @@ public class ServiceCenter extends Service {
                             privateChat = new PrivateChatOB(Conversion.hexToAscii(myjsonObj.getString("privateID")),Conversion.hexToAscii(myjsonObj.getString("studentID")),
                                     Conversion.hexToAscii(myjsonObj.getString("studentName")), Conversion.hexToAscii(myjsonObj.getString("recipient")),
                                     Conversion.hexToAscii(myjsonObj.getString("message")),
-                                    Conversion.hexToAscii(myjsonObj.getString("image")),
+                                    "empty",
                                     Conversion.hexToAscii(myjsonObj.getString("postDate")),
                                     Conversion.hexToAscii(myjsonObj.getString("postTime")));
                             notificationTitle = "New message from " + privateChat.getStudentName();

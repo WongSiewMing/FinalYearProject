@@ -1,5 +1,7 @@
 package Helper;
 
+import android.widget.ImageView;
+
 import java.io.Serializable;
 
 public class PrivateChatOB implements Serializable {
@@ -12,6 +14,7 @@ public class PrivateChatOB implements Serializable {
     private String postDate;
     private String postTime;
     private Student recipient2;
+    private ImageView temporaryImage;
 
     public PrivateChatOB(String priChatID, String studentID, String studentName, String recipient, String message, String image, String postDate, String postTime) {
         this.priChatID = priChatID;
@@ -20,6 +23,17 @@ public class PrivateChatOB implements Serializable {
         this.recipient = recipient;
         this.message = message;
         this.image = image;
+        this.postDate = postDate;
+        this.postTime = postTime;
+    }
+
+    public PrivateChatOB(String priChatID, String studentID, String studentName, String recipient, String message, ImageView temporaryImage, String postDate, String postTime) {
+        this.priChatID = priChatID;
+        this.studentID = studentID;
+        this.studentName = studentName;
+        this.recipient = recipient;
+        this.message = message;
+        this.temporaryImage = temporaryImage;
         this.postDate = postDate;
         this.postTime = postTime;
     }
@@ -62,6 +76,10 @@ public class PrivateChatOB implements Serializable {
 
     public String getImage(){
         return image;
+    }
+
+    public ImageView getTemporaryImage(){
+        return temporaryImage;
     }
 
     public String getPostDate() {

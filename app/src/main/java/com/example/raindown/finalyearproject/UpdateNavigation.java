@@ -120,7 +120,7 @@ public class UpdateNavigation extends AppCompatActivity implements NavigationVie
         UserSharedPreferences.write(UserSharedPreferences.userName, student.getStudentName());
         UserSharedPreferences.write(UserSharedPreferences.userPhoto, student.getPhoto());
         UserSharedPreferences.write(UserSharedPreferences.userProgramme, student.getStudentProgramme());
-        startService(new Intent(this, ServiceCenter.class));
+        startService(new Intent(UpdateNavigation.this, ServiceCenter.class));
 
     }
 
