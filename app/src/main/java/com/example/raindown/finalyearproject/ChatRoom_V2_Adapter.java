@@ -45,8 +45,8 @@ public class ChatRoom_V2_Adapter extends RecyclerView.Adapter {
     private static final int VIEW_TYPE_MESSAGE_RECEIVED = 2;
     private static final int VIEW_TYPE_IMAGE_SENT = 3;
     private static final int VIEW_TYPE_IMAGE_RECEIVED = 4;
-    private static final int VIEW_TYPE_TRMPORARY_IMAGE_SENT = 5;
-    private static final int VIEW_TYPE_TRMPORARY_IMAGE_RECEIVED = 6;
+    private static final int VIEW_TYPE_TEMPORARY_IMAGE_SENT = 5;
+    private static final int VIEW_TYPE_TEMPORARY_IMAGE_RECEIVED = 6;
 
     private static final String TAG = "ChatRoomAdapter";
     private String command;
@@ -70,6 +70,7 @@ public class ChatRoom_V2_Adapter extends RecyclerView.Adapter {
         String UserID = UserSharedPreferences.read(UserSharedPreferences.userID, null);
         String messageUserID = mData.get(position).getStudentID();
         String messageSent = mData.get(position).getMessage();
+        Log.d(TAG, messageSent);
         if (UserID.equals(messageUserID) && !messageSent.equals("[Image]") && !messageSent.equals("[Temporary Image]")){
             return VIEW_TYPE_MESSAGE_SENT;
         }else if (!UserID.equals(messageUserID) && !messageSent.equals("[Image]") && !messageSent.equals("[Temporary Image]")){
@@ -79,10 +80,12 @@ public class ChatRoom_V2_Adapter extends RecyclerView.Adapter {
         } else if (!UserID.equals(messageUserID) && messageSent.equals("[Image]")) {
             return VIEW_TYPE_IMAGE_RECEIVED;
         } else if (UserID.equals(messageUserID) && messageSent.equals("[Temporary Image]")){
-            return VIEW_TYPE_TRMPORARY_IMAGE_SENT;
-        } else {
-            return VIEW_TYPE_TRMPORARY_IMAGE_RECEIVED;
+            return VIEW_TYPE_TEMPORARY_IMAGE_SENT;
+        } else if (!UserID.equals(messageUserID) && messageSent.equals("[Temporary Image]")){
+            return VIEW_TYPE_TEMPORARY_IMAGE_RECEIVED;
         }
+
+        return 0;
     }
 
     @Override
@@ -101,12 +104,12 @@ public class ChatRoom_V2_Adapter extends RecyclerView.Adapter {
         } else if (viewType == VIEW_TYPE_IMAGE_RECEIVED){
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_receive_image_cardview, parent, false);
             return new ReceivedImageHolder(view);
-        } else if (viewType == VIEW_TYPE_TRMPORARY_IMAGE_SENT) {
+        } else if (viewType == VIEW_TYPE_TEMPORARY_IMAGE_SENT) {
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.temporary_sender_image, parent, false);
-            return new ReceivedImageHolder(view);
-        } else if (viewType == VIEW_TYPE_TRMPORARY_IMAGE_RECEIVED) {
+            return new SentTemporaryImageHolder(view);
+        } else if (viewType == VIEW_TYPE_TEMPORARY_IMAGE_RECEIVED) {
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.temporary_receive_image, parent, false);
-            return new ReceivedImageHolder(view);
+            return new ReceivedTemporaryImageHolder(view);
         }
 
         return null;
@@ -129,10 +132,10 @@ public class ChatRoom_V2_Adapter extends RecyclerView.Adapter {
             case VIEW_TYPE_IMAGE_RECEIVED :
                 ((ReceivedImageHolder) holder).bind(message);
                 break;
-            case VIEW_TYPE_TRMPORARY_IMAGE_SENT :
+            case VIEW_TYPE_TEMPORARY_IMAGE_SENT :
                 ((SentTemporaryImageHolder) holder).bind(message);
                 break;
-            case VIEW_TYPE_TRMPORARY_IMAGE_RECEIVED :
+            case VIEW_TYPE_TEMPORARY_IMAGE_RECEIVED :
                 ((ReceivedTemporaryImageHolder) holder).bind(message);
                 break;
         }

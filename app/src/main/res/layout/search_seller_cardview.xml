@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="120dp"
+    android:id="@+id/SearchSellerCardView"
+    android:clickable="true"
+    android:focusable="true">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/search_seller_photo"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:src="@mipmap/icon_student"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="5dp"
+            android:layout_marginLeft="30dp"
+            android:padding="10dp"
+            android:layout_marginTop="10dp"/>
+
+        <TextView
+            android:id="@+id/search_seller_name"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toEndOf="@+id/search_seller_photo"
+            android:fontFamily="sans-serif-smallcaps"
+            android:text="Seller Name"
+            android:gravity="center_vertical"
+            android:layout_marginStart="10dp"
+            android:textSize="20dp"
+            android:textColor="@color/black"/>
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>

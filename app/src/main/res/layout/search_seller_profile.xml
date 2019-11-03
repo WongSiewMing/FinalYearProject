@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SearchSeller"
+    android:background="@drawable/background">
+
+    <android.support.v7.widget.SearchView
+        android:id="@+id/search_seller"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true" />
+
+    <TextView
+        android:id="@+id/noSellerFound"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No seller found"
+        android:textStyle="bold"
+        android:fontFamily="sans-serif-smallcaps"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:layout_centerInParent="true"
+        android:visibility="gone"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/search_sellerList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/search_seller">
+
+    </android.support.v7.widget.RecyclerView>
+
+    <TextView
+        android:id="@+id/findSeller"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Search a seller to create a trade"
+        android:textStyle="bold"
+        android:fontFamily="sans-serif-smallcaps"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:layout_centerInParent="true" />
+
+    <RelativeLayout
+        android:id="@+id/sellerProgressField"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/search_seller"
+        android:visibility="gone">
+        <TextView
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Searching..."
+            android:layout_marginStart="15dp"/>
+
+        <ProgressBar
+            android:id="@+id/sellerProgressBar"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginEnd="10dp"/>
+
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/searchImage"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_above="@+id/findSeller"
+        android:layout_alignStart="@+id/findSeller"
+        android:layout_alignEnd="@+id/findSeller"
+        android:layout_marginStart="110dp"
+        android:layout_marginEnd="116dp"
+        android:layout_marginBottom="18dp"
+        android:src="@mipmap/icon_search" />
+
+    <ImageView
+        android:id="@+id/noSeller"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_above="@+id/noSellerFound"
+        android:layout_alignStart="@+id/noSellerFound"
+        android:layout_alignEnd="@+id/noSellerFound"
+        android:layout_marginStart="43dp"
+        android:layout_marginEnd="41dp"
+        android:layout_marginBottom="22dp"
+        android:src="@mipmap/icon_info"
+        android:visibility="gone"/>
+
+</RelativeLayout>
