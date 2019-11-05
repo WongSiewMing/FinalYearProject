@@ -25,6 +25,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -94,8 +96,7 @@ public class RegisterStore extends Fragment {
     private EditText registerStoreName, registerStoreDescription, registerStoreLocation;
     private Spinner registerStoreCategory;
     private TextView registerOpenTime, registerCloseTime, openText, closeText;
-    private FloatingActionButton submitRegister;
-    private Button AddRow, SelectStuff;
+    private Button AddRow, submitRegister;
     private MqttAndroidClient mqttAndroidClient;
     private PahoMqttClient pahoMqttClient;
     FragmentManager fragmentManager;
@@ -106,11 +107,14 @@ public class RegisterStore extends Fragment {
     private JSONObject jsonObj;
     private Uri uri;
     private Intent cameraIntent, photoPickerIntent, CropIntent;
-    private List<Stuff> stuffList = new ArrayList<>();
+    private ArrayList<Stuff> stuffList = new ArrayList<>();
 
     private Bitmap cameraImage;
-    private int rowA = 0;
     private String userID = "";
+
+    private RecyclerView mRecycleView;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
 
     View view;
 
@@ -121,6 +125,8 @@ public class RegisterStore extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getActivity().setTitle("Register Store");
+
+
     }
 
     @Override
@@ -140,11 +146,9 @@ public class RegisterStore extends Fragment {
         registerStoreCategory = view.findViewById(R.id.register_StoreCategory);
         registerOpenTime = view.findViewById(R.id.register_StoreOpenTime);
         registerCloseTime = view.findViewById(R.id.register_StoreCloseTime);
-        submitRegister = view.findViewById(R.id.register_store);
+        submitRegister = view.findViewById(R.id.btnRegisterStore);
         openText = view.findViewById(R.id.openText);
         closeText = view.findViewById(R.id.closeText);
-
-        SelectStuff = view.findViewById(R.id.btnSelectStuff);
 
         ArrayAdapter<CharSequence> adapterStoreCategory = ArrayAdapter.createFromResource(getActivity().getBaseContext(), R.array.storeCategorySpinner,
                 android.R.layout.simple_spinner_dropdown_item);
@@ -241,7 +245,7 @@ public class RegisterStore extends Fragment {
             }
         });
 
-        submitRegister = view.findViewById(R.id.register_store);
+        submitRegister = view.findViewById(R.id.btnRegisterStore);
         submitRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -260,6 +264,7 @@ public class RegisterStore extends Fragment {
 
             }
         });
+
         pahoMqttClient = new PahoMqttClient();
         mqttAndroidClient = pahoMqttClient.getMqttClient(getContext(), Constant.serverUrl);
 
@@ -270,7 +275,13 @@ public class RegisterStore extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState){
         super.onActivityCreated(savedInstanceState);
 
-        final LinearLayout stuffLinearLayout = view.findViewById(R.id.stuffLL);
+        mRecycleView = view.findViewById(R.id.stuffLL);
+        mRecycleView.setHasFixedSize(true);
+        mLayoutManager = new LinearLayoutManager(getActivity());
+        mAdapter = new StoreStuffAdapter(stuffList);
+        mRecycleView.setLayoutManager(mLayoutManager);
+        mRecycleView.setAdapter(mAdapter);
+
         AddRow = view.findViewById(R.id.btnAddRow);
 
         AddRow.setOnClickListener(new View.OnClickListener() {
@@ -290,23 +301,6 @@ public class RegisterStore extends Fragment {
 
             }
         });
-        if (!stuffList.isEmpty()){
-            LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            final View rowView = inflater.inflate(R.layout.storestufflist, null);
-            ImageView stuffImage = (ImageView)rowView.findViewById(R.id.StuffImageView);
-            TextView stuffNum = (TextView)rowView.findViewById(R.id.txtStuffNum);
-            TextView stuffName = (TextView)rowView.findViewById(R.id.txtStuffName);
-            TextView stuffPrice = (TextView)rowView.findViewById(R.id.txtStuffPrice);
-            rowA++;
-            stuffNum.setText(rowA + ".");
-            stuffName.setId(rowA);
-            stuffName.setText(stuffList.get(rowA - 1).getStuffName());
-            stuffPrice.setText(Double.toString(stuffList.get(rowA - 1).getStuffPrice()));
-            Picasso.with(getActivity()).load(stuffList.get(rowA-1).getStuffImage()).memoryPolicy(MemoryPolicy.NO_CACHE).networkPolicy(NetworkPolicy.NO_CACHE).into(stuffImage);
-            Toast.makeText(getActivity().getApplication(), "Row Added : " + stuffName.getId(), Toast.LENGTH_LONG).show();
-            stuffLinearLayout.addView(rowView, stuffLinearLayout.getChildCount() - 1);
-        }
-
     }
 
     @Override

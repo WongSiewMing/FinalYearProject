@@ -69,7 +69,6 @@ public class StuffBasicInfoRecycleViewAdapter extends RecyclerView.Adapter<Stuff
                 selectedStuffID.setText(mData.get(position).getStuffID());
                 selectedStuffField.setVisibility(View.VISIBLE);
 
-
                 dialog.dismiss();
             }
         });
