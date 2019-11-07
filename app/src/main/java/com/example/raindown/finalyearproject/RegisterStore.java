@@ -96,7 +96,7 @@ public class RegisterStore extends Fragment {
     private EditText registerStoreName, registerStoreDescription, registerStoreLocation;
     private Spinner registerStoreCategory;
     private TextView registerOpenTime, registerCloseTime, openText, closeText;
-    private Button AddRow, submitRegister;
+    private Button AddRow, submitRegister, btnEdit, btnRemove;
     private MqttAndroidClient mqttAndroidClient;
     private PahoMqttClient pahoMqttClient;
     FragmentManager fragmentManager;
@@ -275,12 +275,7 @@ public class RegisterStore extends Fragment {
 
     public void removeItem(int position){
         stuffList.remove(position);
-        mAdapter.notifyItemRemoved(position);
-    }
-
-    public void changeItem(int position, Stuff stuff){
-        stuffList.set(position, stuff);
-        mAdapter.notifyItemChanged(position);
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -288,6 +283,8 @@ public class RegisterStore extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         mRecycleView = view.findViewById(R.id.stuffLL);
+        btnEdit = view.findViewById(R.id.btnEdit);
+        btnRemove = view.findViewById(R.id.btnRemove);
         mRecycleView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(getActivity());
         mAdapter = new StoreStuffAdapter(stuffList);

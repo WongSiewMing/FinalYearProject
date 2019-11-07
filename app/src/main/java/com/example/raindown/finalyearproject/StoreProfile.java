@@ -3,6 +3,7 @@ package com.example.raindown.finalyearproject;
    Programme : RSD3
    Year : 2018*/
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -60,6 +61,7 @@ public class StoreProfile extends Fragment{
     private TextView shopName, avgRating, openTime, closeTime, condition, storeDescription, ratDrscription, popRating, ratSummary, storeLocation;
     private ImageView shopImage, back;
     private Button editProfile, viewReview, btnEdit, btnRemove;
+    private ProgressDialog pDialog = null;
     private String selectedStoreID, ratingTotalNum, currentTime, UserID;
     private Dialog popUpRating;
     FragmentManager fragmentManager;
@@ -101,6 +103,7 @@ public class StoreProfile extends Fragment{
         storeLocation = view.findViewById(R.id.storeLocation);
         back = view.findViewById(R.id.back);
         progressBar = view.findViewById(R.id.progressBar);
+        pDialog = new ProgressDialog(getActivity());
         body = view.findViewById(R.id.body);
         back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -122,16 +125,6 @@ public class StoreProfile extends Fragment{
         currentTime = sdf.format(d);
         //make changes here (populate)
         populateStoreInfo();
-
-
-        mRecycleView = view.findViewById(R.id.storeprofilestuffLL);
-        btnEdit = view.findViewById(R.id.btnEdit);
-        btnRemove = view.findViewById(R.id.btnRemove);
-        mRecycleView.setHasFixedSize(true);
-        mLayoutManager = new LinearLayoutManager(getActivity());
-        mAdapter = new StoreStuffAdapter(stuffList);
-        mRecycleView.setLayoutManager(mLayoutManager);
-        mRecycleView.setAdapter(mAdapter);
         populateStoreStuffListInfo();
 
 
@@ -208,7 +201,6 @@ public class StoreProfile extends Fragment{
                 ratDrscription = popUpRating.findViewById(R.id.ratingDescription);
                 popRating = popUpRating.findViewById(R.id.popRating);
                 ratSummary = popUpRating.findViewById(R.id.ratingsummary);
-
 
                 try {
                     ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -383,74 +375,87 @@ public class StoreProfile extends Fragment{
     private void populateStoreStuffListInfo() {
         command = "{\"command\": \"303035303087\", \"reserve\": \"303030303030303030303030303030303030303030303030\", " +
                 "\"storeID\": " + "\"" + Conversion.asciiToHex(selectedStoreID) + "\"}";
-
-        try {
+        try{
             ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
             Boolean isConnected = networkInfo != null && networkInfo.isConnectedOrConnecting();
-            if (isConnected) {
-                try {
-                    RequestQueue queue = Volley.newRequestQueue(getActivity());
-                    Log.d(TAG,"Populated Stuff List 1  = " + selectedStoreID);
+            Log.d(TAG, "populateStoreStuffListInfo 1");
 
-                    jsonObj = new JSONObject(command);
-                    if (jsonObj.getString("command").equals("303035303087")) {
-                        Log.d(TAG,"Populated Stuff List 2");
-                        JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Constant.serverFile + "getStoreStuffList.php?storeID=" + selectedStoreID,
-                                new Response.Listener<JSONArray>() {
-                                    @Override
-                                    public void onResponse(JSONArray response) {
-                                        try {
-                                            Log.d(TAG,"Populated Stuff List 3");
-                                            JSONObject myStuffResponse = null;
-                                            stuffList.clear();
-                                            for (int i = 0; i < response.length(); i++){
-                                                myStuffResponse = (JSONObject) response.get(i);
-                                                stuffList.add(new Stuff(myStuffResponse.getString("stuffID"), new Student(myStuffResponse.getString("studentID"),
-                                                        myStuffResponse.getString("clientID"), myStuffResponse.getString("photo"), myStuffResponse.getString("studentName"),
-                                                        myStuffResponse.getString("icNo"), myStuffResponse.getString("studentProgramme"), myStuffResponse.getString("studentFaculty"),
-                                                        myStuffResponse.getInt("yearOfStudy")), myStuffResponse.getString("stuffName"), myStuffResponse.getString("stuffImage"),
-                                                        myStuffResponse.getString("stuffDescription"), myStuffResponse.getString("stuffCategory"), myStuffResponse.getString("stuffCondition"),
-                                                        myStuffResponse.getDouble("stuffPrice"), myStuffResponse.getInt("stuffQuantity"), myStuffResponse.getString("validStartDate"),
-                                                        myStuffResponse.getString("validEndDate"), myStuffResponse.getString("stuffStatus")));
-                                                Log.d(TAG,"Stuff ID = " + stuffList.get(i).getStuffID());
-                                            }
-                                            Log.d(TAG,"Stuff list size = " + stuffList.size());
+            if (isConnected){
+                RequestQueue queue = Volley.newRequestQueue(getActivity());
+                if (!pDialog.isShowing()){
+                    pDialog.setMessage("Sync with server...");
+                }
+                pDialog.show();
+                Log.d(TAG, "populateStoreStuffListInfo 2");
+                jsonObj = new JSONObject(command);
+                if (jsonObj.getString("command").equals("303035303087")){
+                    Log.d(TAG, "populateStoreStuffListInfo 3 = " + selectedStoreID);
+                    JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Constant.serverFile + "getStoreStuffList.php?storeID=" + selectedStoreID,
+                            new Response.Listener<JSONArray>() {
+                        @Override
+                        public void onResponse(JSONArray response) {
+                            Log.d(TAG, "populateStoreStuffListInfo 4");
+                            try {
+                                stuffList.clear();
+                                for (int i = 0; i < response.length(); i++) {
+                                    JSONObject myStuffResponse = (JSONObject) response.get(i);
+                                    Log.d(TAG, "Stuff ID fetched (Response) =" + myStuffResponse.getString("stuffID"));
+                                    stuffList.add(new Stuff(myStuffResponse.getString("stuffID"), new Student(myStuffResponse.getString("studentID"),
+                                            myStuffResponse.getString("clientID"), myStuffResponse.getString("photo"), myStuffResponse.getString("studentName"),
+                                            myStuffResponse.getString("icNo"), myStuffResponse.getString("studentProgramme"), myStuffResponse.getString("studentFaculty"),
+                                            myStuffResponse.getInt("yearOfStudy")), myStuffResponse.getString("stuffName"), myStuffResponse.getString("stuffImage"),
+                                            myStuffResponse.getString("stuffDescription"), myStuffResponse.getString("stuffCategory"), myStuffResponse.getString("stuffCondition"),
+                                            myStuffResponse.getDouble("stuffPrice"), myStuffResponse.getInt("stuffQuantity"), myStuffResponse.getString("validStartDate"),
+                                            myStuffResponse.getString("validEndDate"), myStuffResponse.getString("stuffStatus")));
+                                    Log.d(TAG, "Stuff ID fetched (stuffList) =" + stuffList.get(i).getStuffID());
+                                }
 
-                                        }catch (Exception e){
-                                            Log.d(TAG,"Error Stuff List = " + e.getMessage());
-                                        }
-                                        mAdapter.notifyDataSetChanged();
-                                        Log.d(TAG,"Populated Stuff List 4");
+                                if (pDialog.isShowing()) {
+                                    pDialog.dismiss();
+                                }
 
+                                populateStuffAdapterView();
+                            } catch (Exception e) {
+
+                            }
+                        }
+                    },
+                            new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError volleyError) {
+                                    if (pDialog.isShowing()){
+                                        pDialog.dismiss();
                                     }
-                                },
-                                new Response.ErrorListener() {
-                                    @Override
-                                    public void onErrorResponse(VolleyError volleyError) {
-                                    }
-                                });
-                        queue.add(jsonObjectRequest);
-                    }
-
-                } catch (Exception e) {
-                    Toast.makeText(getActivity().getApplication(),
-                            "Error reading record:" + e.getMessage(),
-                            Toast.LENGTH_LONG).show();
+                                }
+                            });
+                    queue.add(jsonObjectRequest);
                 }
 
             } else {
-                Toast.makeText(getActivity().getApplication(), "Network is NOT available",
-                        Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity().getApplication(), "Network is NOT available", Toast.LENGTH_LONG).show();
             }
-        } catch (Exception e) {
-            Toast.makeText(getActivity().getApplication(),
-                    "Error reading record:" + e.getMessage(),
-                    Toast.LENGTH_LONG).show();
+
+        } catch (Exception e){
+            Toast.makeText(getActivity().getApplication(), "Error Reading Record : " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
-
-
     }
+
+    private void populateStuffAdapterView(){
+        Log.d(TAG, "populateStuffAdapter 1");
+        mRecycleView = view.findViewById(R.id.storeProfileStuffLL);
+        btnEdit = view.findViewById(R.id.btnEdit);
+        btnRemove = view.findViewById(R.id.btnRemove);
+
+        mRecycleView.setHasFixedSize(true);
+        mLayoutManager = new LinearLayoutManager(getActivity());
+        mAdapter = new StoreStuffAdapter(stuffList);
+        mAdapter.hideButton(true);
+        mRecycleView.setAdapter(mAdapter);
+        mRecycleView.setLayoutManager(mLayoutManager);
+    }
+
+
 
     private void populateView() {
         String a = storeProfile.get(0).getStudentID();

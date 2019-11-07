@@ -21,6 +21,7 @@ import Helper.Stuff;
 public class StoreStuffAdapter extends RecyclerView.Adapter<StoreStuffAdapter.StoreStuffViewHolder> {
     private ArrayList<Stuff> mStuffList;
     private OnItemClickListener mListener;
+    private Boolean hide = false;
 
     public interface OnItemClickListener {
         void onItemClick(int position);
@@ -73,8 +74,11 @@ public class StoreStuffAdapter extends RecyclerView.Adapter<StoreStuffAdapter.St
                 }
             });
         }
+    }
 
-
+    public void hideButton(boolean hide){
+        this.hide = hide;
+        notifyDataSetChanged();
     }
 
     public StoreStuffAdapter(ArrayList<Stuff> stuffList){
@@ -96,6 +100,12 @@ public class StoreStuffAdapter extends RecyclerView.Adapter<StoreStuffAdapter.St
         Picasso.with(holder.itemView.getContext()).load(currentStuff.getStuffImage()).memoryPolicy(MemoryPolicy.NO_CACHE).networkPolicy(NetworkPolicy.NO_CACHE).into(holder.StuffImageView);
         holder.txtStuffName.setText(currentStuff.getStuffName());
         holder.txtStuffPrice.setText(String.format("RM %.2f", currentStuff.getStuffPrice()));
+
+        if (hide){
+            holder.btnRemove.setVisibility(View.GONE);
+            holder.btnEdit.setVisibility(View.GONE);
+        }
+
     }
 
     @Override
