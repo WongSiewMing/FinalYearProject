@@ -5,6 +5,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -12,29 +14,67 @@ import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 
 import Helper.Stuff;
 
 public class StoreStuffAdapter extends RecyclerView.Adapter<StoreStuffAdapter.StoreStuffViewHolder> {
     private ArrayList<Stuff> mStuffList;
+    private OnItemClickListener mListener;
+
+    public interface OnItemClickListener {
+        void onItemClick(int position);
+        void onDeleteClick(int position);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener){
+        mListener = listener;
+    }
 
     public static class StoreStuffViewHolder extends RecyclerView.ViewHolder{
         public TextView txtStuffNum;
         public ImageView StuffImageView;
         public TextView txtStuffName;
         public TextView txtStuffPrice;
+        public Button btnEdit;
+        public Button btnRemove;
 
-        public StoreStuffViewHolder(View itemView) {
+        public StoreStuffViewHolder(View itemView, final OnItemClickListener listener) {
             super(itemView);
 
             txtStuffNum = itemView.findViewById(R.id.txtStuffNum);
             StuffImageView = itemView.findViewById(R.id.StuffImageView);
             txtStuffName= itemView.findViewById(R.id.txtStuffName);
             txtStuffPrice = itemView.findViewById(R.id.txtStuffPrice);
+            btnEdit = itemView.findViewById(R.id.btnEdit);
+            btnRemove = itemView.findViewById(R.id.btnRemove);
+
+            btnEdit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (listener != null){
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION){
+                            listener.onItemClick(position);
+                        }
+                    }
+                }
+            });
+
+            btnRemove.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (listener != null){
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION){
+                            listener.onDeleteClick(position);
+                        }
+                    }
+                }
+            });
         }
+
+
     }
 
     public StoreStuffAdapter(ArrayList<Stuff> stuffList){
@@ -44,7 +84,7 @@ public class StoreStuffAdapter extends RecyclerView.Adapter<StoreStuffAdapter.St
     @Override
     public StoreStuffViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.storestufflist, parent, false);
-        StoreStuffViewHolder ssvh = new StoreStuffViewHolder(v);
+        StoreStuffViewHolder ssvh = new StoreStuffViewHolder(v, mListener);
         return ssvh;
     }
 

@@ -14,6 +14,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -48,6 +50,8 @@ import Helper.Constant;
 import Helper.Conversion;
 import Helper.PahoMqttClient;
 import Helper.StoreOB;
+import Helper.Student;
+import Helper.Stuff;
 
 
 public class StoreProfile extends Fragment{
@@ -55,7 +59,7 @@ public class StoreProfile extends Fragment{
     List<StoreOB> storeProfile;
     private TextView shopName, avgRating, openTime, closeTime, condition, storeDescription, ratDrscription, popRating, ratSummary, storeLocation;
     private ImageView shopImage, back;
-    private Button editProfile, viewReview;
+    private Button editProfile, viewReview, btnEdit, btnRemove;
     private String selectedStoreID, ratingTotalNum, currentTime, UserID;
     private Dialog popUpRating;
     FragmentManager fragmentManager;
@@ -66,6 +70,12 @@ public class StoreProfile extends Fragment{
     private Double totalRate, avgRate;
     private ProgressBar progressBar;
     private RelativeLayout body;
+
+    private RecyclerView mRecycleView;
+    private StoreStuffAdapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
+
+    private ArrayList<Stuff> stuffList = new ArrayList<>();
 
     private static final String TAG = "StoreProfile";
 
@@ -101,8 +111,6 @@ public class StoreProfile extends Fragment{
         UserID = UserSharedPreferences.read(UserSharedPreferences.userID, null);
         Log.d(TAG, "User ID =" + UserID);
 
-
-
         shopName.setText(UserSharedPreferences.read(UserSharedPreferences.userName, null));
         storeProfile = new ArrayList<>();
         Bundle bundle = getArguments();
@@ -113,7 +121,19 @@ public class StoreProfile extends Fragment{
         SimpleDateFormat sdf = new SimpleDateFormat("HHmm");
         currentTime = sdf.format(d);
         //make changes here (populate)
-          populateStoreInfo();
+        populateStoreInfo();
+
+
+        mRecycleView = view.findViewById(R.id.storeprofilestuffLL);
+        btnEdit = view.findViewById(R.id.btnEdit);
+        btnRemove = view.findViewById(R.id.btnRemove);
+        mRecycleView.setHasFixedSize(true);
+        mLayoutManager = new LinearLayoutManager(getActivity());
+        mAdapter = new StoreStuffAdapter(stuffList);
+        mRecycleView.setLayoutManager(mLayoutManager);
+        mRecycleView.setAdapter(mAdapter);
+        populateStoreStuffListInfo();
+
 
         pahoMqttClient = new PahoMqttClient();
         mqttAndroidClient = pahoMqttClient.getMqttClient(getActivity(), Constant.serverUrl);
@@ -124,6 +144,7 @@ public class StoreProfile extends Fragment{
                 Log.d(TAG, "Mqtt Connected");
 
                 populateStoreInfo();
+                populateStoreStuffListInfo();
             }
 
             @Override
@@ -247,7 +268,6 @@ public class StoreProfile extends Fragment{
 
 
 
-
         return view;
     }
 
@@ -358,6 +378,78 @@ public class StoreProfile extends Fragment{
                     "Error reading record:" + e.getMessage(),
                     Toast.LENGTH_LONG).show();
         }
+    }
+
+    private void populateStoreStuffListInfo() {
+        command = "{\"command\": \"303035303087\", \"reserve\": \"303030303030303030303030303030303030303030303030\", " +
+                "\"storeID\": " + "\"" + Conversion.asciiToHex(selectedStoreID) + "\"}";
+
+        try {
+            ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+            Boolean isConnected = networkInfo != null && networkInfo.isConnectedOrConnecting();
+            if (isConnected) {
+                try {
+                    RequestQueue queue = Volley.newRequestQueue(getActivity());
+                    Log.d(TAG,"Populated Stuff List 1  = " + selectedStoreID);
+
+                    jsonObj = new JSONObject(command);
+                    if (jsonObj.getString("command").equals("303035303087")) {
+                        Log.d(TAG,"Populated Stuff List 2");
+                        JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Constant.serverFile + "getStoreStuffList.php?storeID=" + selectedStoreID,
+                                new Response.Listener<JSONArray>() {
+                                    @Override
+                                    public void onResponse(JSONArray response) {
+                                        try {
+                                            Log.d(TAG,"Populated Stuff List 3");
+                                            JSONObject myStuffResponse = null;
+                                            stuffList.clear();
+                                            for (int i = 0; i < response.length(); i++){
+                                                myStuffResponse = (JSONObject) response.get(i);
+                                                stuffList.add(new Stuff(myStuffResponse.getString("stuffID"), new Student(myStuffResponse.getString("studentID"),
+                                                        myStuffResponse.getString("clientID"), myStuffResponse.getString("photo"), myStuffResponse.getString("studentName"),
+                                                        myStuffResponse.getString("icNo"), myStuffResponse.getString("studentProgramme"), myStuffResponse.getString("studentFaculty"),
+                                                        myStuffResponse.getInt("yearOfStudy")), myStuffResponse.getString("stuffName"), myStuffResponse.getString("stuffImage"),
+                                                        myStuffResponse.getString("stuffDescription"), myStuffResponse.getString("stuffCategory"), myStuffResponse.getString("stuffCondition"),
+                                                        myStuffResponse.getDouble("stuffPrice"), myStuffResponse.getInt("stuffQuantity"), myStuffResponse.getString("validStartDate"),
+                                                        myStuffResponse.getString("validEndDate"), myStuffResponse.getString("stuffStatus")));
+                                                Log.d(TAG,"Stuff ID = " + stuffList.get(i).getStuffID());
+                                            }
+                                            Log.d(TAG,"Stuff list size = " + stuffList.size());
+
+                                        }catch (Exception e){
+                                            Log.d(TAG,"Error Stuff List = " + e.getMessage());
+                                        }
+                                        mAdapter.notifyDataSetChanged();
+                                        Log.d(TAG,"Populated Stuff List 4");
+
+                                    }
+                                },
+                                new Response.ErrorListener() {
+                                    @Override
+                                    public void onErrorResponse(VolleyError volleyError) {
+                                    }
+                                });
+                        queue.add(jsonObjectRequest);
+                    }
+
+                } catch (Exception e) {
+                    Toast.makeText(getActivity().getApplication(),
+                            "Error reading record:" + e.getMessage(),
+                            Toast.LENGTH_LONG).show();
+                }
+
+            } else {
+                Toast.makeText(getActivity().getApplication(), "Network is NOT available",
+                        Toast.LENGTH_LONG).show();
+            }
+        } catch (Exception e) {
+            Toast.makeText(getActivity().getApplication(),
+                    "Error reading record:" + e.getMessage(),
+                    Toast.LENGTH_LONG).show();
+        }
+
+
     }
 
     private void populateView() {
