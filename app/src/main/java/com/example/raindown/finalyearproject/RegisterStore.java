@@ -100,8 +100,9 @@ public class RegisterStore extends Fragment {
     private MqttAndroidClient mqttAndroidClient;
     private PahoMqttClient pahoMqttClient;
     FragmentManager fragmentManager;
-    private String command = "", currentStoreID, currentStoreStuffID ,newStoreID, newStoreStuffID, addStoreUrl, addStuffUrl;
-    private boolean retrievedStoreStuffID = false;
+    private String command = "", currentStoreID,newStoreID, addStoreUrl, addStuffUrl;
+    private String currentStoreStuffID, newStoreStuffID;
+    private boolean retrievedStoreStuffID = false, storeStuffIDExist = false;
     private SimpleDateFormat sdf;
     private TimePickerDialog timePickerDialog;
     private ProgressDialog pDialog = null;
@@ -119,7 +120,7 @@ public class RegisterStore extends Fragment {
 
     View view;
 
-    private static final String TAG = "testData";
+    private static final String TAG = "RegisterStore";
 
 
     @Override
@@ -294,6 +295,16 @@ public class RegisterStore extends Fragment {
         mAdapter.setOnItemClickListener(new StoreStuffAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
+                //Leave here empty
+            }
+
+            @Override
+            public void onDeleteClick(int position) {
+                removeItem(position);
+            }
+
+            @Override
+            public void onEditClick(int position){
                 Stuff clickedStuff = stuffList.get(position);
                 MaintainStuff frag = new MaintainStuff();
                 Bundle bundle = new Bundle();
@@ -305,11 +316,6 @@ public class RegisterStore extends Fragment {
                         .replace(R.id.update_fragmentHolder, frag)
                         .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                         .commit();
-            }
-
-            @Override
-            public void onDeleteClick(int position) {
-                removeItem(position);
             }
         });
 
@@ -556,10 +562,12 @@ public class RegisterStore extends Fragment {
                                     Log.d(TAG, "Current Store Stuff ID =" + currentStoreStuffID);
 
                                     if (retrievedStoreStuffID == true){
-                                        String first = newStoreStuffID.substring(0, 4);
-                                        String last = newStoreStuffID.substring(4);
-                                        int number = Integer.parseInt(last) + 1;
-                                        newStoreStuffID = first + Integer.toString(number);
+                                        do {
+                                            String first = newStoreStuffID.substring(0, 4);
+                                            String last = newStoreStuffID.substring(4);
+                                            int number = Integer.parseInt(last) + 1;
+                                            newStoreStuffID = first + Integer.toString(number);
+                                        } while (checkExistStoreStuffID());
                                         Log.d(TAG, "New Store Stuff ID =" + newStoreStuffID);
                                         insertStoreStuffList(stuffID, newStoreStuffID);
                                     } else{
@@ -569,10 +577,12 @@ public class RegisterStore extends Fragment {
                                             retrievedStoreStuffID = true;
                                             insertStoreStuffList(stuffID, newStoreStuffID);
                                         } else {
-                                            String first = currentStoreStuffID.substring(0, 4);
-                                            String last = currentStoreStuffID.substring(4);
-                                            int number = Integer.parseInt(last) + 1;
-                                            newStoreStuffID = first + Integer.toString(number);
+                                            do {
+                                                String first = newStoreStuffID.substring(0, 4);
+                                                String last = newStoreStuffID.substring(4);
+                                                int number = Integer.parseInt(last) + 1;
+                                                newStoreStuffID = first + Integer.toString(number);
+                                            } while (checkExistStoreStuffID());
                                             Log.d(TAG, "New Store Stuff ID =" + newStoreStuffID);
                                             retrievedStoreStuffID = true;
                                             insertStoreStuffList(stuffID, newStoreStuffID);
@@ -603,6 +613,78 @@ public class RegisterStore extends Fragment {
                     "Error reading record:" + e.getMessage(),
                     Toast.LENGTH_LONG).show();
         }
+    }
+
+    public Boolean checkExistStoreStuffID() {
+        try {
+            Log.d(TAG, "Check store stuff ID =" + newStoreStuffID);
+
+            command = "{\"command\": \"303035303089\", \"reserve\": \"303030303030303030303030303030303030303030303030\", " +
+                    "\"StoreStuffID\": " + "\"" + Conversion.asciiToHex(newStoreStuffID.trim()) + "\"}";
+
+            pahoMqttClient.publishMessage(mqttAndroidClient, command, 1, "MY/TARUC/SSS/000000001/PUB");
+
+            String encodedStoreStuffID = "";
+
+            jsonObj = new JSONObject(command);
+            if (jsonObj.getString("command").equals("303035303089")) {
+                String[] encodeStoreStuffID = {Conversion.hexToAscii(jsonObj.getString("StoreStuffID"))};
+                for (String s : encodeStoreStuffID) {
+                    encodedStoreStuffID += URLEncoder.encode(s, "UTF-8");
+                }
+
+            }
+
+            addStuffUrl = Constant.serverFile + "checkStoreStuffID.php?storeStuffID=" + encodedStoreStuffID;
+            Log.d(TAG, "Check store stuff ID Url =" + addStuffUrl);
+
+            RequestQueue queue = Volley.newRequestQueue(getActivity());
+            try {
+                JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(addStuffUrl,
+                        new Response.Listener<JSONArray>() {
+                            @Override
+                            public void onResponse(JSONArray response) {
+                                try {
+                                    String success = "";
+                                    for (int i = 0; i < response.length(); i++) {
+                                        JSONObject existResponse = (JSONObject) response.get(i);
+                                        success = existResponse.getString("success");
+                                    }
+                                    if (success.equals("0")) {
+                                        Log.d(TAG, "Check store stuff ID = Not Exist");
+                                        storeStuffIDExist = false;
+                                    } else {
+                                        Log.d(TAG, "Check store stuff ID = Exist");
+                                        storeStuffIDExist = true;
+                                    }
+
+                                    if (pDialog.isShowing())
+                                        pDialog.dismiss();
+                                } catch (Exception e) {
+                                }
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError volleyError) {
+                                if (pDialog.isShowing())
+                                    pDialog.dismiss();
+                            }
+                        });
+                queue.add(jsonObjectRequest);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                if (isAdded()) {
+                }
+            }
+
+        }catch (Exception e){
+            Toast.makeText(getActivity().getApplication(),
+                    "Error reading record:" + e.getMessage(),
+                    Toast.LENGTH_LONG).show();
+        }
+        return storeStuffIDExist;
     }
 
     public void insertStoreInfo(final String newID) {
@@ -674,7 +756,6 @@ public class RegisterStore extends Fragment {
                                     if (success.equals("1")) {
                                         for (int i = 0; i < stuffList.size(); i++){
                                             getStoreStuffID(stuffList.get(i).getStuffID());
-
                                         }
                                         stuffList.clear();
                                         DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {

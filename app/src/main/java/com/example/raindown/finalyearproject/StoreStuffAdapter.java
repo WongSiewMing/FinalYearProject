@@ -26,6 +26,7 @@ public class StoreStuffAdapter extends RecyclerView.Adapter<StoreStuffAdapter.St
     public interface OnItemClickListener {
         void onItemClick(int position);
         void onDeleteClick(int position);
+        void onEditClick(int position);
     }
 
     public void setOnItemClickListener(OnItemClickListener listener){
@@ -37,6 +38,7 @@ public class StoreStuffAdapter extends RecyclerView.Adapter<StoreStuffAdapter.St
         public ImageView StuffImageView;
         public TextView txtStuffName;
         public TextView txtStuffPrice;
+        public TextView txtStuffQuantity;
         public Button btnEdit;
         public Button btnRemove;
 
@@ -47,6 +49,7 @@ public class StoreStuffAdapter extends RecyclerView.Adapter<StoreStuffAdapter.St
             StuffImageView = itemView.findViewById(R.id.StuffImageView);
             txtStuffName= itemView.findViewById(R.id.txtStuffName);
             txtStuffPrice = itemView.findViewById(R.id.txtStuffPrice);
+            txtStuffQuantity = itemView.findViewById(R.id.txtStuffQuantity);
             btnEdit = itemView.findViewById(R.id.btnEdit);
             btnRemove = itemView.findViewById(R.id.btnRemove);
 
@@ -56,7 +59,7 @@ public class StoreStuffAdapter extends RecyclerView.Adapter<StoreStuffAdapter.St
                     if (listener != null){
                         int position = getAdapterPosition();
                         if (position != RecyclerView.NO_POSITION){
-                            listener.onItemClick(position);
+                            listener.onEditClick(position);
                         }
                     }
                 }
@@ -69,6 +72,18 @@ public class StoreStuffAdapter extends RecyclerView.Adapter<StoreStuffAdapter.St
                         int position = getAdapterPosition();
                         if (position != RecyclerView.NO_POSITION){
                             listener.onDeleteClick(position);
+                        }
+                    }
+                }
+            });
+
+            itemView.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View view){
+                    if (listener != null){
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION){
+                            listener.onItemClick(position);
                         }
                     }
                 }
@@ -100,10 +115,13 @@ public class StoreStuffAdapter extends RecyclerView.Adapter<StoreStuffAdapter.St
         Picasso.with(holder.itemView.getContext()).load(currentStuff.getStuffImage()).memoryPolicy(MemoryPolicy.NO_CACHE).networkPolicy(NetworkPolicy.NO_CACHE).into(holder.StuffImageView);
         holder.txtStuffName.setText(currentStuff.getStuffName());
         holder.txtStuffPrice.setText(String.format("RM %.2f", currentStuff.getStuffPrice()));
+        holder.txtStuffQuantity.setText(String.format("%d" + " left", currentStuff.getStuffQuantity()));
 
         if (hide){
-            holder.btnRemove.setVisibility(View.GONE);
-            holder.btnEdit.setVisibility(View.GONE);
+            holder.btnRemove.setVisibility(View.INVISIBLE);
+            holder.btnRemove.setEnabled(false);
+            holder.btnEdit.setVisibility(View.INVISIBLE);
+            holder.btnEdit.setEnabled(false);
         }
 
     }

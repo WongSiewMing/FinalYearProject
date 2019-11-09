@@ -5,6 +5,7 @@ package com.example.raindown.finalyearproject;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -21,6 +22,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -54,13 +56,15 @@ import Helper.StoreOB;
 import Helper.Student;
 import Helper.Stuff;
 
+import static android.app.Activity.RESULT_OK;
+
 
 public class StoreProfile extends Fragment{
     View view;
     List<StoreOB> storeProfile;
     private TextView shopName, avgRating, openTime, closeTime, condition, storeDescription, ratDrscription, popRating, ratSummary, storeLocation;
     private ImageView shopImage, back;
-    private Button editProfile, viewReview, btnEdit, btnRemove;
+    private Button editProfile, viewReview;
     private ProgressDialog pDialog = null;
     private String selectedStoreID, ratingTotalNum, currentTime, UserID;
     private Dialog popUpRating;
@@ -180,6 +184,7 @@ public class StoreProfile extends Fragment{
                 Bundle bundle = new Bundle();
 //                bundle.putString("storeID", selectedStoreID);
                 bundle.putSerializable("storeInfo", storeProfile.get(0));
+                bundle.putSerializable("stuffList", stuffList);
                 frag.setArguments(bundle);
                 fragmentManager = ((AppCompatActivity) view.getContext()).getSupportFragmentManager();
                 fragmentManager.beginTransaction()
@@ -379,7 +384,6 @@ public class StoreProfile extends Fragment{
             ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
             Boolean isConnected = networkInfo != null && networkInfo.isConnectedOrConnecting();
-            Log.d(TAG, "populateStoreStuffListInfo 1");
 
             if (isConnected){
                 RequestQueue queue = Volley.newRequestQueue(getActivity());
@@ -387,15 +391,12 @@ public class StoreProfile extends Fragment{
                     pDialog.setMessage("Sync with server...");
                 }
                 pDialog.show();
-                Log.d(TAG, "populateStoreStuffListInfo 2");
                 jsonObj = new JSONObject(command);
                 if (jsonObj.getString("command").equals("303035303087")){
-                    Log.d(TAG, "populateStoreStuffListInfo 3 = " + selectedStoreID);
                     JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Constant.serverFile + "getStoreStuffList.php?storeID=" + selectedStoreID,
                             new Response.Listener<JSONArray>() {
                         @Override
                         public void onResponse(JSONArray response) {
-                            Log.d(TAG, "populateStoreStuffListInfo 4");
                             try {
                                 stuffList.clear();
                                 for (int i = 0; i < response.length(); i++) {
@@ -442,10 +443,7 @@ public class StoreProfile extends Fragment{
     }
 
     private void populateStuffAdapterView(){
-        Log.d(TAG, "populateStuffAdapter 1");
         mRecycleView = view.findViewById(R.id.storeProfileStuffLL);
-        btnEdit = view.findViewById(R.id.btnEdit);
-        btnRemove = view.findViewById(R.id.btnRemove);
 
         mRecycleView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(getActivity());
@@ -453,6 +451,35 @@ public class StoreProfile extends Fragment{
         mAdapter.hideButton(true);
         mRecycleView.setAdapter(mAdapter);
         mRecycleView.setLayoutManager(mLayoutManager);
+
+        mAdapter.setOnItemClickListener(new StoreStuffAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                Stuff clickedStuff = stuffList.get(position);
+                StuffDetails frag = new StuffDetails();
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("ClickedStuff", clickedStuff);
+                //For StuffDetails, need UserID for who click it. Lazy to retrieve the whole student info
+                bundle.putSerializable("StudentClickedStuff", new Student(UserID, "", "", "", "", "", 0));
+                frag.setArguments(bundle);
+
+                fragmentManager = getFragmentManager();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.update_fragmentHolder, frag)
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                        .commit();
+            }
+
+            @Override
+            public void onDeleteClick(int position) {
+                //Leave here empty
+            }
+
+            @Override
+            public void onEditClick(int position){
+                //Leave here empty
+            }
+        });
     }
 
 
