@@ -1,223 +1,236 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_gravity="center_horizontal"
     android:background="@drawable/background"
+    android:orientation="vertical"
     tools:context="com.example.raindown.finalyearproject.SearchStuff">
+
+    <SearchView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp" />
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
         android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/category"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:fontFamily="sans-serif-smallcaps"
+            android:text="Category : "
+            android:textColor="@color/black"
+            android:textSize="15dp"
+            android:textStyle="bold" />
+
+        <Spinner
+            android:id="@+id/categorySpinner"
+            android:layout_width="240dp"
+            android:layout_height="35dp"
+            android:layout_marginTop="10dp"
+            android:background="@color/lightgrey"
+            android:fontFamily="sans-serif-smallcaps"
+            android:popupBackground="@color/beige"
+            android:textColor="@color/black"
+            android:textSize="15dp"></Spinner>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:fontFamily="sans-serif-smallcaps"
+            android:text="Price : "
+            android:textColor="@color/black"
+            android:textSize="15dp"
+            android:textStyle="bold" />
+
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:orientation="vertical">
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/minimumPrice"
+                android:layout_width="100dp"
+                android:layout_height="35dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="20dp"
+                android:background="@color/lightgrey"
+                android:fontFamily="sans-serif-smallcaps"
+                android:hint="   Minimum"
+                android:inputType="numberDecimal"
+                android:textSize="15dp" />
 
             <TextView
-                android:id="@+id/category"
+                android:id="@+id/to"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
+                android:layout_marginRight="20dp"
                 android:fontFamily="sans-serif-smallcaps"
-                android:text="Category : "
+                android:text="to "
                 android:textColor="@color/black"
-                android:textSize="15dp"
-                android:textStyle="bold" />
+                android:textSize="15dp" />
 
-            <Spinner
-                android:id="@+id/categorySpinner"
-                android:layout_width="240dp"
+            <EditText
+                android:id="@+id/maximumPrice"
+                android:layout_width="100dp"
                 android:layout_height="35dp"
                 android:layout_marginTop="10dp"
                 android:background="@color/lightgrey"
                 android:fontFamily="sans-serif-smallcaps"
-                android:popupBackground="@color/beige"
-                android:textColor="@color/black"
-                android:textSize="15dp"></Spinner>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/price"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:fontFamily="sans-serif-smallcaps"
-                android:text="Price : "
-                android:textColor="@color/black"
-                android:textSize="15dp"
-                android:textStyle="bold" />
-
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <EditText
-                    android:id="@+id/minimumPrice"
-                    android:inputType="numberDecimal"
-                    android:layout_width="100dp"
-                    android:layout_height="35dp"
-                    android:layout_marginRight="20dp"
-                    android:layout_marginTop="10dp"
-                    android:background="@color/lightgrey"
-                    android:fontFamily="sans-serif-smallcaps"
-                    android:hint="   Minimum"
-                    android:textSize="15dp"
-                    />
-
-                <TextView
-                    android:id="@+id/to"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="20dp"
-                    android:layout_marginTop="10dp"
-                    android:fontFamily="sans-serif-smallcaps"
-                    android:text="to "
-                    android:textColor="@color/black"
-                    android:textSize="15dp"
-                    />
-
-                <EditText
-                    android:id="@+id/maximumPrice"
-                    android:inputType="numberDecimal"
-                    android:layout_width="100dp"
-                    android:layout_height="35dp"
-                    android:layout_marginTop="10dp"
-                    android:background="@color/lightgrey"
-                    android:fontFamily="sans-serif-smallcaps"
-                    android:hint="   Maximum"
-                    android:textSize="15dp"
-                    />
-
-
-            </LinearLayout>
+                android:hint="   Maximum"
+                android:inputType="numberDecimal"
+                android:textSize="15dp" />
 
 
         </LinearLayout>
 
-        <LinearLayout
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/condition"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:orientation="vertical">
+            android:layout_marginTop="10dp"
+            android:fontFamily="sans-serif-smallcaps"
+            android:text="Condition : "
+            android:textColor="@color/black"
+            android:textSize="15dp"
+            android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/condition"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:fontFamily="sans-serif-smallcaps"
-                android:text="Condition : "
-                android:textColor="@color/black"
-                android:textSize="15dp"
-                android:textStyle="bold" />
-
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <RadioGroup
-                    android:id="@+id/radiogroupCondition"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:orientation="horizontal">
-
-                    <RadioButton
-                        android:id="@+id/radioNew"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="20dp"
-                        android:checked="true"
-                        android:fontFamily="sans-serif-smallcaps"
-                        android:text="New"
-                        android:textSize="15dp" />
-
-                    <RadioButton
-                        android:id="@+id/radioUsed"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="20dp"
-                        android:fontFamily="sans-serif-smallcaps"
-                        android:text="Used"
-                        android:textSize="15dp" />
-
-                    <RadioButton
-                        android:id="@+id/radioBoth"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-smallcaps"
-                        android:text="Both"
-                        android:textSize="15dp" />
-
-
-                </RadioGroup>
-
-            </LinearLayout>
-        </LinearLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/sort"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:fontFamily="sans-serif-smallcaps"
-                android:text="Sort by : "
-                android:textColor="@color/black"
-                android:textSize="15dp"
-                android:textStyle="bold" />
+            android:orientation="horizontal">
 
             <RadioGroup
-                android:id="@+id/radiogroupSort"
+                android:id="@+id/radiogroupCondition"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:orientation="vertical">
+                android:orientation="horizontal">
 
                 <RadioButton
-                    android:id="@+id/sortHighToLow"
+                    android:id="@+id/radioNew"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="20dp"
+                    android:layout_marginRight="20dp"
                     android:checked="true"
                     android:fontFamily="sans-serif-smallcaps"
-                    android:text="Price : from high to low"
+                    android:text="New"
                     android:textSize="15dp" />
 
                 <RadioButton
-                    android:id="@+id/sortLowToHigh"
+                    android:id="@+id/radioUsed"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="20dp"
                     android:fontFamily="sans-serif-smallcaps"
-                    android:text="Price : from low to high"
+                    android:text="Used"
                     android:textSize="15dp" />
+
+                <RadioButton
+                    android:id="@+id/radioBoth"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-smallcaps"
+                    android:text="Both"
+                    android:textSize="15dp" />
+
 
             </RadioGroup>
 
-
         </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/sort"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:fontFamily="sans-serif-smallcaps"
+            android:text="Sort by : "
+            android:textColor="@color/black"
+            android:textSize="15dp"
+            android:textStyle="bold" />
+
+        <RadioGroup
+            android:id="@+id/radiogroupSort"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="vertical">
+
+            <RadioButton
+                android:id="@+id/sortHighToLow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:checked="true"
+                android:fontFamily="sans-serif-smallcaps"
+                android:text="Price : from high to low"
+                android:textSize="15dp" />
+
+            <RadioButton
+                android:id="@+id/sortLowToHigh"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:fontFamily="sans-serif-smallcaps"
+                android:text="Price : from low to high"
+                android:textSize="15dp" />
+
+            <RadioButton
+                android:id="@+id/sortNameAscending"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:fontFamily="sans-serif-smallcaps"
+                android:text="Name : Ascending"
+                android:textSize="15dp" />
+
+            <RadioButton
+                android:id="@+id/sortNameDescending"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:fontFamily="sans-serif-smallcaps"
+                android:text="Name : Descending"
+                android:textSize="15dp" />
+
+        </RadioGroup>
 
 
     </LinearLayout>
@@ -226,10 +239,12 @@
         android:id="@+id/filterSearch"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_marginTop="460dp"
         android:background="#ffbb6d"
         android:fontFamily="sans-serif-smallcaps"
+        android:text="Filter Search"
         android:textSize="15dp"
-        android:textStyle="bold"
-        android:text="Filter Search" />
-</FrameLayout>
+        android:textStyle="bold" />
+
+
+</LinearLayout>
+
