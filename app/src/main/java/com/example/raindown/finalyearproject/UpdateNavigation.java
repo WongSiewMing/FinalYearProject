@@ -353,7 +353,11 @@ public class UpdateNavigation extends AppCompatActivity implements NavigationVie
                     return true;
 
                 case R.id.navigation_summary:
-
+                    SummaryMenu summaryMenu = new SummaryMenu();
+                    Bundle bundle3 = new Bundle();
+                    bundle3.putSerializable("SummaryMenu", student);
+                    summaryMenu.setArguments(bundle3);
+                    loadFragment(summaryMenu);
                     return true;
 
                 case R.id.navigation_store:

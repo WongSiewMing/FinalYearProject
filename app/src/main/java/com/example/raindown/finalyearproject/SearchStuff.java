@@ -23,11 +23,12 @@ Year : 2017*/
 public class SearchStuff extends Fragment {
 
     EditText minimumPrice, maximumPrice;
-    RadioButton radioNew, radioUsed, radioBoth, radioSortHighToLow, radioSortLowToHigh;
+    RadioButton radioNew, radioUsed, radioBoth, radioSortHighToLow, radioSortLowToHigh, radioAscending, radioDescending;
     RadioGroup radioGroupCondition, radioGroupSort;
+    SearchView searchStuffInput;
     Button filterSearch;
     View view;
-    String error = "", sort = "", command = "", category = "", condition = "";
+    String error = "", query = "",sort = "", command = "", category = "", condition = "";
     Spinner categorySpinner;
     ProgressDialog pDialog = null;
     public static List<Stuff> searchStuffList = new ArrayList<>();
@@ -95,12 +96,22 @@ public class SearchStuff extends Fragment {
         radioGroupSort = (RadioGroup) view.findViewById(R.id.radiogroupSort);
         radioSortHighToLow = (RadioButton) view.findViewById(R.id.sortHighToLow);
         radioSortLowToHigh = (RadioButton) view.findViewById(R.id.sortLowToHigh);
+        radioAscending = (RadioButton) view.findViewById(R.id.sortNameAscending);
+        radioDescending = (RadioButton) view.findViewById(R.id.sortNameDescending);
+
+        searchStuffInput = (SearchView) view.findViewById(R.id.SearchStuffInput);
 
         filterSearch = (Button) view.findViewById(R.id.filterSearch);
         filterSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (validateInput()) {
+
+                    if (!searchStuffInput.getQuery().toString().isEmpty()){
+                        query = "303031";
+                    } else {
+                        query = "303032";
+                    }
 
                     if (categorySpinner.getSelectedItem().toString().equals("Books")) {
                         category = "303031";
@@ -124,10 +135,15 @@ public class SearchStuff extends Fragment {
                         sort = "303031";
                     } else if (radioGroupSort.getCheckedRadioButtonId() == R.id.sortLowToHigh) {
                         sort = "303032";
+                    } else if (radioGroupSort.getCheckedRadioButtonId() == R.id.sortNameAscending){
+                        sort = "303033";
+                    } else if (radioGroupSort.getCheckedRadioButtonId() == R.id.sortNameDescending){
+                        sort = "303034";
                     }
 
 					//Create MQTT command
                     command = "{\"command\": \"30303530301F\", \"reserve\": \"303030303030303030303030303030303030303030303030\", " +
+                            "\"stuffQuery\": " + "\"" + query + "\" ," +
                             "\"stuffCategory\": " + "\"" + category + "\" ," +
                             "\"stuffPriceMin\": " + "\"" + Conversion.asciiToHex(minimumPrice.getText().toString().trim()) + "\" ," +
                             "\"stuffPriceMax\": " + "\"" + Conversion.asciiToHex(maximumPrice.getText().toString().trim()) + "\" ," +
@@ -228,6 +244,12 @@ public class SearchStuff extends Fragment {
             if (isConnected) {
                 jsonObj = new JSONObject(command);
                 if(jsonObj.getString("command").equals("30303530301F")){
+                    if (jsonObj.getString("stuffQuery").equals("303031")){
+                        query = searchStuffInput.getQuery().toString();
+                    } else if (jsonObj.getString("stuffQuery").equals("303032")){
+                        query = "";
+                    }
+
                     if (jsonObj.getString("stuffCategory").equals("303031")) {
                         category = "Books";
                     } else if (jsonObj.getString("stuffCategory").equals("303032")) {
@@ -247,9 +269,13 @@ public class SearchStuff extends Fragment {
                     }
 
                     if (jsonObj.getString("stuffSorting").equals("303031")) {
-                        sort = "desc";
+                        sort = "stuffPrice desc";
                     } else if (jsonObj.getString("stuffSorting").equals("303032")) {
-                        sort = "asc";
+                        sort = "stuffPrice asc";
+                    } else if (jsonObj.getString("stuffSorting").equals("303033")){
+                        sort = "stuffName asc";
+                    } else if (jsonObj.getString("stuffSorting").equals("303034")){
+                        sort = "stuffName desc";
                     }
 
                     RequestQueue queue = Volley.newRequestQueue(getActivity());
@@ -257,7 +283,8 @@ public class SearchStuff extends Fragment {
                         pDialog.setMessage("Sync with server...");
                     pDialog.show();
 
-                    JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Constant.serverFile + "applyFilterSearch.php?stuffCategory=" + category
+                    JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Constant.serverFile + "applyFilterSearch.php?stuffQuery=" + query
+                            + "&stuffCategory=" + category
                             + "&stuffPriceMin=" + Conversion.hexToAscii(jsonObj.getString("stuffPriceMin"))
                             + "&stuffPriceMax=" + Conversion.hexToAscii(jsonObj.getString("stuffPriceMax"))
                             + "&stuffCondition=" + condition + "&stuffSorting=" + sort,
@@ -280,6 +307,8 @@ public class SearchStuff extends Fragment {
                                         if (pDialog.isShowing())
                                             pDialog.dismiss();
                                     } catch (Exception e) {
+                                        Toast.makeText(getActivity().getApplication(), e.getMessage(),
+                                                Toast.LENGTH_LONG).show();
                                     }
                                 }
                             },
