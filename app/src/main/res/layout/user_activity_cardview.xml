@@ -156,6 +156,18 @@
             android:text="comment amount"
             android:visibility="gone" />
 
+        <ImageView
+            android:id="@+id/shareButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_below="@id/posterThumbnail"
+            android:layout_marginStart="5dp"
+            android:layout_toEndOf="@id/commentButton"
+            android:clickable="true"
+            android:focusable="true"
+            android:visibility="visible"
+            cardview:srcCompat="?attr/actionModeShareDrawable" />
+
 
     </RelativeLayout>
 
