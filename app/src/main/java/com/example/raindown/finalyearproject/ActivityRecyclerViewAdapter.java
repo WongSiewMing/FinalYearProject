@@ -2,12 +2,16 @@ package com.example.raindown.finalyearproject;
 /*Author : Lee Thian Xin
 Programme : RSD3
 Year : 2018*/
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.support.v4.app.FragmentManager;
 import android.content.Context;
 import android.os.Bundle;
@@ -20,6 +24,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -60,10 +65,11 @@ import Helper.Student;
 import Helper.Stuff;
 import Helper.UserActivityOB;
 
-public class ActivityRecyclerViewAdapter extends RecyclerView.Adapter<ActivityRecyclerViewAdapter.MyviewHolder> {
+public class ActivityRecyclerViewAdapter extends RecyclerView.Adapter<ActivityRecyclerViewAdapter.ActivityRecyclerViewHolder> {
+    private OnItemClickListener mListener;
+    private ArrayList<UserActivityOB> mData;
 
     private Context mContext;
-    private List<UserActivityOB> mData;
     private Student s;
     private MqttAndroidClient mqttAndroidClient;
     private PahoMqttClient pahoMqttClient;
@@ -77,77 +83,162 @@ public class ActivityRecyclerViewAdapter extends RecyclerView.Adapter<ActivityRe
     private String UserID, insertNewLikeActivityUrl = "";
     private String command;
 
-
-    public ActivityRecyclerViewAdapter(Context mContext, List<UserActivityOB> mData, Student s, MqttAndroidClient mqttAndroidClient, PahoMqttClient pahoMqttClient) {
-        this.mContext = mContext;
+    public ActivityRecyclerViewAdapter(ArrayList<UserActivityOB> mData, Context mContext, MqttAndroidClient mqttAndroidClient, PahoMqttClient pahoMqttClient) {
         this.mData = mData;
-        this.s = s;
+        this.mContext = mContext;
         this.mqttAndroidClient = mqttAndroidClient;
         this.pahoMqttClient = pahoMqttClient;
     }
 
-    @Override
-    public MyviewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view;
-        LayoutInflater mInflater = LayoutInflater.from(mContext);
-        view = mInflater.inflate(R.layout.user_activity_cardview, parent, false);
+    public interface OnItemClickListener {
+        void onCommentClick(int position);
+        void onBookmarkClick(int position);
+        void onShareClick(int position);
+        void onViewStuffClick(int position);
+        void onViewPosterClick(int position);
+    }
 
-        return new MyviewHolder(view);
+    public void setOnItemClickListener(ActivityRecyclerViewAdapter.OnItemClickListener listener){
+        this.mListener = listener;
+    }
+
+    public static class ActivityRecyclerViewHolder extends RecyclerView.ViewHolder{
+        public ImageView posterPhoto;
+        public TextView posterName;
+        public TextView posterDate;
+        public TextView btnviewStuff;
+        public TextView posterCaption;
+        public ImageView posterThumbnail;
+        public ImageView likeButton;
+        public ImageView commentButton;
+        public TextView likeCondition;
+        public ImageView bookmarkButton;
+        public TextView likeAmount;
+        public TextView commentAmount;
+        public ImageView shareButton;
+        public ProgressBar userActProgressbar;
+        public RelativeLayout activityHolder;
+
+        public ActivityRecyclerViewHolder(View itemView,final OnItemClickListener listener) {
+            super(itemView);
+
+            posterPhoto = itemView.findViewById(R.id.posterPhoto);
+            posterName = itemView.findViewById(R.id.posterName);
+            posterDate = itemView.findViewById(R.id.posterDate);
+            btnviewStuff = itemView.findViewById(R.id.btnviewStuff);
+            posterCaption = itemView.findViewById(R.id.posterCaption);
+            posterThumbnail = itemView.findViewById(R.id.posterThumbnail);
+            likeButton = itemView.findViewById(R.id.likeButton);
+            commentButton = itemView.findViewById(R.id.commentButton);
+            likeCondition = itemView.findViewById(R.id.likeConditon);
+            bookmarkButton = itemView.findViewById(R.id.bookmarkButton);
+            likeAmount = itemView.findViewById(R.id.likeAmount);
+            commentAmount = itemView.findViewById(R.id.commentAmount);
+            shareButton = itemView.findViewById(R.id.shareButton);
+            userActProgressbar = itemView.findViewById(R.id.userActProgressbar);
+            activityHolder = itemView.findViewById(R.id.activityHolder);
+
+            posterPhoto.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (listener != null){
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION){
+                            listener.onViewPosterClick(position);
+                        }
+                    }
+                }
+            });
+
+            btnviewStuff.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (listener != null){
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION){
+                            listener.onViewStuffClick(position);
+                        }
+                    }
+                }
+            });
+
+            commentButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (listener != null){
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION){
+                            listener.onCommentClick(position);
+                        }
+                    }
+                }
+            });
+
+            bookmarkButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (listener != null){
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION){
+                            listener.onBookmarkClick(position);
+                        }
+                    }
+                }
+            });
+
+            shareButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (listener != null){
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION){
+                            listener.onShareClick(position);
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    public void changeLikeButton(){
+        notifyDataSetChanged();
     }
 
     @Override
-    public void onBindViewHolder(final MyviewHolder holder, final int position) {
+    public ActivityRecyclerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.user_activity_cardview, parent, false);
+        ActivityRecyclerViewHolder mvh = new ActivityRecyclerViewHolder(v, mListener);
+        return mvh;
+    }
+
+    @Override
+    public void onBindViewHolder(final ActivityRecyclerViewHolder holder, final int position) {
+        UserActivityOB userActivity = mData.get(position);
 
         UserID = UserSharedPreferences.read(UserSharedPreferences.userID, null);
 
 //        Picasso.with(mContext).load(mData.get(position).getStudentID().getPhoto()).memoryPolicy(MemoryPolicy.NO_CACHE).networkPolicy(NetworkPolicy.NO_CACHE).into(holder.posterPhoto);
-        Picasso.with(mContext).load(mData.get(position).getStudentID().getPhoto()).memoryPolicy(MemoryPolicy.NO_CACHE).networkPolicy(NetworkPolicy.NO_CACHE).transform(new CircleTransform()).into(holder.posterPhoto);
+        Picasso.with(mContext).load(userActivity.getStudentID().getPhoto()).memoryPolicy(MemoryPolicy.NO_CACHE).networkPolicy(NetworkPolicy.NO_CACHE).transform(new CircleTransform()).into(holder.posterPhoto);
 
-
-        holder.posterPhoto.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Dialog dialog;
-                ImageView basicInfoPhoto;
-                TextView basicInfoName, basicInfoProgramme;
-                //               Button btnviewProfile;
-                dialog = new Dialog(mContext);
-                dialog.setContentView(R.layout.userbasicinfo);
-                basicInfoPhoto = dialog.findViewById(R.id.basicInfoPhoto);
-                basicInfoName = dialog.findViewById(R.id.basicInfoName);
-                basicInfoProgramme = dialog.findViewById(R.id.basicInfoProgramme);
-                Picasso.with(mContext).load(mData.get(position).getStudentID().getPhoto()).memoryPolicy(MemoryPolicy.NO_CACHE).networkPolicy(NetworkPolicy.NO_CACHE).into(basicInfoPhoto);
-                basicInfoName.setText(mData.get(position).getStudentID().getStudentName());
-                basicInfoProgramme.setText(mData.get(position).getStudentID().getStudentProgramme());
-                //              btnviewProfile = dialog.findViewById(R.id.btnViewProfile);
-
-                dialog.show();
-
-            }
-        });
-        holder.posterName.setText(mData.get(position).getStudentID().getStudentName());
-        String date = mData.get(position).getUploadDate() + " on " + mData.get(position).getUploadTime();
+        holder.posterName.setText(userActivity.getStudentID().getStudentName());
+        String date = userActivity.getUploadDate() + " on " + userActivity.getUploadTime();
         holder.posterDate.setText(date);
-        holder.posterCaption.setText(mData.get(position).getActivityCaption());
-        if (mData.get(position).getActivityThumbnail().equals("")) {
+        holder.posterCaption.setText(userActivity.getActivityCaption());
+        if (userActivity.getActivityThumbnail().equals("")) {
             holder.posterThumbnail.setVisibility(View.GONE);
         } else {
-            Picasso.with(mContext).load(mData.get(position).getActivityThumbnail()).memoryPolicy(MemoryPolicy.NO_CACHE).networkPolicy(NetworkPolicy.NO_CACHE).into(holder.posterThumbnail);
+            Picasso.with(mContext).load(userActivity.getActivityThumbnail()).memoryPolicy(MemoryPolicy.NO_CACHE).networkPolicy(NetworkPolicy.NO_CACHE).into(holder.posterThumbnail);
+        }
+        holder.likeCondition.setText("didnt like");
+        checkLike(holder, userActivity.getActivityID(), UserID);
+
+        if (userActivity.getStuffID().equals("")) {
+            holder.btnviewStuff.setVisibility(View.GONE);
         }
 
-
-        holder.posterThumbnail.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "thumbnail String =" + holder.posterThumbnail);
-            }
-        });
-
-        holder.likeCondition.setText("didnt like");
-        checkLike(holder, mData.get(position).getActivityID(), UserID);
         holder.likeButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View view) {
                 if (holder.likeCondition.getText().toString().equals("didnt like")) {
                     getLikeID(UserID, position, holder.likeCondition.getText().toString());
                     holder.likeButton.setImageResource(R.drawable.ic_liked);
@@ -160,185 +251,8 @@ public class ActivityRecyclerViewAdapter extends RecyclerView.Adapter<ActivityRe
             }
         });
 
-        if (mData.get(position).getStuffID().equals("")) {
-            holder.btnViewStuff.setVisibility(View.GONE);
-        }
-
-        holder.btnViewStuff.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getMySelectedStuff(mData.get(position).getStuffID(), v, position);
-            }
-        });
-
-        holder.commentButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ActivityComment frag = new ActivityComment();
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("activityID", mData.get(position).getActivityID());
-                bundle.putSerializable("posterName", mData.get(position).getStudentID().getStudentName());
-                bundle.putSerializable("activityCaption", mData.get(position).getActivityCaption());
-                frag.setArguments(bundle);
-
-                fragmentManager = ((AppCompatActivity) v.getContext()).getSupportFragmentManager();
-                fragmentManager.beginTransaction()
-                        .replace(R.id.update_fragmentHolder, frag)
-                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                        .addToBackStack(null)
-                        .commit();
-
-
-            }
-        });
-
-        holder.progressBar.setVisibility(View.GONE);
+        holder.userActProgressbar.setVisibility(View.GONE);
         holder.activityHolder.setVisibility(View.VISIBLE);
-
-
-    }
-
-    private void getMySelectedStuff(String stuffID, final View v, final int position) {
-        Log.d(TAG, "Stuff ID Clicked = " + stuffID);
-        pDialog = new ProgressDialog(mContext);
-        try {
-            ConnectivityManager connMgr = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-            Boolean isConnected = networkInfo != null && networkInfo.isConnectedOrConnecting();
-            if (isConnected) {
-
-
-                try {
-                    command = "{\"command\": \"30303530304D\", \"reserve\": \"303030303030303030303030303030303030303030303030\", " +
-                            "\"StudentID\": " + "\"" + Conversion.asciiToHex(UserID) + "\" ," +
-                            "\"StuffID\": " + "\"" + Conversion.asciiToHex(stuffID) + "\" }";
-
-                    pahoMqttClient.publishMessage(mqttAndroidClient, command, 1, "MY/TARUC/SSS/000000001/PUB");
-
-                } catch (MqttException e) {
-                    e.printStackTrace();
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-
-                RequestQueue queue = Volley.newRequestQueue(mContext);
-                if (!pDialog.isShowing())
-                    pDialog.setMessage("Sync with server...");
-                pDialog.show();
-                //http://192.168.0.107/raindown/getMyAttachedStuff.php?stuffID=STF0024
-                JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Constant.serverFile + "getMyAttachedStuff.php?stuffID=" + stuffID,
-                        new Response.Listener<JSONArray>() {
-                            @Override
-                            public void onResponse(JSONArray response) {
-                                try {
-                                    Log.d(TAG, "Stuff ID responded");
-                                    arrayMyStuff.clear();
-                                    for (int i = 0; i < response.length(); i++) {
-                                        JSONObject myStuffResponse = (JSONObject) response.get(i);
-                                        arrayMyStuff.add(new Stuff(myStuffResponse.getString("stuffID"), new Student(myStuffResponse.getString("studentID"),
-                                                myStuffResponse.getString("clientID"), myStuffResponse.getString("photo"), myStuffResponse.getString("studentName"),
-                                                myStuffResponse.getString("icNo"), myStuffResponse.getString("studentProgramme"), myStuffResponse.getString("studentFaculty"),
-                                                myStuffResponse.getInt("yearOfStudy")), myStuffResponse.getString("stuffName"), myStuffResponse.getString("stuffImage"),
-                                                myStuffResponse.getString("stuffDescription"), myStuffResponse.getString("stuffCategory"), myStuffResponse.getString("stuffCondition"),
-                                                myStuffResponse.getDouble("stuffPrice"), myStuffResponse.getInt("stuffQuantity"), myStuffResponse.getString("validStartDate"),
-                                                myStuffResponse.getString("validEndDate"), myStuffResponse.getString("stuffStatus")));
-                                    }
-                                    Log.d(TAG, "Respond length =" + response.length());
-                                    Log.d(TAG, "arrayMyStuff length =" + arrayMyStuff.size());
-                                    if (response.length() == 0){
-                                        Log.d(TAG, "Respond length is zero");
-                                        AlertDialog.Builder noItem = new AlertDialog.Builder(mContext);
-                                        noItem.setTitle("Alert");
-                                        noItem.setMessage("Item no longer available");
-                                        noItem.setPositiveButton("ok", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-
-                                            }
-                                        });
-                                        noItem.show();
-
-                                    }else {
-                                        Log.d(TAG, "Respond length is not zero " + response.length());
-                                        Stuff clickedStuff = arrayMyStuff.get(0);
-                                        StuffDetails frag = new StuffDetails();
-                                        Bundle bundle = new Bundle();
-                                        bundle.putSerializable("ClickedStuff", clickedStuff);
-                                        bundle.putSerializable("StudentClickedStuff", s);
-                                        frag.setArguments(bundle);
-
-                                        fragmentManager = ((AppCompatActivity) v.getContext()).getSupportFragmentManager();
-                                        fragmentManager.beginTransaction()
-                                                .replace(R.id.update_fragmentHolder, frag)
-                                                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                                                .addToBackStack(null)
-                                                .commit();
-
-//                                        if (mData.get(position).getStudentID().getStudentID().equals(UserID)) {
-//
-//                                            Stuff clickedStuff = arrayMyStuff.get(0);
-//                                            MaintainStuff frag = new MaintainStuff();
-//                                            Bundle bundle = new Bundle();
-//                                            bundle.putSerializable("MaintainStuff", clickedStuff);
-//                                            frag.setArguments(bundle);
-//
-//                                            fragmentManager = ((AppCompatActivity) v.getContext()).getSupportFragmentManager();
-//                                            fragmentManager.beginTransaction()
-//                                                    .replace(R.id.fragmentHolder, frag)
-//                                                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-//                                                    .addToBackStack(null)
-//                                                    .commit();
-//                                        } else {
-//                                            Log.d(TAG, "Retrieve other user item...");
-//                                            Stuff clickedStuff = arrayMyStuff.get(0);
-//                                            StuffDetails frag = new StuffDetails();
-//                                            Bundle bundle = new Bundle();
-//                                            bundle.putSerializable("ClickedStuff", clickedStuff);
-//                                            bundle.putSerializable("StudentClickedStuff", s);
-//                                            frag.setArguments(bundle);
-//
-//                                            fragmentManager = ((AppCompatActivity) v.getContext()).getSupportFragmentManager();
-//                                            fragmentManager.beginTransaction()
-//                                                    .replace(R.id.fragmentHolder, frag)
-//                                                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-//                                                    .addToBackStack(null)
-//                                                    .commit();
-//                                        }
-                                    }
-
-
-
-
-
-                                    if (pDialog.isShowing())
-                                        pDialog.dismiss();
-
-
-
-                                } catch (Exception e) {
-                                }
-                            }
-                        },
-                        new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError volleyError) {
-                                if (pDialog.isShowing())
-                                    pDialog.dismiss();
-                            }
-                        });
-                queue.add(jsonObjectRequest);
-
-            } else {
-                Toast.makeText(mContext.getApplicationContext(), "Network is NOT available",
-                        Toast.LENGTH_LONG).show();
-            }
-        } catch (Exception e) {
-            Toast.makeText(mContext.getApplicationContext(),
-                    "Error create activity:" + e.getMessage(),
-                    Toast.LENGTH_LONG).show();
-        }
-
-
     }
 
     private void getLikeID(String UserID, final int position, String likeCondition) {
@@ -587,7 +501,7 @@ public class ActivityRecyclerViewAdapter extends RecyclerView.Adapter<ActivityRe
     }
 
 
-    private void checkLike(final MyviewHolder holder, String actID, String UserID) {
+    private void checkLike(final ActivityRecyclerViewHolder holder, String actID, String UserID) {
         RequestQueue queue = Volley.newRequestQueue(mContext);
         //http://192.168.0.108/raindown/getActivityLikeList.php?studentID=17wmr05969&activityID=act1002
 
@@ -616,36 +530,5 @@ public class ActivityRecyclerViewAdapter extends RecyclerView.Adapter<ActivityRe
     @Override
     public int getItemCount() {
         return mData.size();
-    }
-
-    public static class MyviewHolder extends RecyclerView.ViewHolder {
-
-        CardView userActivity_cardview;
-        ImageView posterPhoto, posterThumbnail, commentButton, bookmarkButton;
-        TextView posterName, posterDate, posterCaption, likeAmount, commentAmount, likeCondition, btnViewStuff;
-        ImageView likeButton;
-        ProgressBar progressBar;
-        RelativeLayout activityHolder;
-
-        public MyviewHolder(View itemView) {
-            super(itemView);
-            userActivity_cardview = itemView.findViewById(R.id.userActivityCardView);
-            posterPhoto = itemView.findViewById(R.id.posterPhoto);
-            posterThumbnail = itemView.findViewById(R.id.posterThumbnail);
-            likeButton = itemView.findViewById(R.id.likeButton);
-            commentButton = itemView.findViewById(R.id.commentButton);
-            bookmarkButton = itemView.findViewById(R.id.bookmarkButton);
-            posterName = itemView.findViewById(R.id.posterName);
-            posterDate = itemView.findViewById(R.id.posterDate);
-            posterCaption = itemView.findViewById(R.id.posterCaption);
-            likeAmount = itemView.findViewById(R.id.likeAmount);
-            commentAmount = itemView.findViewById(R.id.commentAmount);
-            likeCondition = itemView.findViewById(R.id.likeConditon);
-            btnViewStuff = itemView.findViewById(R.id.btnviewStuff);
-            progressBar = itemView.findViewById(R.id.userActProgressbar);
-            activityHolder = itemView.findViewById(R.id.activityHolder);
-
-
-        }
     }
 }

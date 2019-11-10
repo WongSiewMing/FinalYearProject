@@ -6,15 +6,28 @@
     tools:context=".UserActivity"
     android:background="@color/lightgrey">
 
+    <Switch
+        android:id="@+id/btnSwitch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="10dp"
+        android:text="Show Following Only :  "
+        android:textColor="@color/black" />
+
     <Button
         android:id="@+id/create_activity"
-        android:layout_marginTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="70dp"
-        android:text="What's on your mind?"
+        android:layout_below="@id/btnSwitch"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="10dp"
+        android:background="@drawable/button_style_1"
         android:gravity="center"
-        android:textSize="20sp"
-        android:background="@drawable/button_style_1" />
+        android:text="What's on your mind?"
+        android:textSize="20sp" />
 
     <ProgressBar
         android:layout_width="70dp"
