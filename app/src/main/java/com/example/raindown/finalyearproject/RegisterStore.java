@@ -25,6 +25,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -94,33 +96,39 @@ public class RegisterStore extends Fragment {
     private EditText registerStoreName, registerStoreDescription, registerStoreLocation;
     private Spinner registerStoreCategory;
     private TextView registerOpenTime, registerCloseTime, openText, closeText;
-    private FloatingActionButton submitRegister;
-    private Button AddRow, SelectStuff;
+    private Button AddRow, submitRegister, btnEdit, btnRemove;
     private MqttAndroidClient mqttAndroidClient;
     private PahoMqttClient pahoMqttClient;
     FragmentManager fragmentManager;
-    private String command = "", currentStoreID, newStoreID, addStuffUrl;
+    private String command = "", currentStoreID,newStoreID, addStoreUrl, addStuffUrl;
+    private String currentStoreStuffID, newStoreStuffID;
+    private boolean retrievedStoreStuffID = false, storeStuffIDExist = false;
     private SimpleDateFormat sdf;
     private TimePickerDialog timePickerDialog;
     private ProgressDialog pDialog = null;
     private JSONObject jsonObj;
     private Uri uri;
     private Intent cameraIntent, photoPickerIntent, CropIntent;
-    private List<Stuff> stuffList = new ArrayList<>();
+    private ArrayList<Stuff> stuffList = new ArrayList<>();
 
     private Bitmap cameraImage;
-    private int rowA = 0;
     private String userID = "";
+
+    private RecyclerView mRecycleView;
+    private StoreStuffAdapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
 
     View view;
 
-    private static final String TAG = "testData";
+    private static final String TAG = "RegisterStore";
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getActivity().setTitle("Register Store");
+
+
     }
 
     @Override
@@ -140,11 +148,9 @@ public class RegisterStore extends Fragment {
         registerStoreCategory = view.findViewById(R.id.register_StoreCategory);
         registerOpenTime = view.findViewById(R.id.register_StoreOpenTime);
         registerCloseTime = view.findViewById(R.id.register_StoreCloseTime);
-        submitRegister = view.findViewById(R.id.register_store);
+        submitRegister = view.findViewById(R.id.btnRegisterStore);
         openText = view.findViewById(R.id.openText);
         closeText = view.findViewById(R.id.closeText);
-
-        SelectStuff = view.findViewById(R.id.btnSelectStuff);
 
         ArrayAdapter<CharSequence> adapterStoreCategory = ArrayAdapter.createFromResource(getActivity().getBaseContext(), R.array.storeCategorySpinner,
                 android.R.layout.simple_spinner_dropdown_item);
@@ -241,7 +247,7 @@ public class RegisterStore extends Fragment {
             }
         });
 
-        submitRegister = view.findViewById(R.id.register_store);
+        submitRegister = view.findViewById(R.id.btnRegisterStore);
         submitRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -256,21 +262,63 @@ public class RegisterStore extends Fragment {
 
 
                     getStoreID();
+
                 }
 
             }
         });
+
         pahoMqttClient = new PahoMqttClient();
         mqttAndroidClient = pahoMqttClient.getMqttClient(getContext(), Constant.serverUrl);
 
         return view;
     }
 
+    public void removeItem(int position){
+        stuffList.remove(position);
+        mAdapter.notifyDataSetChanged();
+    }
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState){
         super.onActivityCreated(savedInstanceState);
 
-        final LinearLayout stuffLinearLayout = view.findViewById(R.id.stuffLL);
+        mRecycleView = view.findViewById(R.id.stuffLL);
+        btnEdit = view.findViewById(R.id.btnEdit);
+        btnRemove = view.findViewById(R.id.btnRemove);
+        mRecycleView.setHasFixedSize(true);
+        mLayoutManager = new LinearLayoutManager(getActivity());
+        mAdapter = new StoreStuffAdapter(stuffList);
+        mRecycleView.setLayoutManager(mLayoutManager);
+        mRecycleView.setAdapter(mAdapter);
+
+        mAdapter.setOnItemClickListener(new StoreStuffAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                //Leave here empty
+            }
+
+            @Override
+            public void onDeleteClick(int position) {
+                removeItem(position);
+            }
+
+            @Override
+            public void onEditClick(int position){
+                Stuff clickedStuff = stuffList.get(position);
+                MaintainStuff frag = new MaintainStuff();
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("MaintainStuff", clickedStuff);
+                frag.setArguments(bundle);
+
+                fragmentManager = getFragmentManager();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.update_fragmentHolder, frag)
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                        .commit();
+            }
+        });
+
         AddRow = view.findViewById(R.id.btnAddRow);
 
         AddRow.setOnClickListener(new View.OnClickListener() {
@@ -290,23 +338,6 @@ public class RegisterStore extends Fragment {
 
             }
         });
-        if (!stuffList.isEmpty()){
-            LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            final View rowView = inflater.inflate(R.layout.storestufflist, null);
-            ImageView stuffImage = (ImageView)rowView.findViewById(R.id.StuffImageView);
-            TextView stuffNum = (TextView)rowView.findViewById(R.id.txtStuffNum);
-            TextView stuffName = (TextView)rowView.findViewById(R.id.txtStuffName);
-            TextView stuffPrice = (TextView)rowView.findViewById(R.id.txtStuffPrice);
-            rowA++;
-            stuffNum.setText(rowA + ".");
-            stuffName.setId(rowA);
-            stuffName.setText(stuffList.get(rowA - 1).getStuffName());
-            stuffPrice.setText(Double.toString(stuffList.get(rowA - 1).getStuffPrice()));
-            Picasso.with(getActivity()).load(stuffList.get(rowA-1).getStuffImage()).memoryPolicy(MemoryPolicy.NO_CACHE).networkPolicy(NetworkPolicy.NO_CACHE).into(stuffImage);
-            Toast.makeText(getActivity().getApplication(), "Row Added : " + stuffName.getId(), Toast.LENGTH_LONG).show();
-            stuffLinearLayout.addView(rowView, stuffLinearLayout.getChildCount() - 1);
-        }
-
     }
 
     @Override
@@ -423,6 +454,10 @@ public class RegisterStore extends Fragment {
             error += "- Close time must after open time\n";
             indicator = false;
         }
+        if (stuffList.size() == 0){
+            error += "- At least one stuff should be selected\n";
+            indicator = false;
+        }
         if (indicator == false) {
             AlertDialog.Builder sent = new AlertDialog.Builder(getActivity());
             sent.setTitle("Invalid input");
@@ -435,6 +470,7 @@ public class RegisterStore extends Fragment {
             });
             sent.show();
         }
+
         return indicator;
     }
 
@@ -464,14 +500,14 @@ public class RegisterStore extends Fragment {
                                     if (currentStoreID.equals("0")) {
                                         newStoreID = "str1001";
                                         Log.d(TAG, "New Store ID =" + newStoreID);
-                                        insetStoreInfo(newStoreID);
+                                        insertStoreInfo(newStoreID);
                                     } else {
                                         String first = currentStoreID.substring(0, 3);
                                         String last = currentStoreID.substring(3);
                                         int number = Integer.parseInt(last) + 1;
                                         newStoreID = first + Integer.toString(number);
                                         Log.d(TAG, "New Store ID =" + newStoreID);
-                                        insetStoreInfo(newStoreID);
+                                        insertStoreInfo(newStoreID);
                                     }
 
                                     if (pDialog.isShowing())
@@ -498,10 +534,160 @@ public class RegisterStore extends Fragment {
                     "Error reading record:" + e.getMessage(),
                     Toast.LENGTH_LONG).show();
         }
-
     }
 
-    public void insetStoreInfo(final String newID) {
+    public void getStoreStuffID(final String stuffID){
+
+        try {
+            ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+            Boolean isConnected = networkInfo != null && networkInfo.isConnectedOrConnecting();
+            if (isConnected) {
+
+                RequestQueue queue = Volley.newRequestQueue(getActivity());
+                if (!pDialog.isShowing())
+                    pDialog.setMessage("Sync with server...");
+                pDialog.show();
+
+                JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Constant.serverFile + "getStoreStuffID.php",
+                        new Response.Listener<JSONArray>() {
+                            @Override
+                            public void onResponse(JSONArray response) {
+                                try {
+                                    JSONObject storeStuffIDResponse = null;
+                                    for (int i = 0; i < response.length(); i++) {
+                                        storeStuffIDResponse = (JSONObject) response.get(i);
+                                        currentStoreStuffID = storeStuffIDResponse.getString("CurrentStoreStuffID");
+                                    }
+                                    Log.d(TAG, "Current Store Stuff ID =" + currentStoreStuffID);
+
+                                    if (retrievedStoreStuffID == true){
+                                        do {
+                                            String first = newStoreStuffID.substring(0, 4);
+                                            String last = newStoreStuffID.substring(4);
+                                            int number = Integer.parseInt(last) + 1;
+                                            newStoreStuffID = first + Integer.toString(number);
+                                        } while (checkExistStoreStuffID());
+                                        Log.d(TAG, "New Store Stuff ID =" + newStoreStuffID);
+                                        insertStoreStuffList(stuffID, newStoreStuffID);
+                                    } else{
+                                        if (currentStoreStuffID.equals("0")) {
+                                            newStoreStuffID = "strs1001";
+                                            Log.d(TAG, "New Store Stuff ID =" + newStoreStuffID);
+                                            retrievedStoreStuffID = true;
+                                            insertStoreStuffList(stuffID, newStoreStuffID);
+                                        } else {
+                                            do {
+                                                String first = newStoreStuffID.substring(0, 4);
+                                                String last = newStoreStuffID.substring(4);
+                                                int number = Integer.parseInt(last) + 1;
+                                                newStoreStuffID = first + Integer.toString(number);
+                                            } while (checkExistStoreStuffID());
+                                            Log.d(TAG, "New Store Stuff ID =" + newStoreStuffID);
+                                            retrievedStoreStuffID = true;
+                                            insertStoreStuffList(stuffID, newStoreStuffID);
+                                        }
+                                    }
+
+                                    if (pDialog.isShowing())
+                                        pDialog.dismiss();
+                                } catch (Exception e) {
+                                }
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError volleyError) {
+                                if (pDialog.isShowing())
+                                    pDialog.dismiss();
+                            }
+                        });
+                queue.add(jsonObjectRequest);
+
+            } else {
+                Toast.makeText(getActivity().getApplication(), "Network is NOT available",
+                        Toast.LENGTH_LONG).show();
+            }
+        } catch (Exception e) {
+            Toast.makeText(getActivity().getApplication(),
+                    "Error reading record:" + e.getMessage(),
+                    Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public Boolean checkExistStoreStuffID() {
+        try {
+            Log.d(TAG, "Check store stuff ID =" + newStoreStuffID);
+
+            command = "{\"command\": \"303035303089\", \"reserve\": \"303030303030303030303030303030303030303030303030\", " +
+                    "\"StoreStuffID\": " + "\"" + Conversion.asciiToHex(newStoreStuffID.trim()) + "\"}";
+
+            pahoMqttClient.publishMessage(mqttAndroidClient, command, 1, "MY/TARUC/SSS/000000001/PUB");
+
+            String encodedStoreStuffID = "";
+
+            jsonObj = new JSONObject(command);
+            if (jsonObj.getString("command").equals("303035303089")) {
+                String[] encodeStoreStuffID = {Conversion.hexToAscii(jsonObj.getString("StoreStuffID"))};
+                for (String s : encodeStoreStuffID) {
+                    encodedStoreStuffID += URLEncoder.encode(s, "UTF-8");
+                }
+
+            }
+
+            addStuffUrl = Constant.serverFile + "checkStoreStuffID.php?storeStuffID=" + encodedStoreStuffID;
+            Log.d(TAG, "Check store stuff ID Url =" + addStuffUrl);
+
+            RequestQueue queue = Volley.newRequestQueue(getActivity());
+            try {
+                JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(addStuffUrl,
+                        new Response.Listener<JSONArray>() {
+                            @Override
+                            public void onResponse(JSONArray response) {
+                                try {
+                                    String success = "";
+                                    for (int i = 0; i < response.length(); i++) {
+                                        JSONObject existResponse = (JSONObject) response.get(i);
+                                        success = existResponse.getString("success");
+                                    }
+                                    if (success.equals("0")) {
+                                        Log.d(TAG, "Check store stuff ID = Not Exist");
+                                        storeStuffIDExist = false;
+                                    } else {
+                                        Log.d(TAG, "Check store stuff ID = Exist");
+                                        storeStuffIDExist = true;
+                                    }
+
+                                    if (pDialog.isShowing())
+                                        pDialog.dismiss();
+                                } catch (Exception e) {
+                                }
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError volleyError) {
+                                if (pDialog.isShowing())
+                                    pDialog.dismiss();
+                            }
+                        });
+                queue.add(jsonObjectRequest);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                if (isAdded()) {
+                }
+            }
+
+        }catch (Exception e){
+            Toast.makeText(getActivity().getApplication(),
+                    "Error reading record:" + e.getMessage(),
+                    Toast.LENGTH_LONG).show();
+        }
+        return storeStuffIDExist;
+    }
+
+    public void insertStoreInfo(final String newID) {
         //192.168.0.107/raindown/insertStoreData.php?storeID=str1006&studentID=17WWW05969&storeName=1&storeImage=&storeDescription=2&storeCategory=3&openTime=0000&closeTime=1111&storeLocation=4
 
         try {
@@ -540,7 +726,7 @@ public class RegisterStore extends Fragment {
 
 
 
-            addStuffUrl = Constant.serverFile + "insertStoreData.php?storeID=" + newID
+            addStoreUrl = Constant.serverFile + "insertStoreData.php?storeID=" + newID
                     + "&studentID=" + userID
                     + "&storeName=" + encodedStoreName
                     + "&storeImage=" + ""
@@ -549,13 +735,14 @@ public class RegisterStore extends Fragment {
                     + "&openTime=" + registerOpenTime.getText().toString()
                     + "&closeTime=" + registerCloseTime.getText().toString()
                     + "&storeLocation=" + encodedStoreLocation;
-            Log.d(TAG, "Insert store profile Url =" + addStuffUrl);
+            Log.d(TAG, "Insert store profile Url =" + addStoreUrl);
 
             RequestQueue queue = Volley.newRequestQueue(getActivity());
             try {
+
                 StringRequest postRequest = new StringRequest(
                         Request.Method.POST,
-                        addStuffUrl,
+                        addStoreUrl,
                         new Response.Listener<String>() {
                             @Override
                             public void onResponse(String response) {
@@ -567,6 +754,10 @@ public class RegisterStore extends Fragment {
                                     String success = jsonObject.getString("success");
                                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                                     if (success.equals("1")) {
+                                        for (int i = 0; i < stuffList.size(); i++){
+                                            getStoreStuffID(stuffList.get(i).getStuffID());
+                                        }
+                                        stuffList.clear();
                                         DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
@@ -615,6 +806,109 @@ public class RegisterStore extends Fragment {
                         params.put("openTime", registerOpenTime.getText().toString());
                         params.put("closeTime", registerCloseTime.getText().toString());
                         params.put("storeLocation", registerStoreLocation.getText().toString().trim());
+                        return params;
+                    }
+
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        Map<String, String> params = new HashMap<>();
+                        params.put("Content-Type", "application/x-www-form-urlencoded");
+                        return params;
+                    }
+                };
+                queue.add(postRequest);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            if (isAdded()) {
+            }
+        }
+    }
+
+    public void insertStoreStuffList(final String newStuffID, final String newID){
+        try {
+
+            command = "{\"command\": \"303035303086\", \"reserve\": \"303030303030303030303030303030303030303030303030\", " +
+                    "\"StoreStuffID\": " + "\"" + Conversion.asciiToHex(newID.trim()) + "\" ," +
+                    "\"StoreID\": " + "\"" + Conversion.asciiToHex(newStoreID.trim()) + "\" ," +
+                    "\"StuffID\": " + "\"" + Conversion.asciiToHex(newStuffID.trim()) + "\"}";
+
+            pahoMqttClient.publishMessage(mqttAndroidClient, command, 1, "MY/TARUC/SSS/000000001/PUB");
+
+            String encodedStoreStuffID = "";
+            String encodedStoreID = "";
+            String encodedStuffID = "";
+
+            jsonObj = new JSONObject(command);
+            if (jsonObj.getString("command").equals("303035303086")){
+                String[] encodeStoreStuffID = {Conversion.hexToAscii(jsonObj.getString("StoreStuffID"))};
+                for (String s : encodeStoreStuffID){
+                    encodedStoreStuffID += URLEncoder.encode(s, "UTF-8");
+                }
+                String[] encodeStoreID = {Conversion.hexToAscii(jsonObj.getString("StoreID"))};
+                for (String s : encodeStoreID){
+                    encodedStoreID += URLEncoder.encode(s, "UTF-8");
+                }
+                String[] encodeStuffID = {Conversion.hexToAscii(jsonObj.getString("StuffID"))};
+                for (String s : encodeStuffID){
+                    encodedStuffID += URLEncoder.encode(s, "UTF-8");
+                }
+
+            }
+
+            addStuffUrl = Constant.serverFile + "insertStoreStuffList.php?storeStuffID=" + encodedStoreStuffID
+                    + "&storeID=" + encodedStoreID
+                    + "&stuffID=" + encodedStuffID;
+            Log.d(TAG, "Insert store stuff Url =" + addStuffUrl);
+
+            RequestQueue queue = Volley.newRequestQueue(getActivity());
+            try {
+                StringRequest postRequest = new StringRequest(
+                        Request.Method.POST,
+                        addStuffUrl,
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                if (isAdded()) {
+                                }
+                                JSONObject jsonObject = null;
+                                try {
+                                    jsonObject = new JSONObject(response);
+                                    String success = jsonObject.getString("success");
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                                    if (success.equals("1")) {
+                                        Log.d(TAG, "StoreStuffID successful inserted =" + newID.trim());
+                                    } else {
+                                        builder.setTitle("Failed to create StoreStuffID");
+                                        builder.setMessage(newID.trim() + " is failed to be uploaded");
+                                        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                            }
+                                        });
+                                        builder.show();
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                if (isAdded()) {
+                                }
+                            }
+                        }) {
+                    @Override
+                    protected Map<String, String> getParams() {
+                        Map<String, String> params = new HashMap<>();
+                        params.put("storeStuffID", newID.trim());
+                        params.put("storeID", newStoreID);
+                        params.put("stuffID", newStuffID.trim());
                         return params;
                     }
 

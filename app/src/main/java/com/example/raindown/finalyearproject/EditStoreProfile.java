@@ -23,6 +23,10 @@ import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
@@ -46,6 +50,7 @@ import com.android.volley.Response;
 import com.android.volley.ServerError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.squareup.picasso.MemoryPolicy;
@@ -54,6 +59,7 @@ import com.squareup.picasso.Picasso;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -67,6 +73,7 @@ import java.sql.Time;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -76,6 +83,7 @@ import Helper.Constant;
 import Helper.Conversion;
 import Helper.PahoMqttClient;
 import Helper.StoreOB;
+import Helper.Stuff;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -85,6 +93,7 @@ public class EditStoreProfile extends Fragment {
     private static final int CAMERA_REQUEST = 10;
     private static final int IMAGE_GALLERY_REQUEST = 20;
     private static final int CROP_REQUEST = 30;
+    private static final int RequestStuffCode = 40;
     private ImageView captureImage, buttonCamera;
     private Bitmap cameraImage;
     private String converted, targetStoreID, jsonURL= "", changeImage = "";
@@ -92,21 +101,30 @@ public class EditStoreProfile extends Fragment {
     private Spinner editStoreCategory;
     private TextView editOpenTime, editCloseTime, openText, closeText;
     private FloatingActionButton submitChange;
+    private Button AddRow;
     private SimpleDateFormat sdf;
     private TimePickerDialog timePickerDialog;
     private StoreOB storeInfo;
+    private ArrayList<Stuff> stuffList = new ArrayList<Stuff>();
     private JSONObject jsonObj;
+    private String currentStoreStuffID, newStoreStuffID;
+    private boolean retrievedStoreStuffID = false, storeStuffIDExist = false;
+    private String addStuffUrl, checkStuffUrl;
 
     private MqttAndroidClient mqttAndroidClient;
     private PahoMqttClient pahoMqttClient;
-    private String command;
+    private String command, userID = "";
     FragmentManager fragmentManager;
     View view;
     private Uri uri;
     private Intent cameraIntent, photoPickerIntent, CropIntent;
 
-    private static final String TAG = "testData";
+    private static final String TAG = "EditStoreProfile";
     private int RequestCameraPermissionID = 1001;
+
+    private RecyclerView mRecycleView;
+    private StoreStuffAdapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
 
 
     @Override
@@ -125,6 +143,8 @@ public class EditStoreProfile extends Fragment {
 //        targetStoreID = bundle.getString("storeID");
 //        Log.d(TAG, "Current Store ID = " + targetStoreID);
         storeInfo = (StoreOB) bundle.getSerializable("storeInfo");
+        stuffList = (ArrayList<Stuff>) bundle.getSerializable("stuffList");
+        userID = UserSharedPreferences.read(UserSharedPreferences.userID, null);
         Log.d(TAG, "Store name =" + storeInfo.getStoreName());
 
         captureImage = view.findViewById(R.id.captureImage2);
@@ -161,7 +181,6 @@ public class EditStoreProfile extends Fragment {
         editOpenTime.setText(storeInfo.getOpenTime());
         editCloseTime.setText(storeInfo.getCloseTime());
         editStoreLocation.setText(storeInfo.getStoreLocation());
-
 
         sdf = new SimpleDateFormat("HHmm");
 
@@ -270,6 +289,70 @@ public class EditStoreProfile extends Fragment {
     }
 
     @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        mRecycleView = view.findViewById(R.id.stuffLL);
+        mRecycleView.setHasFixedSize(true);
+        mLayoutManager = new LinearLayoutManager(getActivity());
+        mAdapter = new StoreStuffAdapter(stuffList);
+        mRecycleView.setAdapter(mAdapter);
+        mRecycleView.setLayoutManager(mLayoutManager);
+
+        mAdapter.setOnItemClickListener(new StoreStuffAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                //Leave here empty
+            }
+
+            @Override
+            public void onDeleteClick(int position) {
+                removeItem(position);
+            }
+
+            @Override
+            public void onEditClick(int position){
+                Stuff clickedStuff = stuffList.get(position);
+                MaintainStuff frag = new MaintainStuff();
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("MaintainStuff", clickedStuff);
+                frag.setArguments(bundle);
+
+                fragmentManager = getFragmentManager();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.update_fragmentHolder, frag)
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                        .commit();
+            }
+        });
+
+        AddRow = view.findViewById(R.id.btnAddRow);
+
+        AddRow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                StoreStuffFragment storeStuffFragment = new StoreStuffFragment();
+                storeStuffFragment.setTargetFragment(EditStoreProfile.this, RequestStuffCode);
+                Bundle bundle1 = new Bundle();
+                bundle1.putString("selectStuff", userID);
+                storeStuffFragment.setArguments(bundle1);
+
+                fragmentManager = getFragmentManager();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.update_fragmentHolder, storeStuffFragment)
+                        .addToBackStack(storeStuffFragment.getClass().getName())
+                        .commit();
+
+            }
+        });
+    }
+
+    public void removeItem(int position){
+        stuffList.remove(position);
+        mAdapter.notifyDataSetChanged();
+    }
+
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         converted = "";
         super.onActivityResult(requestCode, resultCode, data);
@@ -296,6 +379,12 @@ public class EditStoreProfile extends Fragment {
                         e.printStackTrace();
                     }
                 }
+            }
+            if (requestCode == RequestStuffCode){
+                Stuff selectedStuff = (Stuff)data.getSerializableExtra("selectedStuff");
+                Toast.makeText(getActivity().getApplication(), "Selected Stuff : " + selectedStuff.getStuffID(), Toast.LENGTH_LONG).show();
+                stuffList.add(selectedStuff);
+                Log.d(TAG, "Stuff ID fetched at Register=" + selectedStuff.getStuffID());
             }
         }
     }
@@ -371,6 +460,10 @@ public class EditStoreProfile extends Fragment {
         }
         if (cTime <= oTime) {
             error += "- Close time must after open time\n";
+            indicator = false;
+        }
+        if (stuffList.size() == 0){
+            error += "- At least one stuff should be selected\n";
             indicator = false;
         }
         if (indicator == false) {
@@ -455,6 +548,13 @@ public class EditStoreProfile extends Fragment {
                                     String success = jsonObject.getString("success");
                                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                                     if (success.equals("1")) {
+                                        deleteStuff();
+
+                                        for (int y = 0; y < stuffList.size(); y++){
+                                            getStoreStuffID(stuffList.get(y).getStuffID());
+                                        }
+                                        stuffList.clear();
+
                                         DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
@@ -533,6 +633,324 @@ public class EditStoreProfile extends Fragment {
         }
 
 
+    }
+
+    public void deleteStuff(){
+        try {
+            command = "{\"command\": \"303035303088\", \"reserve\": \"303030303030303030303030303030303030303030303030\", " +
+                    "\"StoreID\": " + "\"" + Conversion.asciiToHex(storeInfo.getStoreID().trim()) + "\"}";
+
+            pahoMqttClient.publishMessage(mqttAndroidClient, command, 1, "MY/TARUC/SSS/000000001/PUB");
+
+            String encodedStoreID = "";
+
+            jsonObj = new JSONObject(command);
+            if (jsonObj.getString("command").equals("303035303088")){
+                String[] encodeStuffID ={Conversion.hexToAscii(jsonObj.getString("StoreID"))};
+                for (String s : encodeStuffID){
+                    encodedStoreID += URLEncoder.encode(s, "UTF-8");
+                }
+            }
+
+            Log.d(TAG, "Delete Store ID = " + encodedStoreID);
+
+            jsonURL = Constant.serverFile + "removeStoreStuffList.php?storeID=" + encodedStoreID;
+
+            Log.d(TAG,"Delete Store Stuff URL = " + jsonURL);
+
+            RequestQueue queue = Volley.newRequestQueue(getActivity());
+            try {
+                JsonArrayRequest deleteRequest = new JsonArrayRequest(jsonURL,
+                        new Response.Listener<JSONArray>() {
+                            @Override
+                            public void onResponse(JSONArray response) {
+                                try {
+                                    Log.d(TAG, "Delete Stuff (onResponse)");
+                                    JSONObject jsonObject = null;
+                                    String success = "";
+                                    try {
+                                        Log.d(TAG, "Delete Stuff (onResponse) 2");
+                                        for (int i = 0; i < response.length(); i++) {
+                                            jsonObject = (JSONObject) response.get(i);
+                                            success = jsonObject.getString("ID");
+                                        }
+                                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                                        if (success.equals("0")) {
+                                            Log.d(TAG, jsonObject.getString("message"));
+                                        } else {
+                                            builder.setTitle("Store is failed to update");
+                                            builder.setMessage(jsonObject.getString("message"));
+                                            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                }
+                                            });
+                                            builder.show();
+                                        }
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                } catch (Exception e) {
+                                }
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError volleyError) {
+
+                            }
+                        });
+                queue.add(deleteRequest);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            if (isAdded()) {
+            }
+        }
+    }
+
+    public void getStoreStuffID(final String stuffID){
+
+        try {
+            ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+            Boolean isConnected = networkInfo != null && networkInfo.isConnectedOrConnecting();
+            if (isConnected) {
+
+                RequestQueue queue = Volley.newRequestQueue(getActivity());
+
+                JsonArrayRequest getStoreStuffIDRequest = new JsonArrayRequest(Constant.serverFile + "getStoreStuffID.php",
+                        new Response.Listener<JSONArray>() {
+                            @Override
+                            public void onResponse(JSONArray response) {
+                                try {
+                                    JSONObject storeStuffIDResponse = null;
+                                    for (int i = 0; i < response.length(); i++) {
+                                        storeStuffIDResponse = (JSONObject) response.get(i);
+                                        currentStoreStuffID = storeStuffIDResponse.getString("CurrentStoreStuffID");
+                                    }
+                                    Log.d(TAG, "Current Store Stuff ID =" + currentStoreStuffID);
+
+                                    if (retrievedStoreStuffID == true){
+                                        do {
+                                            String first = newStoreStuffID.substring(0, 4);
+                                            String last = newStoreStuffID.substring(4);
+                                            int number = Integer.parseInt(last) + 1;
+                                            newStoreStuffID = first + Integer.toString(number);
+                                        } while (checkExistStoreStuffID(newStoreStuffID));
+                                        Log.d(TAG, "New Store Stuff ID =" + newStoreStuffID);
+                                        insertStoreStuffList(stuffID, newStoreStuffID);
+                                    } else{
+                                        if (currentStoreStuffID.equals("0")) {
+                                            newStoreStuffID = "strs1001";
+                                            Log.d(TAG, "New Store Stuff ID =" + newStoreStuffID);
+                                            retrievedStoreStuffID = true;
+                                            insertStoreStuffList(stuffID, newStoreStuffID);
+                                        } else {
+                                            do {
+                                                String first = newStoreStuffID.substring(0, 4);
+                                                String last = newStoreStuffID.substring(4);
+                                                int number = Integer.parseInt(last) + 1;
+                                                newStoreStuffID = first + Integer.toString(number);
+                                            } while (checkExistStoreStuffID(newStoreStuffID));
+                                            Log.d(TAG, "New Store Stuff ID =" + newStoreStuffID);
+                                            retrievedStoreStuffID = true;
+                                            insertStoreStuffList(stuffID, newStoreStuffID);
+                                        }
+                                    }
+                                } catch (Exception e) {
+                                }
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError volleyError) {
+
+                            }
+                        });
+                queue.add(getStoreStuffIDRequest);
+
+            } else {
+                Toast.makeText(getActivity().getApplication(), "Network is NOT available",
+                        Toast.LENGTH_LONG).show();
+            }
+        } catch (Exception e) {
+            Toast.makeText(getActivity().getApplication(),
+                    "Error reading record:" + e.getMessage(),
+                    Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public Boolean checkExistStoreStuffID(String stuffID) {
+        try {
+
+            command = "{\"command\": \"303035303089\", \"reserve\": \"303030303030303030303030303030303030303030303030\", " +
+                    "\"StoreStuffID\": " + "\"" + Conversion.asciiToHex(stuffID.trim()) + "\"}";
+
+            pahoMqttClient.publishMessage(mqttAndroidClient, command, 1, "MY/TARUC/SSS/000000001/PUB");
+
+            String encodedStoreStuffID = "";
+
+            jsonObj = new JSONObject(command);
+            if (jsonObj.getString("command").equals("303035303089")) {
+                String[] encodeStoreStuffID = {Conversion.hexToAscii(jsonObj.getString("StoreStuffID"))};
+                for (String s : encodeStoreStuffID) {
+                    encodedStoreStuffID += URLEncoder.encode(s, "UTF-8");
+                }
+
+            }
+
+            checkStuffUrl = Constant.serverFile + "checkStoreStuffID.php?storeStuffID=" + encodedStoreStuffID;
+            Log.d(TAG, "Check store stuff ID Url =" + checkStuffUrl);
+
+            RequestQueue queue = Volley.newRequestQueue(getActivity());
+            try {
+                JsonArrayRequest checkStuffRequest = new JsonArrayRequest(checkStuffUrl,
+                        new Response.Listener<JSONArray>() {
+                            @Override
+                            public void onResponse(JSONArray response) {
+                                try {
+                                    String success = "";
+                                    for (int i = 0; i < response.length(); i++) {
+                                        JSONObject existResponse = (JSONObject) response.get(i);
+                                        success = existResponse.getString("success");
+                                    }
+                                    if (success.equals("0")) {
+                                        storeStuffIDExist = false;
+                                    } else {
+                                        storeStuffIDExist = true;
+                                    }
+                                } catch (Exception e) {
+                                }
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError volleyError) {
+                            }
+                        });
+                queue.add(checkStuffRequest);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                if (isAdded()) {
+                }
+            }
+
+        }catch (Exception e){
+            Toast.makeText(getActivity().getApplication(),
+                    "Error reading record:" + e.getMessage(),
+                    Toast.LENGTH_LONG).show();
+        }
+        return storeStuffIDExist;
+    }
+
+    public void insertStoreStuffList(final String newStuffID, final String newID){
+        try {
+
+            command = "{\"command\": \"303035303086\", \"reserve\": \"303030303030303030303030303030303030303030303030\", " +
+                    "\"StoreStuffID\": " + "\"" + Conversion.asciiToHex(newID.trim()) + "\" ," +
+                    "\"StoreID\": " + "\"" + Conversion.asciiToHex(storeInfo.getStoreID().trim()) + "\" ," +
+                    "\"StuffID\": " + "\"" + Conversion.asciiToHex(newStuffID.trim()) + "\"}";
+
+            pahoMqttClient.publishMessage(mqttAndroidClient, command, 1, "MY/TARUC/SSS/000000001/PUB");
+
+            String encodedStoreStuffID = "";
+            String encodedStoreID = "";
+            String encodedStuffID = "";
+
+            jsonObj = new JSONObject(command);
+            if (jsonObj.getString("command").equals("303035303086")){
+                String[] encodeStoreStuffID = {Conversion.hexToAscii(jsonObj.getString("StoreStuffID"))};
+                for (String s : encodeStoreStuffID){
+                    encodedStoreStuffID += URLEncoder.encode(s, "UTF-8");
+                }
+                String[] encodeStoreID = {Conversion.hexToAscii(jsonObj.getString("StoreID"))};
+                for (String s : encodeStoreID){
+                    encodedStoreID += URLEncoder.encode(s, "UTF-8");
+                }
+                String[] encodeStuffID = {Conversion.hexToAscii(jsonObj.getString("StuffID"))};
+                for (String s : encodeStuffID){
+                    encodedStuffID += URLEncoder.encode(s, "UTF-8");
+                }
+
+            }
+
+            addStuffUrl = Constant.serverFile + "insertStoreStuffList.php?storeStuffID=" + encodedStoreStuffID
+                    + "&storeID=" + encodedStoreID
+                    + "&stuffID=" + encodedStuffID;
+            Log.d(TAG, "Insert store stuff Url =" + addStuffUrl);
+
+            RequestQueue queue = Volley.newRequestQueue(getActivity());
+            try {
+                StringRequest postRequest = new StringRequest(
+                        Request.Method.POST,
+                        addStuffUrl,
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                if (isAdded()) {
+                                }
+                                JSONObject jsonObject = null;
+                                try {
+                                    jsonObject = new JSONObject(response);
+                                    String success = jsonObject.getString("success");
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                                    if (success.equals("1")) {
+                                        Log.d(TAG, "StoreStuffID successful inserted =" + newID.trim());
+                                    } else {
+                                        builder.setTitle("Failed to create StoreStuffID");
+                                        builder.setMessage(newID.trim() + " is failed to be uploaded");
+                                        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                            }
+                                        });
+                                        builder.show();
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                if (isAdded()) {
+                                }
+                            }
+                        }) {
+                    @Override
+                    protected Map<String, String> getParams() {
+                        Map<String, String> params = new HashMap<>();
+                        params.put("storeStuffID", newID.trim());
+                        params.put("storeID", storeInfo.getStoreID());
+                        params.put("stuffID", newStuffID.trim());
+                        return params;
+                    }
+
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        Map<String, String> params = new HashMap<>();
+                        params.put("Content-Type", "application/x-www-form-urlencoded");
+                        return params;
+                    }
+                };
+                queue.add(postRequest);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            if (isAdded()) {
+            }
+        }
     }
 
     @Override

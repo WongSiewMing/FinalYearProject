@@ -19,7 +19,7 @@
     <ImageView
         android:id="@+id/StuffImageView"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="170dp"
         android:layout_marginStart="5dp"
         android:layout_marginTop="16dp"
         android:layout_weight="3"
@@ -37,9 +37,10 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="5dp"
+            android:layout_marginEnd="10dp"
             android:layout_weight="1"
             android:text="No Stuff Found"
+            android:textAlignment="center"
             android:textColor="@color/black"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -50,10 +51,47 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="5dp"
-            android:layout_weight="8"
+            android:layout_marginEnd="10dp"
+            android:layout_weight="3"
             android:text="No Price Found"
+            android:textAlignment="center"
             android:textColor="@color/black" />
+
+        <TextView
+            android:id="@+id/txtStuffQuantity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="10dp"
+            android:layout_weight="1"
+            android:text="No Quantity Found"
+            android:textAlignment="center"
+            android:textColor="@color/black" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="10dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnRemove"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Remove" />
+
+            <Button
+                android:id="@+id/btnEdit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Edit" />
+        </LinearLayout>
 
     </LinearLayout>
 </LinearLayout>
