@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/myDrawer"
-    android:background="@drawable/gradient_background"
+    android:background="@drawable/background"
     tools:context="com.example.raindown.finalyearproject.UpdateNavigation">
 
     <LinearLayout

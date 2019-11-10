@@ -87,8 +87,15 @@ public class ServiceCenter extends Service {
                                     "empty",
                                     Conversion.hexToAscii(myjsonObj.getString("postDate")),
                                     Conversion.hexToAscii(myjsonObj.getString("postTime")));
-                            notificationTitle = "New message from " + privateChat.getStudentName();
-                            notificationMessage = privateChat.getMessage();
+
+                            if(!privateChat.getMessage().equals("")){
+                                notificationTitle = "New message from " + privateChat.getStudentName();
+                                notificationMessage = privateChat.getMessage();
+                            } else {
+                                notificationTitle = "New message from " + privateChat.getStudentName();
+                                notificationMessage = privateChat.getStudentName() + " had sent you an image file";
+                            }
+
 
                             pushNotification(notificationTitle, notificationMessage);
 

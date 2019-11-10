@@ -75,6 +75,7 @@ public class UpdateNavigation extends AppCompatActivity implements NavigationVie
     private Toast backToast;
 
     protected void onCreate(Bundle savedInstanceState) {
+
         fragmentManager = this.getSupportFragmentManager();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.update_navigation);
@@ -97,6 +98,8 @@ public class UpdateNavigation extends AppCompatActivity implements NavigationVie
 
         View view = bottom_navigation.findViewById(R.id.navigation_home);
         view.performClick();
+
+        Toast.makeText(getApplicationContext(),"Welcome, " + student.getStudentName(),Toast.LENGTH_SHORT).show();
 
         drawerLayout.addDrawerListener(mytoggle);
         mytoggle.syncState();
@@ -184,6 +187,11 @@ public class UpdateNavigation extends AppCompatActivity implements NavigationVie
                 break;
 
             case R.id.nav_history:
+                HistoryMenu historyMenu = new HistoryMenu();
+                Bundle bundle9 = new Bundle();
+                bundle9.putSerializable("HistoryMenu", student);
+                historyMenu.setArguments(bundle9);
+                loadFragment(historyMenu);
                 break;
 
             case R.id.nav_about:

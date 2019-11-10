@@ -587,13 +587,13 @@ public class MaintainStuff extends Fragment {
                                                                     for (int i2 = 0; i2 < getFragmentManager().getBackStackEntryCount(); ++i2){
                                                                         getFragmentManager().popBackStack();
                                                                     }
-                                                                    MainMenu mainMenu = new MainMenu();
+                                                                    Home home = new Home();
                                                                     Bundle bundle= new Bundle();
-                                                                    bundle.putSerializable("MainMenu", UpdateNavigation.student);
-                                                                    mainMenu.setArguments(bundle);
+                                                                    bundle.putSerializable("Home", UpdateNavigation.student);
+                                                                    home.setArguments(bundle);
                                                                     fragmentManager = getFragmentManager();
                                                                     fragmentManager.beginTransaction()
-                                                                            .replace(R.id.update_fragmentHolder, mainMenu)
+                                                                            .replace(R.id.update_fragmentHolder, home)
                                                                             .commit();
                                                             }
                                                         }

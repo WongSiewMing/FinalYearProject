@@ -169,7 +169,6 @@ public class RequestListAdapter extends RecyclerView.Adapter<RequestListAdapter.
                     .setPositiveButton("OK", dialogClickListener).show();
 
         }else {
-            Log.d(TAG,"Hi");
             command = "{\"command\": \"303035303063\", \"reserve\": \"303030303030303030303030303030303030303030303030\", " +
                     "\"appointmentID\": " + "\"" + Conversion.asciiToHex(mData.get(position).getAppointmentID()) + "\" ," +
                     "\"studentID\": " + "\"" + Conversion.asciiToHex(Navigation.student.getStudentID()) + "\" ," +
