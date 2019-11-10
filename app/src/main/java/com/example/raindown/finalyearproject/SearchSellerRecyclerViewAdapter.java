@@ -22,7 +22,13 @@ import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 
+import org.eclipse.paho.android.service.MqttAndroidClient;
+
 import java.util.List;
+
+import Helper.Constant;
+import Helper.Conversion;
+import Helper.PahoMqttClient;
 import Helper.SearchOB;
 import Helper.Student;
 
@@ -30,6 +36,9 @@ public class SearchSellerRecyclerViewAdapter extends RecyclerView.Adapter<Search
     private Context mContext;
     private List<SearchOB> mData;
     private Student student;
+    private String sellerStuffCommand = "";
+    private PahoMqttClient pahoMqttClient;
+    private MqttAndroidClient mqttAndroidClient;
 
     FragmentManager fragmentManager;
 
@@ -58,10 +67,18 @@ public class SearchSellerRecyclerViewAdapter extends RecyclerView.Adapter<Search
                 if (mData.get(position).getUserID().equals(student.getStudentID())){
                     Toast.makeText(mContext.getApplicationContext(),"This is your profile", Toast.LENGTH_LONG).show();
                 }else {
+
+                    sellerStuffCommand = "{\"command\": \"30303530300B\", \"reserve\": \"303030303030303030303030303030303030303030303030\", " +
+                            "\"studentID\": " + "\"" + Conversion.asciiToHex(mData.get(position).getUserID()) + "\"}";
+
+                    pahoMqttClient = new PahoMqttClient();
+                    mqttAndroidClient = pahoMqttClient.getMqttClient(mContext, Constant.serverUrl,sellerStuffCommand,"MY/TARUC/SSS/000000001/PUB");
+
                     ChooseSellerStuff chooseSellerStuff = new ChooseSellerStuff();
                     Bundle bundle = new Bundle();
                     bundle.putSerializable("UserData", student);//own data
                     bundle.putString("ClickedUserID", mData.get(position).getUserID());
+                    bundle.putSerializable("SellerStuff",sellerStuffCommand);
                     chooseSellerStuff.setArguments(bundle);
                     fragmentManager = ((AppCompatActivity) v.getContext()).getSupportFragmentManager();
                     fragmentManager.beginTransaction()

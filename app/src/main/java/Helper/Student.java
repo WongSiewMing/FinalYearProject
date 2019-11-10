@@ -46,6 +46,19 @@ public class Student implements Serializable {
         this.studentProgramme = studentProgramme;
     }
 
+    public Student(String studentID, String photo, String studentName, String studentProgramme, String studentFaculty, int yearOfStudy) {
+        this.studentID = studentID;
+        this.photo = photo;
+        this.studentName = studentName;
+        this.studentProgramme = studentProgramme;
+        this.studentFaculty = studentFaculty;
+        this.yearOfStudy = yearOfStudy;
+    }
+
+    public Student(String studentID) {
+        this.studentID = studentID;
+    }
+
     public String getStudentID() {
         return studentID;
     }

@@ -14,7 +14,7 @@
         android:weightSum="1">
 
         <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/sellerPhoto"
+            android:id="@+id/buyerPhoto"
             android:layout_width="90dp"
             android:layout_height="90dp"
             android:layout_gravity="center"
@@ -28,7 +28,7 @@
             app:layout_constraintVertical_bias="0.6" />
 
         <TextView
-            android:id="@+id/sellerName"
+            android:id="@+id/buyerName"
             android:layout_width="209dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -41,7 +41,7 @@
             app:layout_constraintBottom_toTopOf="@+id/linearLayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.535"
-            app:layout_constraintStart_toEndOf="@+id/sellerPhoto"
+            app:layout_constraintStart_toEndOf="@+id/buyerPhoto"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="1.0" />
 
@@ -54,12 +54,12 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.509"
-            app:layout_constraintStart_toEndOf="@+id/sellerPhoto"
+            app:layout_constraintStart_toEndOf="@+id/buyerPhoto"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="1.0">
 
             <TextView
-                android:id="@+id/sellerFaculty"
+                android:id="@+id/buyerFaculty"
                 android:layout_width="80dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -71,7 +71,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/sellerProgramme"
+                android:id="@+id/buyerProgramme"
                 android:layout_width="80dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -83,7 +83,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/sellerYear"
+                android:id="@+id/buyerYear"
                 android:layout_width="80dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -107,14 +107,14 @@
         android:layout_marginBottom="15dp"
         android:fontFamily="sans-serif-smallcaps"
         android:background="@color/darkgrey"
-        android:text="Select an item you want to trade :"
+        android:text="Select an item you want to offer :"
         android:textAlignment="center"
         android:textColor="@color/black"
         android:textSize="18dp"
         android:textStyle="bold"/>
 
     <ListView
-        android:id="@+id/sellerTradeList"
+        android:id="@+id/buyerOfferList"
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
         android:layout_marginTop="170dp"
@@ -127,13 +127,13 @@
         android:src="@mipmap/icon_info"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:id="@+id/tradeInfoIcon"
+        android:id="@+id/buyerInfoIcon"
         android:layout_gravity="center" />
 
     <TextView
         android:visibility="gone"
         android:layout_marginTop="50dp"
-        android:id="@+id/tradeNotice"
+        android:id="@+id/buyerNotice"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-smallcaps"

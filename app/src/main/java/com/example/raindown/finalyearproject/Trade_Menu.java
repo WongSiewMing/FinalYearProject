@@ -73,7 +73,8 @@ public class Trade_Menu extends Fragment {
     public void populateArrayAppointmentOption() {
         arrayTradeOption.clear();
         arrayTradeOption.add(0, new TradeOption(R.mipmap.icon_add, "Create Trade"));
-        arrayTradeOption.add(1, new TradeOption(R.mipmap.icon_trade, "Trade Request"));
+        arrayTradeOption.add(1, new TradeOption(R.mipmap.icon_my_trade, "Sent Trade Request"));
+        arrayTradeOption.add(2, new TradeOption(R.mipmap.icon_trade, "Trading Request"));
         populateListView();
     }
 
@@ -116,9 +117,9 @@ public class Trade_Menu extends Fragment {
 
                 if (arrayTradeOption.get(position).getTradeOptionName().equals("Create Trade")) {
                     SearchSeller searchSeller = new SearchSeller();
-                    Bundle bundle8 = new Bundle();
-                    bundle8.putSerializable("createTrade", s);
-                    searchSeller.setArguments(bundle8);
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("createTrade", s);
+                    searchSeller.setArguments(bundle);
                     fragmentManager = getFragmentManager();
                     fragmentManager.beginTransaction()
                             .replace(R.id.update_fragmentHolder, searchSeller)
@@ -126,14 +127,28 @@ public class Trade_Menu extends Fragment {
                             .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                             .commit();
 
-                } else if (arrayTradeOption.get(position).getTradeOptionName().equals("Trade Request")) {
-//                    ManageRequest manageRequest = new ManageRequest();
-//                    fragmentManager = getFragmentManager();
-//                    fragmentManager.beginTransaction()
-//                            .replace(R.id.update_fragmentHolder, manageRequest)
-//                            .addToBackStack(null)
-//                            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-//                            .commit();
+                } else if (arrayTradeOption.get(position).getTradeOptionName().equals("Sent Trade Request")) {
+                    ManageSentTrade manageSentTrade = new ManageSentTrade();
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("manageSentTrade", s);
+                    manageSentTrade.setArguments(bundle);
+                    fragmentManager = getFragmentManager();
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.update_fragmentHolder, manageSentTrade)
+                            .addToBackStack(null)
+                            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                            .commit();
+                } else if (arrayTradeOption.get(position).getTradeOptionName().equals("Trading Request")) {
+                    ManageTradeRequest manageTradeRequest = new ManageTradeRequest();
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("manageTradeRequest", s);
+                    manageTradeRequest.setArguments(bundle);
+                    fragmentManager = getFragmentManager();
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.update_fragmentHolder, manageTradeRequest)
+                            .addToBackStack(null)
+                            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                            .commit();
                 }
             }
         });

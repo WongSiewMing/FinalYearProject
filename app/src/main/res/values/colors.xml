@@ -2,6 +2,7 @@
 <resources>
     <color name="lightorange">#feb34d</color>
     <color name="darkorange">#feb34d</color>
+    <color name="darktangerine">#ffa812</color>
     <color name="beige">#FFFFD7A1</color>
     <color name="lightgreen">#6dbc15</color>
     <color name="darkgreen">#7bb639</color>

@@ -27,6 +27,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Log;
@@ -101,7 +102,7 @@ public class ChatRoom_V2 extends Fragment {
     private Student myInfo;
     private String opponentID;
     private FloatingActionButton btnSendMessage;
-    private ImageView btnSendImage, sendImagePreview, temporaryImageHolder;
+    private ImageView btnSendImage, sendImagePreview;
     private EditText editMessage;
     private ImageView opponentPhoto, btnBack;
     private TextView opponentName, opponentStatus, messageStatus, sendImageCaption;
@@ -140,10 +141,6 @@ public class ChatRoom_V2 extends Fragment {
         myInfo = (Student) bundle.getSerializable("UserData");
         opponentID = bundle.getString("ClickedUserID");
 
-        Log.d(TAG, "My Info = " + myInfo.getStudentID());
-        Log.d(TAG, "Opponent ID = " + opponentID);
-
-
         btnSendMessage = view.findViewById(R.id.btn_send_message);
         btnSendImage = view.findViewById(R.id.btnSendImage);
         sendImagePreview = view.findViewById(R.id.send_image_preview);
@@ -156,13 +153,20 @@ public class ChatRoom_V2 extends Fragment {
         messageProgressBar = view.findViewById(R.id.messageProgressBar);
         messageStatus = view.findViewById(R.id.message_status);
         sendImageCaption = view.findViewById(R.id.send_image_caption);
-        temporaryImageHolder = view.findViewById(R.id.temporaryImageHolder);
-        temporaryImageHolder.setImageResource(R.drawable.ic_camera);
 
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getFragmentManager().popBackStack();
+                ChatRoomList_V2 chatRoomList_v2 = new ChatRoomList_V2();
+                Bundle bundle1 = new Bundle();
+                bundle1.putSerializable("chatRoomList_v2", myInfo);
+                chatRoomList_v2.setArguments(bundle1);
+                getFragmentManager()
+                .beginTransaction()
+                        .replace(R.id.update_fragmentHolder, chatRoomList_v2)
+                        .addToBackStack(null)
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                        .commit();
             }
         });
         opponentStatus.setText("Offline");
@@ -269,7 +273,7 @@ public class ChatRoom_V2 extends Fragment {
 
                         if (Conversion.hexToAscii(myjsonObj.getString("studentID")).equals(myInfo.getStudentID())
                                 && Conversion.hexToAscii(myjsonObj.getString("recipient")).equals(opponentID)
-                        && temporaryImageHolder.getDrawable().getConstantState() == getResources().getDrawable(R.drawable.ic_camera).getConstantState()) {
+                        && !Conversion.hexToAscii(myjsonObj.getString("message")).equals("")) {
                             Log.d(TAG, "This is message that I send");
                             Log.d(TAG, "Array size =" + arrayPrivateChat.size());
                             arrayPrivateChat.add(new PrivateChatOB(
@@ -284,7 +288,7 @@ public class ChatRoom_V2 extends Fragment {
                             populateChatRecyclerView();
                         } else if (Conversion.hexToAscii(myjsonObj.getString("studentID")).equals(opponentID)
                                 && Conversion.hexToAscii(myjsonObj.getString("recipient")).equals(myInfo.getStudentID())
-                                && temporaryImageHolder.getDrawable().getConstantState() == getResources().getDrawable(R.drawable.ic_camera).getConstantState()) {
+                                && !Conversion.hexToAscii(myjsonObj.getString("message")).equals("")) {
                             arrayPrivateChat.add(new PrivateChatOB(Conversion.hexToAscii(myjsonObj.getString("privateID")),
                                     Conversion.hexToAscii(myjsonObj.getString("studentID")),
                                     Conversion.hexToAscii(myjsonObj.getString("studentName")),
@@ -295,31 +299,20 @@ public class ChatRoom_V2 extends Fragment {
                                     Conversion.hexToAscii(myjsonObj.getString("postTime"))));
                             populateChatRecyclerView();
 
-                        } else if (Conversion.hexToAscii(myjsonObj.getString("studentID")).equals(myInfo.getStudentID())
-                                && Conversion.hexToAscii(myjsonObj.getString("recipient")).equals(opponentID)) {
-                            arrayPrivateChat.add(new PrivateChatOB(Conversion.hexToAscii(myjsonObj.getString("privateID")),
-                                    Conversion.hexToAscii(myjsonObj.getString("studentID")),
-                                    Conversion.hexToAscii(myjsonObj.getString("studentName")),
-                                    Conversion.hexToAscii(myjsonObj.getString("recipient")),
-                                    "[Temporary Image]",
-                                    temporaryImageHolder,
-                                    Conversion.hexToAscii(myjsonObj.getString("postDate")),
-                                    Conversion.hexToAscii(myjsonObj.getString("postTime"))));
-                            populateChatRecyclerView();
+                        } else {
 
-                        } else if (Conversion.hexToAscii(myjsonObj.getString("studentID")).equals(opponentID)
-                                && Conversion.hexToAscii(myjsonObj.getString("recipient")).equals(myInfo.getStudentID())) {
-                            arrayPrivateChat.add(new PrivateChatOB(Conversion.hexToAscii(myjsonObj.getString("privateID")),
-                                    Conversion.hexToAscii(myjsonObj.getString("studentID")),
-                                    Conversion.hexToAscii(myjsonObj.getString("studentName")),
-                                    Conversion.hexToAscii(myjsonObj.getString("recipient")),
-                                    "[Temporary Image]",
-                                    temporaryImageHolder,
-                                    Conversion.hexToAscii(myjsonObj.getString("postDate")),
-                                    Conversion.hexToAscii(myjsonObj.getString("postTime"))));
-                            populateChatRecyclerView();
+                            ChatRoom_V2 fg = new ChatRoom_V2();
+                            Bundle bundle = new Bundle();
+                            bundle.putSerializable("UserData", myInfo);//own data
+                            bundle.putString("ClickedUserID", opponentID);
+                            fg.setArguments(bundle);
 
+                            getFragmentManager()
+                                    .beginTransaction()
+                                    .replace(R.id.update_fragmentHolder, fg)
+                                    .commit();
                         }
+
 
                     } else if (myjsonObj.getString("command").equals("303035303055")) {
                         if (Conversion.hexToAscii(myjsonObj.getString("recipient")).equals(myInfo.getStudentID()) && Conversion.hexToAscii(myjsonObj.getString("studentID")).equals(opponentID)) {
@@ -345,6 +338,7 @@ public class ChatRoom_V2 extends Fragment {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+
 
             }
 
@@ -471,12 +465,11 @@ public class ChatRoom_V2 extends Fragment {
                                         Log.d("privateChatRecord", "Failed");
                                     }
 
-
                                     editMessage.setText("");
+                                    editMessage.setFocusableInTouchMode(true);
                                     sendImagePreview.setVisibility(view.INVISIBLE);
                                     sendImageCaption.setVisibility(view.INVISIBLE);
                                     sendImagePreview.setImageResource(R.drawable.ic_camera);
-                                    //temporaryImageHolder.setImageResource(R.drawable.ic_camera);
 
                                 } catch (JSONException e) {
                                     e.printStackTrace();
@@ -727,7 +720,6 @@ public class ChatRoom_V2 extends Fragment {
                 imagePreview = (Bitmap) data.getExtras().get("data");
                 ByteArrayOutputStream bytes = new ByteArrayOutputStream();
                 imagePreview.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-                temporaryImageHolder.setImageBitmap(imagePreview);
                 sendImagePreview.setVisibility(View.VISIBLE);
                 sendImageCaption.setVisibility(View.VISIBLE);
                 sendImagePreview.setImageBitmap(imagePreview);
@@ -746,7 +738,6 @@ public class ChatRoom_V2 extends Fragment {
                         sendImagePreview.setImageBitmap(getResizedBitmap(bm, 500, 500));
                         sendImagePreview.setVisibility(View.VISIBLE);
                         sendImageCaption.setVisibility(View.VISIBLE);
-                        temporaryImageHolder.setImageBitmap(getResizedBitmap(bm, 500, 500));
                         converted = bitmapToString(getResizedBitmap(bm, 500, 500));
                         editMessage.setText("");
                         editMessage.setFocusable(false);

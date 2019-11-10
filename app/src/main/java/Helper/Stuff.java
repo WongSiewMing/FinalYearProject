@@ -46,6 +46,14 @@ public class Stuff implements Serializable {
         this.stuffStudentID = stuffStudentID;
     }
 
+    public Stuff(String stuffID, Student studentID, String stuffName, String stuffImage, double stuffPrice) {
+        this.stuffID = stuffID;
+        this.studentID = studentID;
+        this.stuffName = stuffName;
+        this.stuffImage = stuffImage;
+        this.stuffPrice = stuffPrice;
+    }
+
     public String getStuffID() {
         return stuffID;
     }
