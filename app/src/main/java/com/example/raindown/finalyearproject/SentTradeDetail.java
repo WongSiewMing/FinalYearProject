@@ -172,9 +172,19 @@ public class SentTradeDetail extends Fragment {
                     }
                 };
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
-                builder.setMessage("Cancel Trade Request ?").setPositiveButton("Yes", dialogClickListener)
-                        .setNegativeButton("No", dialogClickListener).show();
+                if (sentTrade.getTradeStatus().equals("Accepted")){
+                    AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
+                    builder.setTitle("Error");
+                    builder.setMessage("Cannot cancel an on going trading !");
+                    builder.setNegativeButton("OK", dialogClickListener);
+                    builder.show();
+                }
+                else{
+                    AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
+                    builder.setMessage("Cancel Trade Request ?").setPositiveButton("Yes", dialogClickListener)
+                            .setNegativeButton("No", dialogClickListener).show();
+                }
+
             }
         });
         return view;

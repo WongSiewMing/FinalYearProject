@@ -52,7 +52,8 @@ public class TradeRequestDetail extends Fragment {
     private TextView requesterName, requesterFaculty, requesterProgramme, requesterYear, tradeRequesterName, requestStuffName, requestStuffPrice, offerStuffName, offerStuffPrice;
     private Button btnAccept, btnReject, btnChat, btnQR;
     private FragmentManager fragmentManager;
-    private String tradeStatus, command, jsonURL;
+    private String tradeStatus, command, command2, command3, jsonURL, offerStuffStatus, requestStuffStatus;
+    private Integer offerStuffQuantity, requestStuffQuantity;
     private PahoMqttClient pahoMqttClient;
     private MqttAndroidClient mqttAndroidClient;
     private JSONObject jsonObj;
@@ -132,6 +133,12 @@ public class TradeRequestDetail extends Fragment {
             btnAccept.setVisibility(View.GONE);
         }
 
+        offerStuffStatus = tradeRequest.getUserStuffID().getStuffCondition();
+        requestStuffStatus = tradeRequest.getRequestStuffID().getStuffCondition();
+
+        offerStuffQuantity = tradeRequest.getUserStuffID().getStuffQuantity();
+        requestStuffQuantity = tradeRequest.getRequestStuffID().getStuffQuantity();
+
         btnChat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -165,7 +172,20 @@ public class TradeRequestDetail extends Fragment {
                                 pahoMqttClient = new PahoMqttClient();
                                 mqttAndroidClient = pahoMqttClient.getMqttClient(getActivity(), Constant.serverUrl, command, "MY/TARUC/SSS/000000001/PUB");
 
-                                updateTradeStatus();
+                                command2 = "{\"command\": \"303035303076\", \"reserve\": \"303030303030303030303030303030303030303030303030\", " +
+                                        "\"stuffID\": " + "\"" + Conversion.asciiToHex(tradeRequest.getUserStuffID().getStuffID()) + "\"}";
+
+                                pahoMqttClient = new PahoMqttClient();
+                                mqttAndroidClient = pahoMqttClient.getMqttClient(getActivity(), Constant.serverUrl, command2, "MY/TARUC/SSS/000000001/PUB");
+
+                                command3 = "{\"command\": \"303035303077\", \"reserve\": \"303030303030303030303030303030303030303030303030\", " +
+                                        "\"stuffID\": " + "\"" + Conversion.asciiToHex(tradeRequest.getRequestStuffID().getStuffID()) + "\"}";
+
+                                pahoMqttClient = new PahoMqttClient();
+                                mqttAndroidClient = pahoMqttClient.getMqttClient(getActivity(), Constant.serverUrl, command3, "MY/TARUC/SSS/000000001/PUB");
+
+
+                                updateOfferStuff();
                                 break;
                             case DialogInterface.BUTTON_NEGATIVE:
                                 break;
@@ -338,6 +358,210 @@ public class TradeRequestDetail extends Fragment {
                 Toast.makeText(getActivity().getApplication(), "Network is NOT available",
                         Toast.LENGTH_LONG).show();
             }
+        } catch (Exception e) {
+            Toast.makeText(getActivity().getApplication(),
+                    "Error reading record:" + e.getMessage(),
+                    Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public void updateOfferStuff() {
+
+        try {
+            ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+            Boolean isConnected = networkInfo != null && networkInfo.isConnectedOrConnecting();
+            if (isConnected) {
+                try {
+                    jsonObj = new JSONObject(command2);
+                    if (jsonObj.getString("command").equals("303035303076")) {
+
+                        if (offerStuffQuantity > 1){
+                            offerStuffQuantity = offerStuffQuantity - 1;
+                            offerStuffStatus = "Active";
+                        } else if (offerStuffQuantity == 1){
+                            offerStuffQuantity = 0;
+                            offerStuffStatus = "Sold";
+                        }
+
+                        jsonURL = Constant.serverFile + "updateTradeStuff.php?stuffID=" + Conversion.hexToAscii(jsonObj.getString("stuffID")) + "&stuffQuantity=" + offerStuffQuantity + "&stuffStatus=" + offerStuffStatus;
+
+                        RequestQueue queue = Volley.newRequestQueue(getActivity());
+                        try {
+                            StringRequest postRequest = new StringRequest(
+                                    Request.Method.POST,
+                                    jsonURL,
+                                    new Response.Listener<String>() {
+                                        @Override
+                                        public void onResponse(String response) {
+                                            if (isAdded()) {
+                                            }
+                                            JSONObject jsonObject = null;
+                                            try {
+                                                jsonObject = new JSONObject(response);
+                                                String success = jsonObject.getString("success");
+                                                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                                                if (success.equals("1")) {
+                                                    updateRequestStuff();
+                                                } else {
+                                                    builder.setTitle("Oops !");
+                                                    builder.setMessage("Something Wrong. Please Try Again.");
+                                                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(DialogInterface dialog, int which) {
+                                                        }
+                                                    });
+                                                    builder.show();
+                                                }
+                                            } catch (JSONException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    },
+                                    new Response.ErrorListener() {
+                                        @Override
+                                        public void onErrorResponse(VolleyError error) {
+                                            if (isAdded()) {
+                                            }
+
+                                        }
+                                    }) {
+                                @Override
+                                protected Map<String, String> getParams() {
+                                    Map<String, String> params = new HashMap<>();
+                                    try {
+                                        params.put("stuffID", Conversion.hexToAscii(jsonObj.getString("stuffID")));
+                                        params.put("stuffQuantity", offerStuffQuantity.toString());
+                                        params.put("stuffStatus", offerStuffStatus);
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                    return params;
+                                }
+
+                                @Override
+                                public Map<String, String> getHeaders() throws AuthFailureError {
+                                    Map<String, String> params = new HashMap<>();
+                                    params.put("Content-Type", "application/x-www-form-urlencoded");
+                                    return params;
+                                }
+                            };
+                            queue.add(postRequest);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    if (isAdded()) {
+                    }
+                }
+
+            }
+
+        } catch (Exception e) {
+            Toast.makeText(getActivity().getApplication(),
+                    "Error reading record:" + e.getMessage(),
+                    Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public void updateRequestStuff() {
+
+        try {
+            ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+            Boolean isConnected = networkInfo != null && networkInfo.isConnectedOrConnecting();
+            if (isConnected) {
+                try {
+                    jsonObj = new JSONObject(command3);
+                    if (jsonObj.getString("command").equals("303035303077")) {
+
+                        if (requestStuffQuantity > 1){
+                            requestStuffQuantity = requestStuffQuantity - 1;
+                            requestStuffStatus = "Active";
+                        } else if (requestStuffQuantity == 1){
+                            requestStuffQuantity = 0;
+                            requestStuffStatus = "Sold";
+                        }
+
+                        jsonURL = Constant.serverFile + "updateTradeStuff.php?stuffID=" + Conversion.hexToAscii(jsonObj.getString("stuffID")) + "&stuffQuantity=" + requestStuffQuantity + "&stuffStatus=" + requestStuffStatus;
+
+                        RequestQueue queue = Volley.newRequestQueue(getActivity());
+                        try {
+                            StringRequest postRequest = new StringRequest(
+                                    Request.Method.POST,
+                                    jsonURL,
+                                    new Response.Listener<String>() {
+                                        @Override
+                                        public void onResponse(String response) {
+                                            if (isAdded()) {
+                                            }
+                                            JSONObject jsonObject = null;
+                                            try {
+                                                jsonObject = new JSONObject(response);
+                                                String success = jsonObject.getString("success");
+                                                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                                                if (success.equals("1")) {
+                                                    updateTradeStatus();
+                                                } else {
+                                                    builder.setTitle("Oops !");
+                                                    builder.setMessage("Something Wrong. Please Try Again.");
+                                                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(DialogInterface dialog, int which) {
+                                                        }
+                                                    });
+                                                    builder.show();
+                                                }
+                                            } catch (JSONException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    },
+                                    new Response.ErrorListener() {
+                                        @Override
+                                        public void onErrorResponse(VolleyError error) {
+                                            if (isAdded()) {
+                                            }
+
+                                        }
+                                    }) {
+                                @Override
+                                protected Map<String, String> getParams() {
+                                    Map<String, String> params = new HashMap<>();
+                                    try {
+                                        params.put("stuffID", Conversion.hexToAscii(jsonObj.getString("stuffID")));
+                                        params.put("stuffQuantity", requestStuffQuantity.toString());
+                                        params.put("stuffStatus", requestStuffStatus);
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                    return params;
+                                }
+
+                                @Override
+                                public Map<String, String> getHeaders() throws AuthFailureError {
+                                    Map<String, String> params = new HashMap<>();
+                                    params.put("Content-Type", "application/x-www-form-urlencoded");
+                                    return params;
+                                }
+                            };
+                            queue.add(postRequest);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    if (isAdded()) {
+                    }
+                }
+
+            }
+
         } catch (Exception e) {
             Toast.makeText(getActivity().getApplication(),
                     "Error reading record:" + e.getMessage(),
