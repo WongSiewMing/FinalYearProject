@@ -3,12 +3,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Summary">
+    android:background="@drawable/background"
+    tools:context="com.example.raindown.finalyearproject.SummaryMenu">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
+
+    <ListView
+        android:id="@+id/summaryOptionList"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="SUMMARY" />
+        android:layout_height="fill_parent"
+        android:drawSelectorOnTop="false"
+        android:listSelector="@color/lightgrey" />
 
 </FrameLayout>

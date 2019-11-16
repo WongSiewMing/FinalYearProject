@@ -6,12 +6,10 @@
     tools:context="com.example.raindown.finalyearproject.HistoryMenu">
 
     <ListView
+        android:id="@+id/historyOptionList"
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
-        android:layout_weight="1"
-        android:id="@+id/historyOptionList"
         android:drawSelectorOnTop="false"
-        android:listSelector="@color/lightgrey">
-    </ListView>
+        android:listSelector="@color/lightgrey"></ListView>
 
 </FrameLayout>
