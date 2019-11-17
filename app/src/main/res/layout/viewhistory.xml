@@ -30,7 +30,7 @@
         android:id="@+id/noViewHistoryFound"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="No view history found !"
+        android:text="No recently viewed stuffs !"
         android:layout_gravity="center"
         android:textStyle="bold"
         android:fontFamily="sans-serif-smallcaps"

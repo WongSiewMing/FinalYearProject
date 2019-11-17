@@ -24,6 +24,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
+import com.squareup.picasso.MemoryPolicy;
+import com.squareup.picasso.NetworkPolicy;
+import com.squareup.picasso.Picasso;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.json.JSONArray;
@@ -37,6 +40,7 @@ import Helper.Conversion;
 import Helper.PahoMqttClient;
 import Helper.SearchHistoryOB;
 import Helper.Student;
+import Helper.Stuff;
 import Helper.ViewHistoryOB;
 
 public class ViewHistory extends Fragment {
@@ -94,102 +98,115 @@ public class ViewHistory extends Fragment {
         notice = (TextView) view.findViewById(R.id.noViewHistoryFound);
         deleteAllHistory = view.findViewById(R.id.deleteAllViewHistory);
 
-        //getViewHistory();
+        getViewHistory();
 
         return view;
     }
 
-//    public void getViewHistory() {
-//        try {
-//            ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-//            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-//            Boolean isConnected = networkInfo != null && networkInfo.isConnectedOrConnecting();
-//            if (isConnected) {
-//
-//                RequestQueue queue = Volley.newRequestQueue(getActivity());
-//                if (!pDialog.isShowing())
-//                    pDialog.setMessage("Sync with server...");
-//                pDialog.show();
-//
-//                JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Constant.serverFile + "getViewHistory.php?studentID=" + s.getStudentID(),
-//                        new Response.Listener<JSONArray>() {
-//                            @Override
-//                            public void onResponse(JSONArray response) {
-//                                if (response.toString().equals("[]")) {
-//                                    infoIcon.setVisibility(view.VISIBLE);
-//                                    notice.setVisibility(view.VISIBLE);
-//                                    deleteAllHistory.setEnabled(false);
-//                                }
-//                                try {
-//                                    arrayViewHistory.clear();
-//                                    for (int i = 0; i < response.length(); i++) {
-//                                        JSONObject searchHistoryResponse = (JSONObject) response.get(i);
-////                                        arrayViewHistory.add(new SearchHistoryOB(searchHistoryResponse.getString("SearchHistoryID"),
-////                                                new Student(searchHistoryResponse.getString("StudentID")),
-////                                                searchHistoryResponse.getString("Date"),
-////                                                searchHistoryResponse.getString("Time"),
-////                                                searchHistoryResponse.getString("SearchKeyword"),
-////                                                searchHistoryResponse.getString("status")));
-//                                    }
-//
-//                                    populateListView();
-//                                    if (pDialog.isShowing())
-//                                        pDialog.dismiss();
-//                                } catch (Exception e) {
-//                                }
-//                            }
-//                        },
-//                        new Response.ErrorListener() {
-//                            @Override
-//                            public void onErrorResponse(VolleyError volleyError) {
-//                                if (pDialog.isShowing())
-//                                    pDialog.dismiss();
-//                            }
-//                        });
-//                queue.add(jsonObjectRequest);
-//
-//            } else {
-//                Toast.makeText(getActivity().getApplication(), "Network is NOT available",
-//                        Toast.LENGTH_LONG).show();
-//            }
-//        } catch (Exception e) {
-//            Toast.makeText(getActivity().getApplication(),
-//                    "Error reading record:" + e.getMessage(),
-//                    Toast.LENGTH_LONG).show();
-//        }
-//
-//    }
-//
-//    public void populateListView() {
-//
-//        ArrayAdapter<ViewHistoryOB> adapter = new MyListAdapter();
-//        ListView list = (ListView) view.findViewById(R.id.ViewHistoryList);
-//        list.setAdapter(adapter);
-//    }
+    public void getViewHistory() {
+        try {
+            ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+            Boolean isConnected = networkInfo != null && networkInfo.isConnectedOrConnecting();
+            if (isConnected) {
 
-//    public class MyListAdapter extends ArrayAdapter<ViewHistoryOB> {
-//
-//        public MyListAdapter() {
-//            super(getActivity(), R.layout.viewhistory_cardview, arrayViewHistory);
-//        }
-//
-//        @Override
-//        public View getView(int position, View convertView, ViewGroup parent) {
-//
-//            View itemView = convertView;
-//
-//            if (itemView == null) {
-//                itemView = getActivity().getLayoutInflater().inflate(R.layout.searchhistorycardview, parent, false);
-//            }
-//
-//            final SearchHistoryOB currentSearchHistory = arrayViewHistory.get(position);
-//
-//            TextView searchKeyword = (TextView) itemView.findViewById(R.id.SearchKeyword);
-//            searchKeyword.setText(currentSearchHistory.getSearchKeyword());
-//
-//            TextView searchTime = (TextView) itemView.findViewById(R.id.searchTime);
-//            searchTime.setText("Searched On " + currentSearchHistory.getDate() + " " + currentSearchHistory.getTime());
-//
+                RequestQueue queue = Volley.newRequestQueue(getActivity());
+                if (!pDialog.isShowing())
+                    pDialog.setMessage("Sync with server...");
+                pDialog.show();
+
+                JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Constant.serverFile + "getViewHistory.php?studentID=" + s.getStudentID(),
+                        new Response.Listener<JSONArray>() {
+                            @Override
+                            public void onResponse(JSONArray response) {
+                                if (response.toString().equals("[]")) {
+                                    infoIcon.setVisibility(view.VISIBLE);
+                                    notice.setVisibility(view.VISIBLE);
+                                    deleteAllHistory.setEnabled(false);
+                                }
+                                try {
+                                    arrayViewHistory.clear();
+                                    for (int i = 0; i < response.length(); i++) {
+                                        JSONObject viewHistoryResponse = (JSONObject) response.get(i);
+                                        arrayViewHistory.add(new ViewHistoryOB(viewHistoryResponse.getString("ViewHistoryID"),
+                                                new Student(viewHistoryResponse.getString("StudentID")),
+                                                viewHistoryResponse.getString("Date"),
+                                                viewHistoryResponse.getString("Time"),
+                                                new Stuff(new Student(viewHistoryResponse.getString("StuffSellerID"),
+                                                        viewHistoryResponse.getString("StuffSeller")),
+                                                        viewHistoryResponse.getString("stuffName"),
+                                                        viewHistoryResponse.getString("stuffImage"),
+                                                        viewHistoryResponse.getDouble("stuffPrice")),
+                                                viewHistoryResponse.getString("status")));
+                                    }
+
+                                    populateListView();
+                                    if (pDialog.isShowing())
+                                        pDialog.dismiss();
+                                } catch (Exception e) {
+                                }
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError volleyError) {
+                                if (pDialog.isShowing())
+                                    pDialog.dismiss();
+                            }
+                        });
+                queue.add(jsonObjectRequest);
+
+            } else {
+                Toast.makeText(getActivity().getApplication(), "Network is NOT available",
+                        Toast.LENGTH_LONG).show();
+            }
+        } catch (Exception e) {
+            Toast.makeText(getActivity().getApplication(),
+                    "Error reading record:" + e.getMessage(),
+                    Toast.LENGTH_LONG).show();
+        }
+
+    }
+
+    public void populateListView() {
+
+        ArrayAdapter<ViewHistoryOB> adapter = new MyListAdapter();
+        ListView list = (ListView) view.findViewById(R.id.ViewHistoryList);
+        list.setAdapter(adapter);
+    }
+
+    public class MyListAdapter extends ArrayAdapter<ViewHistoryOB> {
+
+        public MyListAdapter() {
+            super(getActivity(), R.layout.viewhistory_cardview, arrayViewHistory);
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+
+            View itemView = convertView;
+
+            if (itemView == null) {
+                itemView = getActivity().getLayoutInflater().inflate(R.layout.viewhistory_cardview, parent, false);
+            }
+
+            final ViewHistoryOB currentViewHistory = arrayViewHistory.get(position);
+
+            ImageView stuffImage = (ImageView) itemView.findViewById(R.id.viewedProductImage);
+            Picasso.with(getActivity()).load(currentViewHistory.getStuffID().getStuffImage()).memoryPolicy(MemoryPolicy.NO_CACHE).networkPolicy(NetworkPolicy.NO_CACHE).into(stuffImage);
+
+            TextView stuffName = (TextView) itemView.findViewById(R.id.viewedProductName);
+            stuffName.setText(currentViewHistory.getStuffID().getStuffName());
+
+            TextView stuffPrice = (TextView) itemView.findViewById(R.id.viewedProductPrice);
+            stuffPrice.setText(String.format("RM %.2f", currentViewHistory.getStuffID().getStuffPrice()));
+
+            TextView viewTime = (TextView) itemView.findViewById(R.id.viewedTime);
+            viewTime.setText("Viewed On " + currentViewHistory.getDate() + " " + currentViewHistory.getTime());
+
+            TextView stuffSeller = (TextView) itemView.findViewById(R.id.viewedProductSeller);
+            stuffSeller.setText(currentViewHistory.getStuffID().getStudentID().getStudentName());
+
 //                ImageView deleteHistory = itemView.findViewById(R.id.deleteSearchHistory);
 //
 //                deleteHistory.setOnClickListener(new View.OnClickListener() {
@@ -221,8 +238,8 @@ public class ViewHistory extends Fragment {
 //                                .setNegativeButton("No", dialogClickListener).show();
 //                    }
 //                });
-//
-//            return itemView;
-//        }
-//    }
+
+            return itemView;
+        }
+    }
 }

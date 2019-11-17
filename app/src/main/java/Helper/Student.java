@@ -59,6 +59,11 @@ public class Student implements Serializable {
         this.studentID = studentID;
     }
 
+    public Student(String studentID, String studentName) {
+        this.studentID = studentID;
+        this.studentName = studentName;
+    }
+
     public String getStudentID() {
         return studentID;
     }
