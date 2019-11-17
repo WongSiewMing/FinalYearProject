@@ -218,6 +218,7 @@ public class UserActivity extends Fragment {
 
 
                 RequestQueue queue = Volley.newRequestQueue(getActivity());
+                Log.d(TAG, "User ID = " + UserID);
 
                 JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Constant.serverFile + "getUserActivityFollowingOnly.php?subscriberID=" + UserID,
                         new Response.Listener<JSONArray>() {

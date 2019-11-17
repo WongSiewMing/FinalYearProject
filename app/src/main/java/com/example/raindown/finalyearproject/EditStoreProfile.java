@@ -628,8 +628,7 @@ public class EditStoreProfile extends Fragment {
 
         } catch (Exception e) {
             e.printStackTrace();
-            if (isAdded()) {
-            }
+
         }
 
 
@@ -753,8 +752,8 @@ public class EditStoreProfile extends Fragment {
                                             insertStoreStuffList(stuffID, newStoreStuffID);
                                         } else {
                                             do {
-                                                String first = newStoreStuffID.substring(0, 4);
-                                                String last = newStoreStuffID.substring(4);
+                                                String first = currentStoreStuffID.substring(0, 4);
+                                                String last = currentStoreStuffID.substring(4);
                                                 int number = Integer.parseInt(last) + 1;
                                                 newStoreStuffID = first + Integer.toString(number);
                                             } while (checkExistStoreStuffID(newStoreStuffID));
