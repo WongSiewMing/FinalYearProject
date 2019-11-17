@@ -7,12 +7,15 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.*;
 import android.widget.*;
 import com.android.volley.*;
 import com.android.volley.toolbox.*;
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.json.*;
+
+import java.text.SimpleDateFormat;
 import java.util.*;
 import Helper.*;
 
@@ -28,7 +31,7 @@ public class SearchStuff extends Fragment {
     SearchView searchStuffInput;
     Button filterSearch;
     View view;
-    String error = "", query = "",sort = "", command = "", category = "", condition = "";
+    String error = "", query = "",sort = "", command = "", category = "", condition = "", insertcommand = "", currentSearchID = "", SearchID = "", jsonURL = "", formattedDate, formattedTime;
     Spinner categorySpinner;
     ProgressDialog pDialog = null;
     public static List<Stuff> searchStuffList = new ArrayList<>();
@@ -37,6 +40,8 @@ public class SearchStuff extends Fragment {
     double minPrice = 0.0, maxPrice = 0.0;
     private PahoMqttClient pahoMqttClient;
     private MqttAndroidClient mqttAndroidClient;
+    private Date date;
+    private SimpleDateFormat dateFormat;
     JSONObject jsonObj;
 
     @Override
@@ -107,6 +112,12 @@ public class SearchStuff extends Fragment {
             public void onClick(View v) {
                 if (validateInput()) {
 
+                    date = Calendar.getInstance().getTime();
+                    dateFormat = new SimpleDateFormat("d MMM yyyy");
+                    formattedDate = dateFormat.format(date);
+                    dateFormat = new SimpleDateFormat("h:mm a");
+                    formattedTime = dateFormat.format(date);
+
                     if (!searchStuffInput.getQuery().toString().isEmpty()){
                         query = "303031";
                     } else {
@@ -150,9 +161,20 @@ public class SearchStuff extends Fragment {
                             "\"stuffCondition\": " + "\"" + condition + "\" ," +
                             "\"stuffSorting\": " + "\"" + sort + "\"}";
 
-					//Connect and publish messages to broker
+                    //Connect and publish messages to broker
                     pahoMqttClient = new PahoMqttClient();
                     mqttAndroidClient = pahoMqttClient.getMqttClient(getActivity(), Constant.serverUrl, command, "MY/TARUC/SSS/000000001/PUB");
+
+                    insertcommand = "{\"command\": \"303035303079\", \"reserve\": \"303030303030303030303030303030303030303030303030\", " +
+                            "\"StudentID\": " + "\"" + Conversion.asciiToHex(s.getStudentID()) + "\" ," +
+                            "\"Date\": " + "\"" + Conversion.asciiToHex(formattedDate) + "\" ," +
+                            "\"Time\": " + "\"" + Conversion.asciiToHex(formattedTime) + "\" ," +
+                            "\"SearchKeyword\": " + "\"" + Conversion.asciiToHex(searchStuffInput.getQuery().toString()) + "\"}";
+
+                    pahoMqttClient = new PahoMqttClient();
+                    mqttAndroidClient = pahoMqttClient.getMqttClient(getActivity(), Constant.serverUrl, insertcommand, "MY/TARUC/SSS/000000001/PUB");
+
+                    getSearchID();
                     applyFilterSearch();
                 }
 
@@ -350,4 +372,132 @@ public class SearchStuff extends Fragment {
     }
 
 
+    public void getSearchID() {
+        try {
+            ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+            Boolean isConnected = networkInfo != null && networkInfo.isConnectedOrConnecting();
+            if (isConnected) {
+
+                RequestQueue queue = Volley.newRequestQueue(getActivity());
+
+                JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Constant.serverFile + "generateSearchHistoryID.php",
+                        new Response.Listener<JSONArray>() {
+                            @Override
+                            public void onResponse(JSONArray response) {
+                                try {
+                                    for (int i = 0; i < response.length(); i++) {
+                                        JSONObject tradeIDResponse = (JSONObject) response.get(i);
+                                        currentSearchID = tradeIDResponse.getString("CurrentSearchHistoryID");
+                                    }
+                                    if (currentSearchID.equals("0")) {
+                                        SearchID = "SH0001";
+                                    } else {
+                                        SearchID = String.format("SH%04d", (Integer.parseInt(currentSearchID.substring(3, 6)) + 1));
+                                    }
+                                    insertSearchHistory();
+
+                                } catch (Exception e) {
+                                }
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError volleyError) {
+
+                            }
+                        });
+                queue.add(jsonObjectRequest);
+
+            } else {
+                Toast.makeText(getActivity().getApplication(), "Network is NOT available",
+                        Toast.LENGTH_LONG).show();
+            }
+        } catch (Exception e) {
+            Toast.makeText(getActivity().getApplication(),
+                    "Error reading record:" + e.getMessage(),
+                    Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public void insertSearchHistory() {
+        try {
+            jsonObj = new JSONObject(insertcommand);
+            if(jsonObj.getString("command").equals("303035303079")){
+
+                jsonURL = Constant.serverFile + "insertSearchHistory.php?SearchHistoryID=" + SearchID
+                        + "&StudentID=" + Conversion.hexToAscii(jsonObj.getString("StudentID"))
+                        + "&Date=" + Conversion.hexToAscii(jsonObj.getString("Date"))
+                        + "&Time=" + Conversion.hexToAscii(jsonObj.getString("Time"))
+                        + "&SearchKeyword=" + Conversion.hexToAscii(jsonObj.getString("SearchKeyword"))
+                        + "&status=Show";
+
+                RequestQueue queue = Volley.newRequestQueue(getActivity());
+                try {
+                    StringRequest postRequest = new StringRequest(
+                            Request.Method.POST,
+                            jsonURL,
+                            new Response.Listener<String>() {
+                                @Override
+                                public void onResponse(String response) {
+                                    if (isAdded()) {
+                                    }
+                                    JSONObject jsonObject = null;
+                                    try {
+                                        jsonObject = new JSONObject(response);
+                                        String success = jsonObject.getString("success");
+                                        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getActivity());
+                                        if (success.equals("1")) {
+
+                                        }
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            },
+                            new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    if (isAdded()) {
+                                    }
+
+                                }
+                            }) {
+                        @Override
+                        protected Map<String, String> getParams() {
+                            Map<String, String> params = new HashMap<>();
+                            try {
+                                params.put("TradeID", SearchID);
+                                params.put("StudentID", Conversion.hexToAscii(jsonObj.getString("StudentID")));
+                                params.put("Date", Conversion.hexToAscii(jsonObj.getString("Date")));
+                                params.put("Time", Conversion.hexToAscii(jsonObj.getString("Time")));
+                                params.put("SearchKeyword", Conversion.hexToAscii(jsonObj.getString("SearchKeyword")));
+                                params.put("status", "Show");
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                            return params;
+                        }
+
+                        @Override
+                        public Map<String, String> getHeaders() throws AuthFailureError {
+                            Map<String, String> params = new HashMap<>();
+                            params.put("Content-Type", "application/x-www-form-urlencoded");
+                            return params;
+                        }
+                    };
+                    queue.add(postRequest);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            if (isAdded()) {
+            }
+        }
+    }
 }
