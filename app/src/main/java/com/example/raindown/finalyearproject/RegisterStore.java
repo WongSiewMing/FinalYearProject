@@ -578,8 +578,8 @@ public class RegisterStore extends Fragment {
                                             insertStoreStuffList(stuffID, newStoreStuffID);
                                         } else {
                                             do {
-                                                String first = newStoreStuffID.substring(0, 4);
-                                                String last = newStoreStuffID.substring(4);
+                                                String first = currentStoreStuffID.substring(0, 4);
+                                                String last = currentStoreStuffID.substring(4);
                                                 int number = Integer.parseInt(last) + 1;
                                                 newStoreStuffID = first + Integer.toString(number);
                                             } while (checkExistStoreStuffID());
@@ -592,6 +592,10 @@ public class RegisterStore extends Fragment {
                                     if (pDialog.isShowing())
                                         pDialog.dismiss();
                                 } catch (Exception e) {
+                                    Log.d(TAG, e.getMessage());
+                                    Toast.makeText(getActivity().getApplication(),
+                                            "Error reading record:" + e.getMessage(),
+                                            Toast.LENGTH_LONG).show();
                                 }
                             }
                         },
