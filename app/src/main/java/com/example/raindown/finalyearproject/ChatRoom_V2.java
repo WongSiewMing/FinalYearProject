@@ -123,7 +123,6 @@ public class ChatRoom_V2 extends Fragment {
 
     private static final String TAG = "Chat Room in";
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

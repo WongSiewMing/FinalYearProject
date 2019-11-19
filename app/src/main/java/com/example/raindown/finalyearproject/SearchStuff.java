@@ -467,7 +467,7 @@ public class SearchStuff extends Fragment {
                         protected Map<String, String> getParams() {
                             Map<String, String> params = new HashMap<>();
                             try {
-                                params.put("TradeID", SearchID);
+                                params.put("SearchHistoryID", SearchID);
                                 params.put("StudentID", Conversion.hexToAscii(jsonObj.getString("StudentID")));
                                 params.put("Date", Conversion.hexToAscii(jsonObj.getString("Date")));
                                 params.put("Time", Conversion.hexToAscii(jsonObj.getString("Time")));

@@ -62,11 +62,13 @@ public class Stuff implements Serializable {
         this.stuffPrice = stuffPrice;
     }
 
-    public Stuff(Student studentID, String stuffName, String stuffImage, double stuffPrice) {
+    public Stuff(Student studentID, String stuffID, String stuffName, String stuffImage, double stuffPrice, String stuffStatus) {
         this.studentID = studentID;
+        this.stuffID = stuffID;
         this.stuffName = stuffName;
         this.stuffImage = stuffImage;
         this.stuffPrice = stuffPrice;
+        this.stuffStatus = stuffStatus;
     }
 
     public String getStuffID() {
@@ -113,4 +115,7 @@ public class Stuff implements Serializable {
         return validEndDate;
     }
 
+    public String getStuffStatus() {
+        return stuffStatus;
+    }
 }

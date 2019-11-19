@@ -23,6 +23,10 @@ public class ViewHistoryOB implements Serializable {
         this.status = status;
     }
 
+    public ViewHistoryOB(String viewHistoryID) {
+        this.ViewHistoryID = viewHistoryID;
+    }
+
     public String getViewHistoryID() {
         return ViewHistoryID;
     }
