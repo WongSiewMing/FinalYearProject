@@ -4,11 +4,12 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center"
     android:layout_margin="10dp">
+
     <SurfaceView
+        android:id="@+id/cameraPreview"
         android:layout_width="match_parent"
-        android:layout_height="480px"
-        android:layout_centerInParent="true"
-        android:id="@+id/cameraPreview"/>
+        android:layout_height="800px"
+        android:layout_centerInParent="true" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -16,7 +17,10 @@
         android:layout_below="@+id/cameraPreview"
         android:text="Scan QR code"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
-        android:textColor="@color/black"/>
+        android:fontFamily="sans-serif-smallcaps"
+        android:textSize="20dp"
+        android:layout_marginTop="50dp"
+        android:textColor="@color/black"
+        android:textStyle="bold"/>
 
 </RelativeLayout>

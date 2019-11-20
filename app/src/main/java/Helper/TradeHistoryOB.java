@@ -9,19 +9,18 @@ public class TradeHistoryOB implements Serializable {
     private Student studentID;
     private String date;
     private String time;
-    private AppointmentOB AppointmentID;
     private Trade TradeID;
     private String status;
 
-    public TradeHistoryOB(String tradeHistoryID, Student studentID, String date, String time, AppointmentOB appointmentID, Trade tradeID, String status) {
+    public TradeHistoryOB(String tradeHistoryID, Student studentID, String date, String time, Trade tradeID, String status) {
         this.TradeHistoryID = tradeHistoryID;
         this.studentID = studentID;
         this.date = date;
         this.time = time;
-        this.AppointmentID = appointmentID;
         this.TradeID = tradeID;
         this.status = status;
     }
+
 
     public String getTradeHistoryID() {
         return TradeHistoryID;
@@ -37,10 +36,6 @@ public class TradeHistoryOB implements Serializable {
 
     public String getTime() {
         return time;
-    }
-
-    public AppointmentOB getAppointmentID() {
-        return AppointmentID;
     }
 
     public Trade getTradeID() {

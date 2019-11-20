@@ -71,6 +71,10 @@ public class Stuff implements Serializable {
         this.stuffStatus = stuffStatus;
     }
 
+    public Stuff(String stuffImage) {
+        this.stuffImage = stuffImage;
+    }
+
     public String getStuffID() {
         return stuffID;
     }

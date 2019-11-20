@@ -8,13 +8,16 @@
 
     <Switch
         android:id="@+id/btnSwitch"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
+        android:layout_alignParentEnd="true"
         android:layout_marginTop="5dp"
-        android:layout_marginEnd="10dp"
+        android:layout_marginEnd="17dp"
+        android:fontFamily="sans-serif-smallcaps"
         android:text="Show Following Only :  "
-        android:textColor="@color/black" />
+        android:textColor="@color/black"
+        android:textSize="15dp"
+        android:textStyle="bold" />
 
     <Button
         android:id="@+id/create_activity"
@@ -25,9 +28,11 @@
         android:layout_marginTop="5dp"
         android:layout_marginEnd="10dp"
         android:background="@drawable/button_style_1"
+        android:fontFamily="sans-serif-smallcaps"
+        android:textStyle="bold"
         android:gravity="center"
         android:text="What's on your mind?"
-        android:textSize="20sp" />
+        android:textSize="20dp" />
 
     <ProgressBar
         android:layout_width="70dp"

@@ -43,7 +43,7 @@ public class ViewFeedback extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActivity().setTitle("View Feedbacks");
+        getActivity().setTitle("View Feedback");
     }
 
     @Override

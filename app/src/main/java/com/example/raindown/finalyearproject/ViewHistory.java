@@ -59,7 +59,7 @@ public class ViewHistory extends Fragment {
     private final static List<Stuff> stuffList = new ArrayList<>();
     private ProgressDialog pDialog = null;
     private Student s = null;
-    private ImageView infoIcon, deleteHistory;
+    private ImageView infoIcon;
     private TextView notice;
     private JSONObject jsonObj;
     private FloatingActionButton deleteAllHistory;

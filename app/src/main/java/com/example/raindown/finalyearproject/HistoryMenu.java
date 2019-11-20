@@ -139,16 +139,16 @@ public class HistoryMenu extends Fragment {
                             .commit();
 
                 } else if (arrayHistoryOption.get(position).getHistoryOptionName().equals("Trade History")) {
-//                    PublicList publicList = new PublicList();
-//                    Bundle bundle2 = new Bundle();
-//                    bundle2.putSerializable("PublicList", s);
-//                    publicList.setArguments(bundle2);
-//                    fragmentManager = getFragmentManager();
-//                    fragmentManager.beginTransaction()
-//                            .replace(R.id.update_fragmentHolder, publicList)
-//                            .addToBackStack(null)
-//                            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-//                            .commit();
+                    TradeHistory tradeHistory = new TradeHistory();
+                    Bundle bundle2 = new Bundle();
+                    bundle2.putSerializable("TradeHistory", s);
+                    tradeHistory.setArguments(bundle2);
+                    fragmentManager = getFragmentManager();
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.update_fragmentHolder, tradeHistory)
+                            .addToBackStack(null)
+                            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                            .commit();
                 }
 
             }

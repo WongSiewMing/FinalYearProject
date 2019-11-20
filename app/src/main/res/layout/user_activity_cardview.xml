@@ -26,8 +26,9 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_alignParentStart="true"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="5dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="22dp"
+            android:layout_marginTop="15dp"
             android:clickable="true"
             android:focusable="true"
             android:src="@mipmap/icon_student" />
@@ -36,9 +37,11 @@
             android:id="@+id/posterName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="16dp"
             android:layout_toEndOf="@+id/posterPhoto"
+            android:fontFamily="sans-serif-smallcaps"
             android:text="User name"
             android:textColor="@color/black"
             android:textSize="15sp"
@@ -49,8 +52,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/posterName"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="8dp"
             android:layout_toEndOf="@+id/posterPhoto"
+            android:fontFamily="sans-serif-smallcaps"
             android:text="Post date"
             android:textColor="@color/black"
             android:textSize="15sp" />
@@ -61,20 +66,31 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/posterPhoto"
             android:layout_alignParentEnd="true"
+            android:layout_marginTop="18dp"
+            android:layout_marginEnd="20dp"
             android:clickable="true"
             android:focusable="true"
+            android:fontFamily="sans-serif-smallcaps"
             android:text="View Stuff"
             android:textColor="@color/blue" />
 
         <TextView
             android:id="@+id/posterCaption"
-            android:layout_width="match_parent"
+            android:layout_width="292dp"
             android:layout_height="wrap_content"
             android:layout_below="@+id/posterPhoto"
-            android:layout_marginTop="2dp"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="13dp"
+            android:layout_marginTop="18dp"
+            android:layout_marginEnd="29dp"
+            android:layout_marginRight="29dp"
+            android:textColor="@color/black"
+            android:layout_toStartOf="@+id/btnviewStuff"
             android:layout_toLeftOf="@id/btnviewStuff"
+            android:fontFamily="sans-serif-smallcaps"
             android:text="Post caption"
             android:textSize="15sp" />
+
 
         <ImageView
             android:id="@+id/posterThumbnail"
@@ -82,7 +98,7 @@
             android:layout_height="180dp"
             android:layout_below="@+id/posterCaption"
             android:layout_centerHorizontal="true"
-            android:layout_margin="5dp"
+            android:layout_margin="20dp"
             android:background="@color/white"
             android:clickable="true"
             android:focusable="true" />
@@ -92,23 +108,26 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_below="@id/posterThumbnail"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="22dp"
+            android:layout_marginTop="1dp"
+            android:layout_marginBottom="15dp"
             android:clickable="true"
             android:focusable="true"
-            android:src="@drawable/ic_like"
-            android:tint="@color/red" />
-
+            android:src="@drawable/ic_like" />
 
         <ImageView
             android:id="@+id/commentButton"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_below="@id/posterThumbnail"
-            android:layout_marginStart="5dp"
+            android:layout_marginStart="97dp"
             android:layout_toEndOf="@+id/likeButton"
+            android:layout_marginTop="1dp"
+            android:layout_marginBottom="15dp"
             android:clickable="true"
             android:focusable="true"
-            android:src="@drawable/ic_comment"
-            android:tint="@color/lightgrey" />
+            android:src="@drawable/ic_comment" />
 
         <TextView
             android:id="@+id/likeConditon"
@@ -161,8 +180,10 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_below="@id/posterThumbnail"
-            android:layout_marginStart="5dp"
-            android:layout_toEndOf="@id/commentButton"
+            android:layout_marginStart="97dp"
+            android:layout_toEndOf="@+id/commentButton"
+            android:layout_marginTop="1dp"
+            android:layout_marginBottom="15dp"
             android:clickable="true"
             android:focusable="true"
             android:visibility="visible"
