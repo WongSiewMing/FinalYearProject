@@ -27,9 +27,7 @@ Programme : RSD3
 Year : 2019
 */
 
-
-public class SummaryMenu extends Fragment {
-
+public class SummaryPersonal extends Fragment {
     public final static List<SummaryOption> arraySummaryOption = new ArrayList<>();
     FragmentManager fragmentManager;
     View view;
@@ -38,7 +36,7 @@ public class SummaryMenu extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActivity().setTitle("Summary Report");
+        getActivity().setTitle("Personal Summary Report");
     }
 
     @Override
@@ -46,7 +44,7 @@ public class SummaryMenu extends Fragment {
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.summary_menu,container, false);
         Bundle bundle = getArguments();
-        s = (Student) bundle.getSerializable("SummaryMenu");
+        s = (Student) bundle.getSerializable("SummaryPersonal");
         populateArraySummaryOption();
         registerClickCallBack();
         return view;
@@ -54,8 +52,10 @@ public class SummaryMenu extends Fragment {
 
     public void populateArraySummaryOption(){
         arraySummaryOption.clear();
-        arraySummaryOption.add(0, new SummaryOption(R.mipmap.icon_personal_report, "Personal Summary Report"));
-        arraySummaryOption.add(1, new SummaryOption(R.mipmap.icon_overall_report, "Overall Summary Report"));
+        arraySummaryOption.add(0, new SummaryOption(R.mipmap.icon_overall_sales, "Overall Sales"));
+        arraySummaryOption.add(1, new SummaryOption(R.mipmap.icon_overall_purchase, "Overall Purchase"));
+        arraySummaryOption.add(2, new SummaryOption(R.mipmap.icon_net_gross, "Net Gross"));
+        arraySummaryOption.add(3, new SummaryOption(R.mipmap.icon_top_selling, "Top Selling Stuff"));
         populateListView();
     }
 
@@ -95,34 +95,31 @@ public class SummaryMenu extends Fragment {
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View viewClicked, int position, long id) {
+                SummaryReportFragment summaryReportFragment = new SummaryReportFragment();
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("Student", s);
 
-                if (arraySummaryOption.get(position).getSummaryOptionName().equals("Personal Summary Report")) {
+                if (arraySummaryOption.get(position).getSummaryOptionName().equals("Overall Sales")) {
+                    bundle.putString("ReportType", "Overall Sales");
 
-                    SummaryPersonal summaryPersonal = new SummaryPersonal();
-                    Bundle bundle = new Bundle();
-                    bundle.putSerializable("SummaryPersonal", s);
-                    summaryPersonal.setArguments(bundle);
-                    fragmentManager = getFragmentManager();
-                    fragmentManager.beginTransaction()
-                        .replace(R.id.update_fragmentHolder, summaryPersonal)
+                } else if (arraySummaryOption.get(position).getSummaryOptionName().equals("Overall Purchase")) {
+                    bundle.putString("ReportType", "Overall Purchase");
+
+                } else if (arraySummaryOption.get(position).getSummaryOptionName().equals("Net Gross")){
+                    bundle.putString("ReportType", "Net Gross");
+
+                } else if (arraySummaryOption.get(position).getSummaryOptionName().equals("Top Selling Stuff")){
+                    bundle.putString("ReportType", "Top Selling Stuff (Personal)");
+
+                }
+                summaryReportFragment.setArguments(bundle);
+                fragmentManager = getFragmentManager();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.update_fragmentHolder, summaryReportFragment)
                         .addToBackStack(null)
                         .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                         .commit();
 
-
-                } else if (arraySummaryOption.get(position).getSummaryOptionName().equals("Overall Summary Report")) {
-                    SummaryOverall summaryOverall = new SummaryOverall();
-                    Bundle bundle = new Bundle();
-                    bundle.putSerializable("SummaryOverall", s);
-                    summaryOverall.setArguments(bundle);
-                    fragmentManager = getFragmentManager();
-                    fragmentManager.beginTransaction()
-                            .replace(R.id.update_fragmentHolder, summaryOverall)
-                            .addToBackStack(null)
-                            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                            .commit();
-
-                }
 
             }
         });
@@ -142,3 +139,4 @@ public class SummaryMenu extends Fragment {
         super.onDetach();
     }
 }
+

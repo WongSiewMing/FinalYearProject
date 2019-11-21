@@ -401,7 +401,6 @@ public class StoreProfile extends Fragment{
                                 stuffList.clear();
                                 for (int i = 0; i < response.length(); i++) {
                                     JSONObject myStuffResponse = (JSONObject) response.get(i);
-                                    Log.d(TAG, "Stuff ID fetched (Response) =" + myStuffResponse.getString("stuffID"));
                                     stuffList.add(new Stuff(myStuffResponse.getString("stuffID"), new Student(myStuffResponse.getString("studentID"),
                                             myStuffResponse.getString("clientID"), myStuffResponse.getString("photo"), myStuffResponse.getString("studentName"),
                                             myStuffResponse.getString("icNo"), myStuffResponse.getString("studentProgramme"), myStuffResponse.getString("studentFaculty"),
