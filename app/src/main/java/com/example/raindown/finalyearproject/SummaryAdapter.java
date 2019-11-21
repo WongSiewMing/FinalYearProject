@@ -22,6 +22,7 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.SummaryV
     private boolean hideAmount = false;
     private boolean greenAmount = false;
     private boolean redAmount = false;
+    private boolean countAmount = false;
 
     public static class SummaryViewHolder extends RecyclerView.ViewHolder{
         public TextView itemNum;
@@ -59,6 +60,11 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.SummaryV
         notifyDataSetChanged();
     }
 
+    public void setCountAmount(boolean set){
+        countAmount = set;
+        notifyDataSetChanged();
+    }
+
     public SummaryAdapter(ArrayList<SummaryItem> itemList){
         mSummaryList = itemList;
     }
@@ -92,6 +98,9 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.SummaryV
             holder.itemAmount.setTextColor(Color.RED);
         } else {
             holder.itemAmount.setText("RM " + currentItem.getItemAmount());
+        }
+        if (countAmount){
+            holder.itemAmount.setText(currentItem.getItemAmount());
         }
     }
 

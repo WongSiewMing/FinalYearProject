@@ -39,7 +39,7 @@ public class SummaryOverall extends Fragment {
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.summary_menu,container, false);
         Bundle bundle = getArguments();
-        s = (Student) bundle.getSerializable("SummaryPersonal");
+        s = (Student) bundle.getSerializable("SummaryOverall");
         populateArraySummaryOption();
         registerClickCallBack();
         return view;

@@ -189,12 +189,32 @@ public class SummaryReportFragment extends Fragment {
             pahoMqttClient = new PahoMqttClient();
             mqttAndroidClient = pahoMqttClient.getMqttClient(getActivity(), Constant.serverUrl, command, "MY/TARUC/SSS/000000001/PUB");
 
-            getTopSellingSelf();
+            getTopSellingOverall();
 
         } else if (report.equals("Top Requested Stuff")){
+            command = "{\"command\": \"303035303094\", \"reserve\": \"303030303030303030303030303030303030303030303030\"}";
+
+            pahoMqttClient = new PahoMqttClient();
+            mqttAndroidClient = pahoMqttClient.getMqttClient(getActivity(), Constant.serverUrl, command, "MY/TARUC/SSS/000000001/PUB");
+
+            getTopRequest();
 
         } else if (report.equals("Most Sold Stuff Category")){
+            itemList.clear();
+            itemList.add(new SummaryItem("1", getURLForResource(R.mipmap.icon_book), "", "Books", "0.00"));
+            itemList.add(new SummaryItem("2", getURLForResource(R.mipmap.icon_electronics), "", "Electronics", "0.00"));
+            itemList.add(new SummaryItem("3", getURLForResource(R.mipmap.icon_furnitures), "", "Furnitures", "0.00"));
+            itemList.add(new SummaryItem("4", getURLForResource(R.mipmap.icon_miscellaneous), "", "Miscellaneous", "0.00"));
 
+            command = "{\"command\": \"303035303093\", \"reserve\": \"303030303030303030303030303030303030303030303030\", " +
+                    "\"studentID\": " + "\"" + Conversion.asciiToHex(s.getStudentID()) + "\"}";
+
+            pahoMqttClient = new PahoMqttClient();
+            mqttAndroidClient = pahoMqttClient.getMqttClient(getActivity(), Constant.serverUrl, command, "MY/TARUC/SSS/000000001/PUB");
+
+            stuffList.clear();
+            total = 0.0;
+            getTopSoldStuffCategory();
         }
     }
 
@@ -485,7 +505,195 @@ public class SummaryReportFragment extends Fragment {
                                         summaryInfoList.setVisibility(View.GONE);
                                     }
                                     try {
-                                        stuffList.clear();
+                                        itemList.clear();
+                                        for (int i = 0; i < response.length(); i++) {
+                                            JSONObject myStuffResponse = (JSONObject) response.get(i);
+                                            itemList.add(new SummaryItem(String.format("%d", i + 1), myStuffResponse.getString("photo"), myStuffResponse.getString("stuffID"), myStuffResponse.getString("stuffName"), ""));
+
+                                            populateItemAdapterView();
+                                        }
+
+                                        if (pDialog.isShowing()) {
+                                            pDialog.dismiss();
+                                        }
+
+
+                                    } catch (Exception e) {
+
+                                    }
+                                }
+                            },
+                            new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError volleyError) {
+                                    if (pDialog.isShowing()){
+                                        pDialog.dismiss();
+                                    }
+                                }
+                            });
+                    queue.add(jsonObjectRequest);
+                }
+
+            } else {
+                Toast.makeText(getActivity().getApplication(), "Network is NOT available", Toast.LENGTH_LONG).show();
+            }
+
+        } catch (Exception e){
+            Toast.makeText(getActivity().getApplication(), "Error Reading Record : " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public void getTopSellingOverall(){
+        try{
+            ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+            Boolean isConnected = networkInfo != null && networkInfo.isConnectedOrConnecting();
+
+            if (isConnected){
+                RequestQueue queue = Volley.newRequestQueue(getActivity());
+                if (!pDialog.isShowing()){
+                    pDialog.setMessage("Sync with server...");
+                }
+                pDialog.show();
+                jsonObj = new JSONObject(command);
+                if (jsonObj.getString("command").equals("303035303093")){
+                    JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Constant.serverFile + "getAllSoldStuff.php",
+                            new Response.Listener<JSONArray>() {
+                                @Override
+                                public void onResponse(JSONArray response) {
+                                    if (response.toString().equals("[]")) {
+                                        infoIcon.setVisibility(view.VISIBLE);
+                                        notice.setVisibility(view.VISIBLE);
+                                        txtSummaryTotal.setVisibility(View.GONE);
+                                        summaryInfoList.setVisibility(View.GONE);
+                                    }
+                                    try {
+                                        itemList.clear();
+                                        for (int i = 0; i < response.length(); i++) {
+                                            JSONObject myStuffResponse = (JSONObject) response.get(i);
+                                            itemList.add(new SummaryItem(String.format("%d", i + 1), myStuffResponse.getString("photo"), myStuffResponse.getString("stuffID"), myStuffResponse.getString("stuffName"), ""));
+
+                                            populateItemAdapterView();
+                                        }
+
+                                        if (pDialog.isShowing()) {
+                                            pDialog.dismiss();
+                                        }
+
+
+                                    } catch (Exception e) {
+
+                                    }
+                                }
+                            },
+                            new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError volleyError) {
+                                    if (pDialog.isShowing()){
+                                        pDialog.dismiss();
+                                    }
+                                }
+                            });
+                    queue.add(jsonObjectRequest);
+                }
+
+            } else {
+                Toast.makeText(getActivity().getApplication(), "Network is NOT available", Toast.LENGTH_LONG).show();
+            }
+
+        } catch (Exception e){
+            Toast.makeText(getActivity().getApplication(), "Error Reading Record : " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public void getTopRequest(){
+        try{
+            ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+            Boolean isConnected = networkInfo != null && networkInfo.isConnectedOrConnecting();
+
+            if (isConnected){
+                RequestQueue queue = Volley.newRequestQueue(getActivity());
+                if (!pDialog.isShowing()){
+                    pDialog.setMessage("Sync with server...");
+                }
+                pDialog.show();
+                jsonObj = new JSONObject(command);
+                if (jsonObj.getString("command").equals("303035303094")){
+                    JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Constant.serverFile + "getAllRequestStuff.php",
+                            new Response.Listener<JSONArray>() {
+                                @Override
+                                public void onResponse(JSONArray response) {
+                                    if (response.toString().equals("[]")) {
+                                        infoIcon.setVisibility(view.VISIBLE);
+                                        notice.setVisibility(view.VISIBLE);
+                                        txtSummaryTotal.setVisibility(View.GONE);
+                                        summaryInfoList.setVisibility(View.GONE);
+                                    }
+                                    try {
+                                        itemList.clear();
+                                        for (int i = 0; i < response.length(); i++) {
+                                            JSONObject myStuffResponse = (JSONObject) response.get(i);
+                                            itemList.add(new SummaryItem(String.format("%d", i + 1), myStuffResponse.getString("stuffImage"), myStuffResponse.getString("requeststuffID"), myStuffResponse.getString("stuffName"), ""));
+
+                                            populateItemAdapterView();
+                                        }
+
+                                        if (pDialog.isShowing()) {
+                                            pDialog.dismiss();
+                                        }
+
+
+                                    } catch (Exception e) {
+
+                                    }
+                                }
+                            },
+                            new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError volleyError) {
+                                    if (pDialog.isShowing()){
+                                        pDialog.dismiss();
+                                    }
+                                }
+                            });
+                    queue.add(jsonObjectRequest);
+                }
+
+            } else {
+                Toast.makeText(getActivity().getApplication(), "Network is NOT available", Toast.LENGTH_LONG).show();
+            }
+
+        } catch (Exception e){
+            Toast.makeText(getActivity().getApplication(), "Error Reading Record : " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public void getTopSoldStuffCategory(){
+        try{
+            ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+            Boolean isConnected = networkInfo != null && networkInfo.isConnectedOrConnecting();
+
+            if (isConnected){
+                RequestQueue queue = Volley.newRequestQueue(getActivity());
+                if (!pDialog.isShowing()){
+                    pDialog.setMessage("Sync with server...");
+                }
+                pDialog.show();
+                jsonObj = new JSONObject(command);
+                if (jsonObj.getString("command").equals("303035303093")){
+                    JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Constant.serverFile + "getAllSoldStuff.php",
+                            new Response.Listener<JSONArray>() {
+                                @Override
+                                public void onResponse(JSONArray response) {
+                                    if (response.toString().equals("[]")) {
+                                        infoIcon.setVisibility(view.VISIBLE);
+                                        notice.setVisibility(view.VISIBLE);
+                                        txtSummaryTotal.setVisibility(View.GONE);
+                                        summaryInfoList.setVisibility(View.GONE);
+                                    }
+                                    try {
                                         for (int i = 0; i < response.length(); i++) {
                                             JSONObject myStuffResponse = (JSONObject) response.get(i);
                                             stuffList.add(new Stuff(myStuffResponse.getString("stuffID"), new Student(myStuffResponse.getString("studentID"),
@@ -495,9 +703,28 @@ public class SummaryReportFragment extends Fragment {
                                                     myStuffResponse.getString("stuffDescription"), myStuffResponse.getString("stuffCategory"), myStuffResponse.getString("stuffCondition"),
                                                     myStuffResponse.getDouble("stuffPrice"), myStuffResponse.getInt("stuffQuantity"), myStuffResponse.getString("validStartDate"),
                                                     myStuffResponse.getString("validEndDate"), myStuffResponse.getString("stuffStatus")));
-                                            Log.d(TAG, "Stuff ID fetched (stuffList) =" + stuffList.get(i).getStuffID());
 
-                                            itemList.add(new SummaryItem(String.format("%d", i + 1),stuffList.get(i).getStuffImage(), stuffList.get(i).getStuffID(), stuffList.get(i).getStuffName(), ""));
+                                            Double count = 0.0;
+                                            if (stuffList.get(i).getStuffCategory().equals("Books")){
+                                                count = Double.parseDouble(itemList.get(0).getItemAmount()) + 1;
+                                                itemList.set(0, new SummaryItem("1", getURLForResource(R.mipmap.icon_book), "", "Books",String.format("%.0f", count)));
+                                                total += count;
+
+                                            } else if (stuffList.get(i).getStuffCategory().equals("Electronics")){
+                                                count = Double.parseDouble(itemList.get(1).getItemAmount()) + 1;
+                                                itemList.set(1, new SummaryItem("2", getURLForResource(R.mipmap.icon_electronics), "", "Electronics",String.format("%.0f", count)));
+                                                total += count;
+
+                                            } else if (stuffList.get(i).getStuffCategory().equals("Furnitures")){
+                                                count = Double.parseDouble(itemList.get(2).getItemAmount()) + 1;
+                                                itemList.set(2, new SummaryItem("3", getURLForResource(R.mipmap.icon_furnitures), "", "Furnitures",String.format("%.0f", count)));
+                                                total += count;
+
+                                            } else if (stuffList.get(i).getStuffCategory().equals("Miscellaneous")){
+                                                count = Double.parseDouble(itemList.get(3).getItemAmount()) + 1;
+                                                itemList.set(3, new SummaryItem("4", getURLForResource(R.mipmap.icon_miscellaneous), "", "Miscellaneous", String.format("%.0f", count)));
+                                                total += count;
+                                            }
 
                                             populateItemAdapterView();
                                         }
@@ -550,8 +777,11 @@ public class SummaryReportFragment extends Fragment {
         } else if (report.equals("Overall Purchase")){
             mAdapter.hideNumTextView(true);
             mAdapter.setRedAmount(true);
-        } else if (report.equals("Top Selling Stuff (Personal)")){
+        } else if (report.equals("Top Selling Stuff (Personal)") || report.equals("Top Selling Stuff (Overall)") || report.equals("Top Requested Stuff")){
             mAdapter.hideAmountTextView(true);
+            txtSummaryTotal.setVisibility(View.GONE);
+        } else if (report.equals("Most Sold Stuff Category")){
+            mAdapter.setCountAmount(true);
             txtSummaryTotal.setVisibility(View.GONE);
         }
 
