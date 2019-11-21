@@ -127,12 +127,16 @@ public class ManageSentTrade extends Fragment {
                                                         new Student(tradeResponse.getString("OfferStuffStudent")),
                                                         tradeResponse.getString("OfferStuffName"),
                                                         tradeResponse.getString("OfferStuffImage"),
-                                                        tradeResponse.getDouble("OfferStuffPrice")),
+                                                        tradeResponse.getDouble("OfferStuffPrice"),
+                                                        tradeResponse.getInt("OfferStuffQuantity"),
+                                                        tradeResponse.getString("OfferStuffStatus")),
                                                 new Stuff(tradeResponse.getString("RequestStuffID"),
                                                         new Student(tradeResponse.getString("RequestStuffStudent")),
                                                         tradeResponse.getString("RequestStuffName"),
                                                         tradeResponse.getString("RequestStuffImage"),
-                                                        tradeResponse.getDouble("RequestStuffPrice")),
+                                                        tradeResponse.getDouble("RequestStuffPrice"),
+                                                        tradeResponse.getInt("RequestStuffQuantity"),
+                                                        tradeResponse.getString("RequestStuffStatus")),
                                                 new Student(tradeResponse.getString("studentID"),
                                                         tradeResponse.getString("photo"),
                                                         tradeResponse.getString("studentName"),
@@ -145,7 +149,6 @@ public class ManageSentTrade extends Fragment {
                                                 tradeResponse.getString("TradeTime")));
 
                                     }
-
 
                                     populateListView();
                                     if (pDialog.isShowing())

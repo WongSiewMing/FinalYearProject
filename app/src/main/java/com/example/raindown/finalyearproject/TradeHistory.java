@@ -10,6 +10,7 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +28,9 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.squareup.picasso.MemoryPolicy;
+import com.squareup.picasso.NetworkPolicy;
+import com.squareup.picasso.Picasso;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.json.JSONArray;
@@ -41,23 +45,26 @@ import java.util.Map;
 import Helper.Constant;
 import Helper.Conversion;
 import Helper.PahoMqttClient;
-import Helper.SearchHistoryOB;
 import Helper.Student;
+import Helper.Stuff;
+import Helper.Trade;
+import Helper.TradeHistoryOB;
+import Helper.ViewHistoryOB;
 
-public class SearchHistory extends Fragment {
+public class TradeHistory extends Fragment {
     private View view;
-    private final static List<SearchHistoryOB> arraySearchHistory = new ArrayList<>();
-    private ProgressDialog pDialog = null;
     private Student s = null;
-    private ImageView infoIcon, deleteHistory;
-    private TextView notice;
-    private JSONObject jsonObj;
     private FloatingActionButton deleteAllHistory;
+    private final static List<TradeHistoryOB> arrayTradeHistory = new ArrayList<>();
+    private ProgressDialog pDialog = null;
     private String command, jsonURL;
+    private ImageView infoIcon;
+    private TextView notice;
     private PahoMqttClient pahoMqttClient;
     private MqttAndroidClient mqttAndroidClient;
+    private FragmentManager fragmentManager;
+    private JSONObject jsonObj;
 
-    @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         Activity a;
@@ -70,7 +77,7 @@ public class SearchHistory extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActivity().setTitle("Search History");
+        getActivity().setTitle("Trade History");
     }
 
     @Override
@@ -88,19 +95,18 @@ public class SearchHistory extends Fragment {
         super.onDetach();
     }
 
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        view = inflater.inflate(R.layout.searchhistory, container, false);
+        view = inflater.inflate(R.layout.tradehistory, container, false);
         pDialog = new ProgressDialog(getActivity());
         Bundle bundle = getArguments();
-        s = (Student) bundle.getSerializable("SearchHistory");
-        infoIcon = (ImageView) view.findViewById(R.id.noSearchHistory);
-        notice = (TextView) view.findViewById(R.id.noSearchHistoryFound);
-        deleteAllHistory = view.findViewById(R.id.deleteAllSearchHistory);
+        s = (Student) bundle.getSerializable("TradeHistory");
+        infoIcon = (ImageView) view.findViewById(R.id.noTradeHistory);
+        notice = (TextView) view.findViewById(R.id.noTradeHistoryFound);
+        deleteAllHistory = view.findViewById(R.id.deleteAllTradeHistory);
 
-        getSearchHistory();
+        getTradeHistory();
 
         deleteAllHistory.setOnClickListener(new View.OnClickListener() {
 
@@ -112,13 +118,13 @@ public class SearchHistory extends Fragment {
                         switch (which) {
                             case DialogInterface.BUTTON_POSITIVE:
 
-                                command = "{\"command\": \"30303530307B\", \"reserve\": \"303030303030303030303030303030303030303030303030\", " +
+                                command = "{\"command\": \"303035303081\", \"reserve\": \"303030303030303030303030303030303030303030303030\", " +
                                         "\"StudentID\": " + "\"" + Conversion.asciiToHex(s.getStudentID()) + "\"}";
 
                                 pahoMqttClient = new PahoMqttClient();
                                 mqttAndroidClient = pahoMqttClient.getMqttClient(getActivity(), Constant.serverUrl, command, "MY/TARUC/SSS/000000001/PUB");
 
-                                updateSearchHistory();
+                                updateTradeHistory();
                                 break;
                             case DialogInterface.BUTTON_NEGATIVE:
                                 break;
@@ -127,17 +133,15 @@ public class SearchHistory extends Fragment {
                 };
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
-                builder.setMessage("Remove All Search History ?").setPositiveButton("Yes", dialogClickListener)
+                builder.setMessage("Remove all trade history  ?").setPositiveButton("Yes", dialogClickListener)
                         .setNegativeButton("No", dialogClickListener).show();
             }
         });
 
-
-
         return view;
     }
 
-    public void getSearchHistory() {
+    public void getTradeHistory() {
         try {
             ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
@@ -149,7 +153,7 @@ public class SearchHistory extends Fragment {
                     pDialog.setMessage("Sync with server...");
                 pDialog.show();
 
-                JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Constant.serverFile + "getSearchHistory.php?studentID=" + s.getStudentID(),
+                JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Constant.serverFile + "getTradeHistory.php?studentID=" + s.getStudentID(),
                         new Response.Listener<JSONArray>() {
                             @Override
                             public void onResponse(JSONArray response) {
@@ -159,15 +163,32 @@ public class SearchHistory extends Fragment {
                                     deleteAllHistory.setEnabled(false);
                                 }
                                 try {
-                                    arraySearchHistory.clear();
+                                    arrayTradeHistory.clear();
                                     for (int i = 0; i < response.length(); i++) {
-                                        JSONObject searchHistoryResponse = (JSONObject) response.get(i);
-                                        arraySearchHistory.add(new SearchHistoryOB(searchHistoryResponse.getString("SearchHistoryID"),
-                                                new Student(searchHistoryResponse.getString("StudentID")),
-                                                searchHistoryResponse.getString("Date"),
-                                                searchHistoryResponse.getString("Time"),
-                                                searchHistoryResponse.getString("SearchKeyword"),
-                                                searchHistoryResponse.getString("status")));
+                                        JSONObject tradeHistoryResponse = (JSONObject) response.get(i);
+                                        arrayTradeHistory.add(new TradeHistoryOB(tradeHistoryResponse.getString("TradeHistoryID"),
+                                                new Student(tradeHistoryResponse.getString("StudentID")),
+                                                tradeHistoryResponse.getString("Date"),
+                                                tradeHistoryResponse.getString("Time"),
+                                                new Trade(tradeHistoryResponse.getString("TradeID"),
+                                                        new Stuff(tradeHistoryResponse.getString("OfferStuffImage")),
+                                                        new Stuff(tradeHistoryResponse.getString("RequestStuffImage")),
+                                                        new Student(tradeHistoryResponse.getString("requesterID"),
+                                                                tradeHistoryResponse.getString("requesterphoto"),
+                                                                tradeHistoryResponse.getString("requesterName"),
+                                                                tradeHistoryResponse.getString("requesterProgramme"),
+                                                                tradeHistoryResponse.getString("requesterFaculty"),
+                                                                tradeHistoryResponse.getInt("requesterYOS")),
+                                                        new Student(tradeHistoryResponse.getString("sellerID"),
+                                                                tradeHistoryResponse.getString("sellerphoto"),
+                                                                tradeHistoryResponse.getString("sellerName"),
+                                                                tradeHistoryResponse.getString("sellerProgramme"),
+                                                                tradeHistoryResponse.getString("sellerFaculty"),
+                                                                tradeHistoryResponse.getInt("sellerYOS")),
+                                                        tradeHistoryResponse.getString("TradeStatus"),
+                                                        tradeHistoryResponse.getString("TradeDate"),
+                                                        tradeHistoryResponse.getString("TradeTime")),
+                                                tradeHistoryResponse.getString("status")));
                                     }
 
                                     populateListView();
@@ -198,17 +219,16 @@ public class SearchHistory extends Fragment {
 
     }
 
-    public void populateListView() {
-
-        ArrayAdapter<SearchHistoryOB> adapter = new MyListAdapter();
-        ListView list = (ListView) view.findViewById(R.id.SearchHistoryList);
+    public void populateListView(){
+        ArrayAdapter<TradeHistoryOB> adapter = new MyListAdapter();
+        ListView list = (ListView) view.findViewById(R.id.TradeHistoryList);
         list.setAdapter(adapter);
     }
 
-    public class MyListAdapter extends ArrayAdapter<SearchHistoryOB> {
+    public class MyListAdapter extends ArrayAdapter<TradeHistoryOB> {
 
         public MyListAdapter() {
-            super(getActivity(), R.layout.searchhistorycardview, arraySearchHistory);
+            super(getActivity(), R.layout.tradehistory_cardview, arrayTradeHistory);
         }
 
         @Override
@@ -217,18 +237,57 @@ public class SearchHistory extends Fragment {
             View itemView = convertView;
 
             if (itemView == null) {
-                itemView = getActivity().getLayoutInflater().inflate(R.layout.searchhistorycardview, parent, false);
+                itemView = getActivity().getLayoutInflater().inflate(R.layout.tradehistory_cardview, parent, false);
             }
 
-            final SearchHistoryOB currentSearchHistory = arraySearchHistory.get(position);
+            final TradeHistoryOB currentTradeHistory = arrayTradeHistory.get(position);
 
-            TextView searchKeyword = (TextView) itemView.findViewById(R.id.SearchKeyword);
-            searchKeyword.setText(currentSearchHistory.getSearchKeyword());
+            ImageView studentAvatar = (ImageView) itemView.findViewById(R.id.tradeStudentAvatar_history);
+            TextView studentName = (TextView) itemView.findViewById(R.id.tradeRequesterName_history);
+            TextView studentFaculty = (TextView) itemView.findViewById(R.id.tradeRequesterFaculty_history);
+            TextView studentProgramme = (TextView) itemView.findViewById(R.id.tradeRequesterProgramme_history);
+            TextView studentYear = (TextView) itemView.findViewById(R.id.tradeRequesterYear_history);
 
-            TextView searchTime = (TextView) itemView.findViewById(R.id.searchTime);
-            searchTime.setText("Searched On " + currentSearchHistory.getDate() + " " + currentSearchHistory.getTime());
+            if (currentTradeHistory.getTradeID().getStudentID().getStudentID().equals(s.getStudentID())){
+                Picasso.with(getActivity()).load(currentTradeHistory.getTradeID().getSellerID().getPhoto()).memoryPolicy(MemoryPolicy.NO_CACHE).networkPolicy(NetworkPolicy.NO_CACHE).into(studentAvatar);
+                studentName.setText(currentTradeHistory.getTradeID().getSellerID().getStudentName());
+                studentFaculty.setText(currentTradeHistory.getTradeID().getSellerID().getStudentFaculty());
+                studentProgramme.setText(currentTradeHistory.getTradeID().getSellerID().getStudentProgramme());
+                studentYear.setText("Year " + currentTradeHistory.getTradeID().getSellerID().getYearOfStudy());
+            }
+            else {
+                Picasso.with(getActivity()).load(currentTradeHistory.getTradeID().getStudentID().getPhoto()).memoryPolicy(MemoryPolicy.NO_CACHE).networkPolicy(NetworkPolicy.NO_CACHE).into(studentAvatar);
+                studentName.setText(currentTradeHistory.getTradeID().getStudentID().getStudentName());
+                studentFaculty.setText(currentTradeHistory.getTradeID().getStudentID().getStudentFaculty());
+                studentProgramme.setText(currentTradeHistory.getTradeID().getStudentID().getStudentProgramme());
+                studentYear.setText("Year " + currentTradeHistory.getTradeID().getStudentID().getYearOfStudy());
+            }
 
-            ImageView deleteHistory = itemView.findViewById(R.id.deleteSearchHistory);
+            ImageView offerStuff = (ImageView) itemView.findViewById(R.id.tradeOfferItem_history);
+            Picasso.with(getActivity()).load(currentTradeHistory.getTradeID().getUserStuffID().getStuffImage()).memoryPolicy(MemoryPolicy.NO_CACHE).networkPolicy(NetworkPolicy.NO_CACHE).into(offerStuff);
+
+            ImageView requestStuff = (ImageView) itemView.findViewById(R.id.tradeRequestItem_history);
+            Picasso.with(getActivity()).load(currentTradeHistory.getTradeID().getRequestStuffID().getStuffImage()).memoryPolicy(MemoryPolicy.NO_CACHE).networkPolicy(NetworkPolicy.NO_CACHE).into(requestStuff);
+
+            TextView tradeDate = (TextView) itemView.findViewById(R.id.tradeDate_history);
+            tradeDate.setText(currentTradeHistory.getDate());
+
+            TextView tradeTime = (TextView) itemView.findViewById(R.id.tradeTime_history);
+            tradeTime.setText(currentTradeHistory.getTime());
+
+            TextView tradeStatus = (TextView) itemView.findViewById(R.id.tradeStatus_history);
+            tradeStatus.setText(currentTradeHistory.getTradeID().getTradeStatus());
+            String status = currentTradeHistory.getTradeID().getTradeStatus();
+
+            if (status.equals("Rejected") || status.equals("Canceled")){
+                tradeStatus.setText(status);
+                tradeStatus.setTextColor(getResources().getColor(R.color.red));
+            } else if (status.equals("Completed")) {
+                tradeStatus.setText(status);
+                tradeStatus.setTextColor(getResources().getColor(R.color.forest));
+            }
+
+            ImageView deleteHistory = itemView.findViewById(R.id.deleteTradeHistory);
 
             deleteHistory.setOnClickListener(new View.OnClickListener() {
 
@@ -240,13 +299,13 @@ public class SearchHistory extends Fragment {
                             switch (which) {
                                 case DialogInterface.BUTTON_POSITIVE:
 
-                                    command = "{\"command\": \"30303530307A\", \"reserve\": \"303030303030303030303030303030303030303030303030\", " +
-                                            "\"SearchHistoryID\": " + "\"" + Conversion.asciiToHex(currentSearchHistory.getSearchHistoryID()) + "\"}";
+                                    command = "{\"command\": \"303035303080\", \"reserve\": \"303030303030303030303030303030303030303030303030\", " +
+                                            "\"TradeHistoryID\": " + "\"" + Conversion.asciiToHex(currentTradeHistory.getTradeHistoryID()) + "\"}";
 
                                     pahoMqttClient = new PahoMqttClient();
                                     mqttAndroidClient = pahoMqttClient.getMqttClient(getActivity(), Constant.serverUrl, command, "MY/TARUC/SSS/000000001/PUB");
 
-                                    updateParticularSearchHistory();
+                                    updateParticularTradeHistory();
                                     break;
                                 case DialogInterface.BUTTON_NEGATIVE:
                                     break;
@@ -255,7 +314,7 @@ public class SearchHistory extends Fragment {
                     };
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
-                    builder.setMessage("Remove Search History ?").setPositiveButton("Yes", dialogClickListener)
+                    builder.setMessage("Remove trade history ?").setPositiveButton("Yes", dialogClickListener)
                             .setNegativeButton("No", dialogClickListener).show();
                 }
             });
@@ -264,18 +323,19 @@ public class SearchHistory extends Fragment {
         }
     }
 
-    public void updateSearchHistory() {
+    public void updateParticularTradeHistory() {
 
         try {
+
             ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
             Boolean isConnected = networkInfo != null && networkInfo.isConnectedOrConnecting();
             if (isConnected) {
                 try {
                     jsonObj = new JSONObject(command);
-                    if (jsonObj.getString("command").equals("30303530307B")) {
+                    if (jsonObj.getString("command").equals("303035303080")) {
 
-                        jsonURL = Constant.serverFile + "hideAllSearchHistory.php?StudentID=" + Conversion.hexToAscii(jsonObj.getString("StudentID")) + "&status=" + "Hide";
+                        jsonURL = Constant.serverFile + "hideTradeHistory.php?TradeHistoryID=" + Conversion.hexToAscii(jsonObj.getString("TradeHistoryID")) + "&status=" + "Hide";
 
                         RequestQueue queue = Volley.newRequestQueue(getActivity());
                         try {
@@ -293,14 +353,14 @@ public class SearchHistory extends Fragment {
                                                 String success = jsonObject.getString("success");
                                                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                                                 if (success.equals("1")) {
-                                                    SearchHistory searchHistory = new SearchHistory();
+                                                    TradeHistory tradeHistory = new TradeHistory();
                                                     Bundle bundle = new Bundle();
-                                                    bundle.putSerializable("SearchHistory", s);
-                                                    searchHistory.setArguments(bundle);
+                                                    bundle.putSerializable("TradeHistory", s);
+                                                    tradeHistory.setArguments(bundle);
 
                                                     getFragmentManager()
                                                             .beginTransaction()
-                                                            .replace(R.id.update_fragmentHolder, searchHistory)
+                                                            .replace(R.id.update_fragmentHolder, tradeHistory)
                                                             .commit();
                                                 } else {
                                                     builder.setTitle("Oops !");
@@ -329,7 +389,7 @@ public class SearchHistory extends Fragment {
                                 protected Map<String, String> getParams() {
                                     Map<String, String> params = new HashMap<>();
                                     try {
-                                        params.put("StudentID", Conversion.hexToAscii(jsonObj.getString("StudentID")));
+                                        params.put("TradeHistoryID", Conversion.hexToAscii(jsonObj.getString("TradeHistoryID")));
                                         params.put("status", "Hide");
                                     } catch (JSONException e) {
                                         e.printStackTrace();
@@ -365,19 +425,18 @@ public class SearchHistory extends Fragment {
         }
     }
 
-    public void updateParticularSearchHistory() {
+    public void updateTradeHistory() {
 
         try {
-
             ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
             Boolean isConnected = networkInfo != null && networkInfo.isConnectedOrConnecting();
             if (isConnected) {
                 try {
                     jsonObj = new JSONObject(command);
-                    if (jsonObj.getString("command").equals("30303530307A")) {
+                    if (jsonObj.getString("command").equals("303035303081")) {
 
-                        jsonURL = Constant.serverFile + "hideSearchHistory.php?SearchHistoryID=" + Conversion.hexToAscii(jsonObj.getString("SearchHistoryID")) + "&status=" + "Hide";
+                        jsonURL = Constant.serverFile + "hideAllTradeHistory.php?StudentID=" + Conversion.hexToAscii(jsonObj.getString("StudentID")) + "&status=" + "Hide";
 
                         RequestQueue queue = Volley.newRequestQueue(getActivity());
                         try {
@@ -395,14 +454,14 @@ public class SearchHistory extends Fragment {
                                                 String success = jsonObject.getString("success");
                                                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                                                 if (success.equals("1")) {
-                                                    SearchHistory searchHistory = new SearchHistory();
+                                                    TradeHistory tradeHistory = new TradeHistory();
                                                     Bundle bundle = new Bundle();
-                                                    bundle.putSerializable("SearchHistory", s);
-                                                    searchHistory.setArguments(bundle);
+                                                    bundle.putSerializable("TradeHistory", s);
+                                                    tradeHistory.setArguments(bundle);
 
                                                     getFragmentManager()
                                                             .beginTransaction()
-                                                            .replace(R.id.update_fragmentHolder, searchHistory)
+                                                            .replace(R.id.update_fragmentHolder, tradeHistory)
                                                             .commit();
                                                 } else {
                                                     builder.setTitle("Oops !");
@@ -431,7 +490,7 @@ public class SearchHistory extends Fragment {
                                 protected Map<String, String> getParams() {
                                     Map<String, String> params = new HashMap<>();
                                     try {
-                                        params.put("SearchHistoryID", Conversion.hexToAscii(jsonObj.getString("SearchHistoryID")));
+                                        params.put("StudentID", Conversion.hexToAscii(jsonObj.getString("StudentID")));
                                         params.put("status", "Hide");
                                     } catch (JSONException e) {
                                         e.printStackTrace();

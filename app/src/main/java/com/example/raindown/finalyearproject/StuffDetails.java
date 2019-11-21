@@ -40,12 +40,14 @@ public class StuffDetails extends Fragment {
     Date d = null;
     public static String confirmedTopic = "";
     public final static List<PrivateChat> arrayPrivateChat = new ArrayList<>();
+    private Date date;
+    private SimpleDateFormat dateFormat;
+    List<ViewHistoryOB> viewedList = new ArrayList<>();
     private PahoMqttClient pahoMqttClient;
     private MqttAndroidClient mqttAndroidClient;
     JSONObject jsonObj;
-    String command = "", message = "", countFollowersCommand = "", countFollowingCommand = "", ratingCommand = "",
-            sellerStuffCommand = "", checkSubscribeCommand = "";
-    private ImageView btnBack;
+    String command = "", insertCommand = "", message = "", countFollowersCommand = "", countFollowingCommand = "", ratingCommand = "",
+            sellerStuffCommand = "", checkSubscribeCommand = "", formattedDate, formattedTime, currentViewedID = "", viewedID = "";
     private Button btnAction;
     private final static String TAG = "Stuff Details";
 
@@ -88,7 +90,6 @@ public class StuffDetails extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-//        view = inflater.inflate(R.layout.stuffdetails, container, false);
         view = inflater.inflate(R.layout.stuffdetails_v2, container, false);
         pDialog = new ProgressDialog(getActivity());
 
@@ -126,7 +127,6 @@ public class StuffDetails extends Fragment {
         chat = (ImageView) view.findViewById(R.id.chat);
         viewProfile = (ImageView) view.findViewById(R.id.view);
 
-        btnBack = view.findViewById(R.id.back);
         btnAction = view.findViewById(R.id.makeAppointment);
         btnAction.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -162,13 +162,6 @@ public class StuffDetails extends Fragment {
             }
         });
 
-        btnBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getFragmentManager().popBackStack();
-            }
-        });
-
         if (stuff.getStudentID().getStudentID().equals(s.getStudentID())) {
             favourite.setEnabled(false);
             chat.setEnabled(false);
@@ -187,8 +180,6 @@ public class StuffDetails extends Fragment {
             command = "{\"command\": \"303035303032\", \"reserve\": \"303030303030303030303030303030303030303030303030\", " +
                     "\"studentID\": " + "\"" + Conversion.asciiToHex(stuff.getStudentID().getStudentID()) + "\" ," +
                     "\"stuffID\": " + "\"" + Conversion.asciiToHex(stuff.getStuffID()) + "\"}";
-
-            Log.d("shiit",stuff.getStuffID());
 
             pahoMqttClient = new PahoMqttClient();
             mqttAndroidClient = pahoMqttClient.getMqttClient(getActivity(),Constant.serverUrl,command,"MY/TARUC/SSS/000000001/PUB");
@@ -247,6 +238,8 @@ public class StuffDetails extends Fragment {
                 }
             });
         }
+
+        checkViewedHistory();
 
         return view;
     }
@@ -466,17 +459,6 @@ public class StuffDetails extends Fragment {
                                         }
                                         if (pDialog.isShowing())
                                             pDialog.dismiss();
-
-//                                        PrivateChatRoom frag = new PrivateChatRoom();
-//                                        Bundle bundles = new Bundle();
-//                                        bundles.putSerializable("Recipient", stuff.getStudentID());
-//                                        bundles.putSerializable("Me",s);
-//                                        frag.setArguments(bundles);
-//                                        fragmentManager = getFragmentManager();
-//                                        fragmentManager.beginTransaction()
-//                                                .replace(R.id.fragmentHolder, frag)
-//                                                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-//                                                .commit();
 
                                         //new code by lee thian xin
                                         if (stuff.getStudentID().equals(s.getStudentID())){
@@ -817,19 +799,202 @@ public class StuffDetails extends Fragment {
                 .commit();
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
-        // Log.d(TAG,"Welcome back");
+    public void checkViewedHistory(){
+        try {
+            ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+            Boolean isConnected = networkInfo != null && networkInfo.isConnectedOrConnecting();
+            if (isConnected) {
+
+                RequestQueue queue = Volley.newRequestQueue(getActivity());
+
+                JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Constant.serverFile + "getViewedData.php?studentID=" + s.getStudentID() + "&stuffID=" + stuff.getStuffID() ,
+                        new Response.Listener<JSONArray>() {
+                            @Override
+                            public void onResponse(JSONArray response) {
+
+                                try {
+                                    viewedList.clear();
+                                    for (int i = 0; i < response.length(); i++) {
+                                        JSONObject viewedResponse = (JSONObject) response.get(i);
+                                        viewedList.add(new ViewHistoryOB(viewedResponse.getString("ViewHistoryID")));
+                                    }
+
+                                    verifyViewedHistory();
+
+                                } catch (Exception e) {
+                                }
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError volleyError) {
+                                if (pDialog.isShowing())
+                                    pDialog.dismiss();
+                            }
+                        });
+                queue.add(jsonObjectRequest);
+
+            } else {
+                Toast.makeText(getActivity().getApplication(), "Network is NOT available",
+                        Toast.LENGTH_LONG).show();
+            }
+        } catch (Exception e) {
+            Toast.makeText(getActivity().getApplication(),
+                    "Error reading record:" + e.getMessage(),
+                    Toast.LENGTH_LONG).show();
+        }
+
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        ((AppCompatActivity) getActivity()).getSupportActionBar().show();
+    public void verifyViewedHistory(){
 
+        if (viewedList.size() == 0) {
+            date = Calendar.getInstance().getTime();
+            dateFormat = new SimpleDateFormat("d MMM yyyy");
+            formattedDate = dateFormat.format(date);
+            dateFormat = new SimpleDateFormat("h:mm a");
+            formattedTime = dateFormat.format(date);
+
+            insertCommand = "{\"command\": \"30303530307C\", \"reserve\": \"303030303030303030303030303030303030303030303030\", " +
+                    "\"StudentID\": " + "\"" + Conversion.asciiToHex(s.getStudentID()) + "\" ," +
+                    "\"Date\": " + "\"" + Conversion.asciiToHex(formattedDate) + "\" ," +
+                    "\"Time\": " + "\"" + Conversion.asciiToHex(formattedTime) + "\" ," +
+                    "\"StuffID\": " + "\"" + Conversion.asciiToHex(stuff.getStuffID()) + "\"}";
+
+            pahoMqttClient = new PahoMqttClient();
+            mqttAndroidClient = pahoMqttClient.getMqttClient(getActivity(), Constant.serverUrl, insertCommand, "MY/TARUC/SSS/000000001/PUB");
+
+            getViewedID();
+        }
     }
 
+    public void getViewedID() {
+        try {
+            ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+            Boolean isConnected = networkInfo != null && networkInfo.isConnectedOrConnecting();
+            if (isConnected) {
 
+                RequestQueue queue = Volley.newRequestQueue(getActivity());
+
+                JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Constant.serverFile + "generateViewedHistoryID.php",
+                        new Response.Listener<JSONArray>() {
+                            @Override
+                            public void onResponse(JSONArray response) {
+                                try {
+                                    for (int i = 0; i < response.length(); i++) {
+                                        JSONObject tradeIDResponse = (JSONObject) response.get(i);
+                                        currentViewedID = tradeIDResponse.getString("currentViewedID");
+                                    }
+                                    if (currentViewedID.equals("0")) {
+                                        viewedID = "VH0001";
+                                    } else {
+                                        viewedID = String.format("VH%04d", (Integer.parseInt(currentViewedID.substring(3, 6)) + 1));
+                                    }
+                                    insertViewedHistory();
+
+                                } catch (Exception e) {
+                                }
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError volleyError) {
+
+                            }
+                        });
+                queue.add(jsonObjectRequest);
+
+            } else {
+                Toast.makeText(getActivity().getApplication(), "Network is NOT available",
+                        Toast.LENGTH_LONG).show();
+            }
+        } catch (Exception e) {
+            Toast.makeText(getActivity().getApplication(),
+                    "Error reading record:" + e.getMessage(),
+                    Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public void insertViewedHistory() {
+        try {
+            jsonObj = new JSONObject(insertCommand);
+            if(jsonObj.getString("command").equals("30303530307C")){
+
+                jsonURL = Constant.serverFile + "insertViewedHistory.php?ViewHistoryID=" + viewedID
+                        + "&StudentID=" + Conversion.hexToAscii(jsonObj.getString("StudentID"))
+                        + "&Date=" + Conversion.hexToAscii(jsonObj.getString("Date"))
+                        + "&Time=" + Conversion.hexToAscii(jsonObj.getString("Time"))
+                        + "&StuffID=" + Conversion.hexToAscii(jsonObj.getString("StuffID"))
+                        + "&status=Show";
+
+                RequestQueue queue = Volley.newRequestQueue(getActivity());
+                try {
+                    StringRequest postRequest = new StringRequest(
+                            Request.Method.POST,
+                            jsonURL,
+                            new Response.Listener<String>() {
+                                @Override
+                                public void onResponse(String response) {
+                                    if (isAdded()) {
+                                    }
+                                    JSONObject jsonObject = null;
+                                    try {
+                                        jsonObject = new JSONObject(response);
+                                        String success = jsonObject.getString("success");
+                                        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getActivity());
+                                        if (success.equals("1")) {
+
+                                        }
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            },
+                            new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    if (isAdded()) {
+                                    }
+
+                                }
+                            }) {
+                        @Override
+                        protected Map<String, String> getParams() {
+                            Map<String, String> params = new HashMap<>();
+                            try {
+                                params.put("ViewHistoryID", viewedID);
+                                params.put("StudentID", Conversion.hexToAscii(jsonObj.getString("StudentID")));
+                                params.put("Date", Conversion.hexToAscii(jsonObj.getString("Date")));
+                                params.put("Time", Conversion.hexToAscii(jsonObj.getString("Time")));
+                                params.put("StuffID", Conversion.hexToAscii(jsonObj.getString("StuffID")));
+                                params.put("status", "Show");
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                            return params;
+                        }
+
+                        @Override
+                        public Map<String, String> getHeaders() throws AuthFailureError {
+                            Map<String, String> params = new HashMap<>();
+                            params.put("Content-Type", "application/x-www-form-urlencoded");
+                            return params;
+                        }
+                    };
+                    queue.add(postRequest);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            if (isAdded()) {
+            }
+        }
+    }
 }

@@ -115,16 +115,16 @@ public class HistoryMenu extends Fragment {
             public void onItemClick(AdapterView<?> parent, View viewClicked, int position, long id) {
 
                 if (arrayHistoryOption.get(position).getHistoryOptionName().equals("Recently Viewed Stuffs")) {
-//                    ChatRoomList_V2 chatRoomList_v2 = new ChatRoomList_V2();
-//                    Bundle bundle1 = new Bundle();
-//                    bundle1.putSerializable("chatRoomList_v2", s);
-//                    chatRoomList_v2.setArguments(bundle1);
-//                    fragmentManager = getFragmentManager();
-//                    fragmentManager.beginTransaction()
-//                            .replace(R.id.update_fragmentHolder, chatRoomList_v2)
-//                            .addToBackStack(null)
-//                            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-//                            .commit();
+                    ViewHistory viewHistory = new ViewHistory();
+                    Bundle bundle1 = new Bundle();
+                    bundle1.putSerializable("ViewHistory", s);
+                    viewHistory.setArguments(bundle1);
+                    fragmentManager = getFragmentManager();
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.update_fragmentHolder, viewHistory)
+                            .addToBackStack(null)
+                            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                            .commit();
 
                 } else if (arrayHistoryOption.get(position).getHistoryOptionName().equals("Search History")) {
                     SearchHistory searchHistory = new SearchHistory();
@@ -139,16 +139,16 @@ public class HistoryMenu extends Fragment {
                             .commit();
 
                 } else if (arrayHistoryOption.get(position).getHistoryOptionName().equals("Trade History")) {
-//                    PublicList publicList = new PublicList();
-//                    Bundle bundle2 = new Bundle();
-//                    bundle2.putSerializable("PublicList", s);
-//                    publicList.setArguments(bundle2);
-//                    fragmentManager = getFragmentManager();
-//                    fragmentManager.beginTransaction()
-//                            .replace(R.id.update_fragmentHolder, publicList)
-//                            .addToBackStack(null)
-//                            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-//                            .commit();
+                    TradeHistory tradeHistory = new TradeHistory();
+                    Bundle bundle2 = new Bundle();
+                    bundle2.putSerializable("TradeHistory", s);
+                    tradeHistory.setArguments(bundle2);
+                    fragmentManager = getFragmentManager();
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.update_fragmentHolder, tradeHistory)
+                            .addToBackStack(null)
+                            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                            .commit();
                 }
 
             }

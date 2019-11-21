@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp"
+    android:paddingTop="8dp">
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="130dp"
+        android:layout_margin="8dp"
+        card_view:cardCornerRadius="6dp"
+        card_view:cardElevation="6dp">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/deleteViewHistory"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginEnd="24dp"
+                card_view:layout_constraintBottom_toBottomOf="parent"
+                card_view:layout_constraintEnd_toEndOf="parent"
+                card_view:layout_constraintTop_toTopOf="parent"
+                card_view:srcCompat="@drawable/ic_delete" />
+
+            <TextView
+                android:id="@+id/viewedProductName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:fontFamily="sans-serif-smallcaps"
+                android:text="Ikea Shark"
+                android:textColor="@color/black"
+                android:textSize="16dp"
+                android:textStyle="bold"
+                card_view:layout_constraintStart_toEndOf="@+id/viewedProductImage"
+                card_view:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/viewedProductSeller"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="24dp"
+                android:fontFamily="sans-serif-smallcaps"
+                android:text="James Wong"
+                android:textColor="@color/black"
+                android:textSize="12dp"
+                card_view:layout_constraintStart_toEndOf="@+id/viewedProductImage"
+                card_view:layout_constraintTop_toTopOf="@+id/viewedProductPrice" />
+
+            <TextView
+                android:id="@+id/viewedProductPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:fontFamily="sans-serif-smallcaps"
+                android:text="RM 60.00"
+                android:textColor="@color/black"
+                android:textSize="12dp"
+                card_view:layout_constraintStart_toEndOf="@+id/viewedProductImage"
+                card_view:layout_constraintTop_toBottomOf="@+id/viewedProductName" />
+
+            <TextView
+                android:id="@+id/viewedTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:fontFamily="sans-serif-smallcaps"
+                android:text="Viewed On 15 Aug 2019 1:37 P.M."
+                android:textColor="@color/black"
+                android:textSize="12dp"
+                card_view:layout_constraintStart_toEndOf="@+id/viewedProductImage"
+                card_view:layout_constraintTop_toBottomOf="@+id/viewedProductSeller" />
+
+            <ImageView
+                android:id="@+id/viewedProductImage"
+                android:layout_width="94dp"
+                android:layout_height="94dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                card_view:layout_constraintBottom_toBottomOf="parent"
+                card_view:layout_constraintStart_toStartOf="parent"
+                card_view:layout_constraintTop_toTopOf="parent"
+                card_view:layout_constraintVertical_bias="0.1"
+                card_view:srcCompat="@mipmap/icon_miscellaneous" />
+        </android.support.constraint.ConstraintLayout>
+
+    </android.support.v7.widget.CardView>
+
+</LinearLayout>
