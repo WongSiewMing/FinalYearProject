@@ -17,16 +17,37 @@ import Helper.Stuff;
 
 public class RecommendRecyclerViewAdapter extends RecyclerView.Adapter<RecommendRecyclerViewAdapter.RecommendViewHolder> {
     private ArrayList<Stuff> stuffList;
+    private OnItemClickListener mListener;
+
+    public interface OnItemClickListener{
+        void onItemClick(int position);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener){
+        mListener = listener;
+    }
 
     public static class RecommendViewHolder extends RecyclerView.ViewHolder {
         public ImageView stuffImageView;
         public TextView stuffTextView;
 
-        public RecommendViewHolder(View itemView) {
+        public RecommendViewHolder(View itemView, final OnItemClickListener listener) {
             super(itemView);
 
             stuffImageView = itemView.findViewById(R.id.recommendStuffImage);
             stuffTextView = itemView.findViewById(R.id.recommendStuffName);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (listener != null){
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION){
+                            listener.onItemClick(position);
+                        }
+                    }
+                }
+            });
         }
     }
 
@@ -37,7 +58,7 @@ public class RecommendRecyclerViewAdapter extends RecyclerView.Adapter<Recommend
     @Override
     public RecommendViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.recommendstuff_cardview, parent, false);
-        RecommendViewHolder rvh = new RecommendViewHolder(v);
+        RecommendViewHolder rvh = new RecommendViewHolder(v, mListener);
         return rvh;
     }
 

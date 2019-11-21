@@ -39,7 +39,7 @@ public class Home extends Fragment {
     View view;
     Student s = null;
     RecyclerView mRecyclerView;
-    RecyclerView.Adapter mAdapter;
+    RecommendRecyclerViewAdapter mAdapter;
     ArrayList<Stuff> stuffList = new ArrayList<>();
     ArrayList<Stuff> tempStuffList = new ArrayList<>();
     ArrayList<SearchHistoryOB> searchList = new ArrayList<>();
@@ -459,6 +459,25 @@ public class Home extends Fragment {
         mAdapter = new RecommendRecyclerViewAdapter(stuffList);
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setAdapter(mAdapter);
+
+        mAdapter.setOnItemClickListener(new RecommendRecyclerViewAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                Stuff clickedStuff = stuffList.get(position);
+                StuffDetails frag = new StuffDetails();
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("ClickedStuff", clickedStuff);
+                //For StuffDetails, need UserID for who click it. Lazy to retrieve the whole student info
+                bundle.putSerializable("StudentClickedStuff", new Student(s.getStudentID(), "", "", "", "", "", 0));
+                frag.setArguments(bundle);
+
+                fragmentManager = getFragmentManager();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.update_fragmentHolder, frag)
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                        .commit();
+            }
+        });
     }
 
 

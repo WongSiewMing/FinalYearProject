@@ -508,7 +508,7 @@ public class SummaryReportFragment extends Fragment {
                                         itemList.clear();
                                         for (int i = 0; i < response.length(); i++) {
                                             JSONObject myStuffResponse = (JSONObject) response.get(i);
-                                            itemList.add(new SummaryItem(String.format("%d", i + 1), myStuffResponse.getString("photo"), myStuffResponse.getString("stuffID"), myStuffResponse.getString("stuffName"), ""));
+                                            itemList.add(new SummaryItem(String.format("%d", i + 1), myStuffResponse.getString("stuffImage"), myStuffResponse.getString("stuffID"), myStuffResponse.getString("stuffName"), ""));
 
                                             populateItemAdapterView();
                                         }
@@ -571,7 +571,7 @@ public class SummaryReportFragment extends Fragment {
                                         itemList.clear();
                                         for (int i = 0; i < response.length(); i++) {
                                             JSONObject myStuffResponse = (JSONObject) response.get(i);
-                                            itemList.add(new SummaryItem(String.format("%d", i + 1), myStuffResponse.getString("photo"), myStuffResponse.getString("stuffID"), myStuffResponse.getString("stuffName"), ""));
+                                            itemList.add(new SummaryItem(String.format("%d", i + 1), myStuffResponse.getString("stuffImage"), myStuffResponse.getString("stuffID"), myStuffResponse.getString("stuffName"), ""));
 
                                             populateItemAdapterView();
                                         }
