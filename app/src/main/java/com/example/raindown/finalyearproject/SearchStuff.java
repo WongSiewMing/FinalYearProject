@@ -26,12 +26,17 @@ Year : 2017*/
 public class SearchStuff extends Fragment {
 
     EditText minimumPrice, maximumPrice;
-    RadioButton radioNew, radioUsed, radioBoth, radioSortHighToLow, radioSortLowToHigh, radioAscending, radioDescending;
+    RadioButton radioNew, radioUsed, radioBoth, radioSortPrice, radioSortName;
     RadioGroup radioGroupCondition, radioGroupSort;
     SearchView searchStuffInput;
     Button filterSearch;
+    Switch btnEnableFilter;
     View view;
+
     String error = "", query = "",sort = "", command = "", category = "", condition = "", insertcommand = "", currentSearchID = "", SearchID = "", jsonURL = "", formattedDate, formattedTime;
+
+    LinearLayout filterLinearLayout;
+
     Spinner categorySpinner;
     ProgressDialog pDialog = null;
     public static List<Stuff> searchStuffList = new ArrayList<>();
@@ -43,6 +48,7 @@ public class SearchStuff extends Fragment {
     private Date date;
     private SimpleDateFormat dateFormat;
     JSONObject jsonObj;
+    private static final String TAG = "SearchStuff";
 
     @Override
     public void onAttach(Context context) {
@@ -99,17 +105,30 @@ public class SearchStuff extends Fragment {
         radioBoth = (RadioButton) view.findViewById(R.id.radioBoth);
 
         radioGroupSort = (RadioGroup) view.findViewById(R.id.radiogroupSort);
-        radioSortHighToLow = (RadioButton) view.findViewById(R.id.sortHighToLow);
-        radioSortLowToHigh = (RadioButton) view.findViewById(R.id.sortLowToHigh);
-        radioAscending = (RadioButton) view.findViewById(R.id.sortNameAscending);
-        radioDescending = (RadioButton) view.findViewById(R.id.sortNameDescending);
+        radioSortPrice = (RadioButton) view.findViewById(R.id.sortPrice);
+        radioSortName = (RadioButton) view.findViewById(R.id.sortName);
 
         searchStuffInput = (SearchView) view.findViewById(R.id.SearchStuffInput);
+
+        filterLinearLayout = (LinearLayout) view.findViewById(R.id.filterLinearLayout);
+
+        btnEnableFilter = (Switch) view.findViewById(R.id.btnEnableFilter);
+        btnEnableFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (btnEnableFilter.isChecked()){
+                    filterLinearLayout.setVisibility(View.VISIBLE);
+                } else {
+                    filterLinearLayout.setVisibility(View.GONE);
+                }
+            }
+        });
 
         filterSearch = (Button) view.findViewById(R.id.filterSearch);
         filterSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 if (validateInput()) {
 
                     date = Calendar.getInstance().getTime();
@@ -120,8 +139,6 @@ public class SearchStuff extends Fragment {
 
                     if (!searchStuffInput.getQuery().toString().isEmpty()){
                         query = "303031";
-                    } else {
-                        query = "303032";
                     }
 
                     if (categorySpinner.getSelectedItem().toString().equals("Books")) {
@@ -134,30 +151,40 @@ public class SearchStuff extends Fragment {
                         category = "303034";
                     }
 
-                    if (radioGroupCondition.getCheckedRadioButtonId() == R.id.radioNew) {
-                        condition = "303031";
-                    } else if (radioGroupCondition.getCheckedRadioButtonId() == R.id.radioUsed) {
-                        condition = "303032";
-                    } else if (radioGroupCondition.getCheckedRadioButtonId() == R.id.radioBoth) {
+                    if (btnEnableFilter.isChecked()){
+                        if (radioGroupCondition.getCheckedRadioButtonId() == R.id.radioNew) {
+                            condition = "303031";
+                        } else if (radioGroupCondition.getCheckedRadioButtonId() == R.id.radioUsed) {
+                            condition = "303032";
+                        } else if (radioGroupCondition.getCheckedRadioButtonId() == R.id.radioBoth) {
+                            condition = "303033";
+                        }
+
+                        if (radioGroupSort.getCheckedRadioButtonId() == R.id.sortPrice) {
+                            sort = "303031";
+                        } else if (radioGroupSort.getCheckedRadioButtonId() == R.id.sortName) {
+                            sort = "303032";
+                        }
+
+                        if (!maximumPrice.getText().toString().equals("") && !minimumPrice.getText().toString().equals("")){
+                            minPrice = Double.parseDouble(minimumPrice.getText().toString().trim());
+                            maxPrice = Double.parseDouble(maximumPrice.getText().toString().trim());
+                        } else {
+                            minPrice = 0;
+                            maxPrice = 0;
+                        }
+                    } else {
                         condition = "303033";
-                    }
-
-                    if (radioGroupSort.getCheckedRadioButtonId() == R.id.sortHighToLow) {
                         sort = "303031";
-                    } else if (radioGroupSort.getCheckedRadioButtonId() == R.id.sortLowToHigh) {
-                        sort = "303032";
-                    } else if (radioGroupSort.getCheckedRadioButtonId() == R.id.sortNameAscending){
-                        sort = "303033";
-                    } else if (radioGroupSort.getCheckedRadioButtonId() == R.id.sortNameDescending){
-                        sort = "303034";
+                        minPrice = 0;
+                        maxPrice = 0;
                     }
-
-					//Create MQTT command
+                    //Create MQTT command
                     command = "{\"command\": \"30303530301F\", \"reserve\": \"303030303030303030303030303030303030303030303030\", " +
                             "\"stuffQuery\": " + "\"" + query + "\" ," +
                             "\"stuffCategory\": " + "\"" + category + "\" ," +
-                            "\"stuffPriceMin\": " + "\"" + Conversion.asciiToHex(minimumPrice.getText().toString().trim()) + "\" ," +
-                            "\"stuffPriceMax\": " + "\"" + Conversion.asciiToHex(maximumPrice.getText().toString().trim()) + "\" ," +
+                            "\"stuffPriceMin\": " + "\"" + Conversion.asciiToHex(String.format("%.2f", minPrice)) + "\" ," +
+                            "\"stuffPriceMax\": " + "\"" + Conversion.asciiToHex(String.format("%.2f", maxPrice)) + "\" ," +
                             "\"stuffCondition\": " + "\"" + condition + "\" ," +
                             "\"stuffSorting\": " + "\"" + sort + "\"}";
 
@@ -175,9 +202,9 @@ public class SearchStuff extends Fragment {
                     mqttAndroidClient = pahoMqttClient.getMqttClient(getActivity(), Constant.serverUrl, insertcommand, "MY/TARUC/SSS/000000001/PUB");
 
                     getSearchID();
+
                     applyFilterSearch();
                 }
-
             }
         });
 
@@ -188,15 +215,37 @@ public class SearchStuff extends Fragment {
 
         error = "";
         boolean indicator = true;
-        if (categorySpinner.getSelectedItem().equals("--Category--")) {
-            error += "- Category type is not selected.\n";
+        if (searchStuffInput.getQuery().toString().isEmpty()){
+            error += "- Search Field must be typed.\n";
             indicator = false;
         }
 
-        if (minimumPrice.getText().toString().trim().equals("")) {
+        if (categorySpinner.getSelectedItem().toString().equals("--Category--")){
+            error += "- Category must be specified.\n";
+            indicator = false;
+        }
+
+        if (minimumPrice.getText().toString().trim().equals("") && !maximumPrice.getText().toString().trim().equals("")) {
             error += "- Minimum price is missing.\n";
             indicator = false;
-        } else {
+        } else if (maximumPrice.getText().toString().trim().equals("") && !minimumPrice.getText().toString().trim().equals("")){
+            error += "- Maximum price is missing.\n";
+            indicator = false;
+        } else if(!minimumPrice.getText().toString().trim().equals("") && !maximumPrice.getText().toString().trim().equals("")) {
+            if ((minimumPrice.getText().toString().trim().matches("^[0-9]\\d*(\\.(\\d{1}|\\d{2}))?$")) &&
+                    (maximumPrice.getText().toString().trim().matches("^[0-9]\\d*(\\.(\\d{1}|\\d{2}))?$"))) {
+                minPrice = Double.parseDouble(minimumPrice.getText().toString().trim());
+                maxPrice = Double.parseDouble(maximumPrice.getText().toString().trim());
+                if (minPrice > 0 && maxPrice > 0) {
+                    if (minPrice >= maxPrice) {
+                        error += "- Minimum price cannot be greater than or equal maximum price.\n";
+                        indicator = false;
+                    }
+                }
+            }
+        }
+        /*
+        else {
             if (minimumPrice.getText().toString().trim().matches("^[0-9]\\d*(\\.(\\d{1}|\\d{2}))?$")) {
                 minPrice = Double.parseDouble(minimumPrice.getText().toString().trim());
                 if (minPrice <= 0) {
@@ -209,6 +258,7 @@ public class SearchStuff extends Fragment {
                 indicator = false;
             }
         }
+
 
         if (maximumPrice.getText().toString().trim().equals("")) {
             error += "- Maximum price is missing.\n";
@@ -238,7 +288,7 @@ public class SearchStuff extends Fragment {
                     }
                 }
             }
-        }
+        } */
 
 
         if (indicator == false) {
@@ -268,8 +318,6 @@ public class SearchStuff extends Fragment {
                 if(jsonObj.getString("command").equals("30303530301F")){
                     if (jsonObj.getString("stuffQuery").equals("303031")){
                         query = searchStuffInput.getQuery().toString();
-                    } else if (jsonObj.getString("stuffQuery").equals("303032")){
-                        query = "";
                     }
 
                     if (jsonObj.getString("stuffCategory").equals("303031")) {
@@ -291,13 +339,9 @@ public class SearchStuff extends Fragment {
                     }
 
                     if (jsonObj.getString("stuffSorting").equals("303031")) {
-                        sort = "stuffPrice desc";
-                    } else if (jsonObj.getString("stuffSorting").equals("303032")) {
                         sort = "stuffPrice asc";
-                    } else if (jsonObj.getString("stuffSorting").equals("303033")){
+                    } else if (jsonObj.getString("stuffSorting").equals("303032")) {
                         sort = "stuffName asc";
-                    } else if (jsonObj.getString("stuffSorting").equals("303034")){
-                        sort = "stuffName desc";
                     }
 
                     RequestQueue queue = Volley.newRequestQueue(getActivity());
@@ -305,11 +349,15 @@ public class SearchStuff extends Fragment {
                         pDialog.setMessage("Sync with server...");
                     pDialog.show();
 
-                    JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Constant.serverFile + "applyFilterSearch.php?stuffQuery=" + query
+                    String url = "applyFilterSearch.php?stuffQuery=" + query
                             + "&stuffCategory=" + category
                             + "&stuffPriceMin=" + Conversion.hexToAscii(jsonObj.getString("stuffPriceMin"))
                             + "&stuffPriceMax=" + Conversion.hexToAscii(jsonObj.getString("stuffPriceMax"))
-                            + "&stuffCondition=" + condition + "&stuffSorting=" + sort,
+                            + "&stuffCondition=" + condition + "&stuffSorting=" + sort;
+
+                    Log.d(TAG, url);
+
+                    JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Constant.serverFile + url,
                             new Response.Listener<JSONArray>() {
                                 @Override
                                 public void onResponse(JSONArray response) {
