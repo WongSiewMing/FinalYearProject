@@ -88,7 +88,7 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.SummaryV
             holder.itemAmount.setText("+ RM " + currentItem.getItemAmount());
             holder.itemAmount.setTextColor(Color.parseColor("#32CD32"));
         } else if (redAmount){
-            holder.itemAmount.setText("- RM " + currentItem.getItemAmount());
+            holder.itemAmount.setText("RM " + currentItem.getItemAmount());
             holder.itemAmount.setTextColor(Color.RED);
         } else {
             holder.itemAmount.setText("RM " + currentItem.getItemAmount());
