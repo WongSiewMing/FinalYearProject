@@ -183,6 +183,13 @@ public class SummaryReportFragment extends Fragment {
             getTopSellingSelf();
 
         } else if (report.equals("Top Selling Stuff (Overall)")){
+            command = "{\"command\": \"303035303093\", \"reserve\": \"303030303030303030303030303030303030303030303030\", " +
+                    "\"studentID\": " + "\"" + Conversion.asciiToHex(s.getStudentID()) + "\"}";
+
+            pahoMqttClient = new PahoMqttClient();
+            mqttAndroidClient = pahoMqttClient.getMqttClient(getActivity(), Constant.serverUrl, command, "MY/TARUC/SSS/000000001/PUB");
+
+            getTopSellingSelf();
 
         } else if (report.equals("Top Requested Stuff")){
 
