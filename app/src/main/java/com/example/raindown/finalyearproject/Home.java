@@ -98,18 +98,9 @@ public class Home extends Fragment {
     }
 
     public void populateRecommendStuffList(){
-        if (checkSearchHistory() == true){
-            for (int i = 0; i < searchList.size(); i++){
-                searchKeyword = searchList.get(i).getSearchKeyword();
-                getStuffDetailBySearch();
-            }
-            populateRecyclerView();
-        } else if (checkViewHistory() == true){
-            for (int i = 0; i < viewList.size(); i++){
-                stuffList.add(viewList.get(i).getStuffID());
-            }
-            populateRecyclerView();
-        } else {
+        checkSearchHistory();
+        checkViewHistory();
+        if (!SearchHistoryExist && !ViewHistoryExist){
             command = "{\"command\": \"303035303093\", \"reserve\": \"303030303030303030303030303030303030303030303030\", " +
                     "\"studentID\": " + "\"" + Conversion.asciiToHex(s.getStudentID()) + "\"}";
 
@@ -161,6 +152,7 @@ public class Home extends Fragment {
                                                     existResponse.getString("Time"),
                                                     existResponse.getString("SearchKeyword"),
                                                     existResponse.getString("status")));
+                                            Log.d(TAG, "Search ID = " + searchList.get(i).getSearchHistoryID());
                                         }
                                         if (searchList.size() == 0) {
                                             Log.d(TAG, "Check Search History = Not Exist");
@@ -169,6 +161,12 @@ public class Home extends Fragment {
                                             Log.d(TAG, "Check Search History = Exist");
                                             SearchHistoryExist = true;
                                         }
+
+                                        for (int i = 0; i < searchList.size(); i++){
+                                            searchKeyword = searchList.get(i).getSearchKeyword();
+                                            getStuffDetailBySearch();
+                                        }
+                                        populateRecyclerView();
 
                                         if (pDialog.isShowing())
                                             pDialog.dismiss();
@@ -237,6 +235,8 @@ public class Home extends Fragment {
                                                             existResponse.getDouble("stuffPrice"),
                                                             existResponse.getString("stuffStatus")),
                                                     existResponse.getString("status")));
+                                            Log.d(TAG, "View ID = " + viewList.get(i).getViewHistoryID());
+
                                         }
                                         if (viewList.size() == 0) {
                                             Log.d(TAG, "Check View History = Not Exist");
@@ -245,6 +245,11 @@ public class Home extends Fragment {
                                             Log.d(TAG, "Check View History = Exist");
                                             ViewHistoryExist = true;
                                         }
+                                        for (int i = 0; i < viewList.size(); i++){
+                                            stuffList.add(viewList.get(i).getStuffID());
+                                            Log.d(TAG, "Stuff ID = " + stuffList.get(i).getStuffID());
+                                        }
+                                        populateRecyclerView();
 
                                         if (pDialog.isShowing())
                                             pDialog.dismiss();
@@ -296,7 +301,6 @@ public class Home extends Fragment {
                                 public void onResponse(JSONArray response) {
                                     try {
                                         tempStuffList.clear();
-                                        stuffList.clear();
                                         for (int i = 0; i < response.length(); i++) {
                                             JSONObject myStuffResponse = (JSONObject) response.get(i);
                                             tempStuffList.add(new Stuff(myStuffResponse.getString("stuffID"), new Student(myStuffResponse.getString("studentID"),
