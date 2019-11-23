@@ -99,7 +99,9 @@ public class Home extends Fragment {
 
     public void populateRecommendStuffList(){
         checkSearchHistory();
-        checkViewHistory();
+        if (!SearchHistoryExist){
+            checkViewHistory();
+        }
         if (!SearchHistoryExist && !ViewHistoryExist){
             command = "{\"command\": \"303035303093\", \"reserve\": \"303030303030303030303030303030303030303030303030\", " +
                     "\"studentID\": " + "\"" + Conversion.asciiToHex(s.getStudentID()) + "\"}";
