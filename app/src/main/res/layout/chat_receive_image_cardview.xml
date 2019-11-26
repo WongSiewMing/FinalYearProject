@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/receivedMessage_CardView"
+    android:id="@+id/receivedImage_CardView"
     android:layout_marginTop="5dp"
     android:layout_margin="5dp"
     app:cardElevation="0dp"

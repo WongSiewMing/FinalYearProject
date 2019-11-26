@@ -92,7 +92,7 @@ public class ChatRoomList_V2 extends Fragment {
         super.onCreate(savedInstanceState);
         getActivity().setTitle("Private Chat");
 
-        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
