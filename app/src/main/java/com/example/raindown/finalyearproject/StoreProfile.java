@@ -63,11 +63,11 @@ import static android.app.Activity.RESULT_OK;
 public class StoreProfile extends Fragment{
     View view;
     List<StoreOB> storeProfile;
-    private TextView avgRating, openTime, closeTime, condition, storeDescription, ratDrscription, popRating, ratSummary, storeLocation;
+    private TextView avgRating, openTime, closeTime, condition, storeDescription, ratDrscription, popRating, ratSummary, storeLocation, shopName;
     private ImageView shopImage, back;
     private Button editProfile, viewReview;
     private ProgressDialog pDialog = null;
-    private String selectedStoreID, ratingTotalNum, currentTime, UserID, shopName = "";
+    private String selectedStoreID, ratingTotalNum, currentTime, UserID;
     private Dialog popUpRating;
     FragmentManager fragmentManager;
     private MqttAndroidClient mqttAndroidClient;
@@ -97,12 +97,6 @@ public class StoreProfile extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_store_profile, container, false);
-        toolbar = (Toolbar) view.findViewById(R.id.update_customAppBar);
-
-        AppCompatActivity activity = (AppCompatActivity) getActivity();
-        activity.setSupportActionBar(toolbar);
-        activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        activity.getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         avgRating = (TextView) view.findViewById(R.id.avgRating);
         openTime = (TextView) view.findViewById(R.id.OpenTime);
@@ -110,21 +104,22 @@ public class StoreProfile extends Fragment{
         condition = (TextView) view.findViewById(R.id.storeStatus);
         storeDescription = (TextView) view.findViewById(R.id.storeDescription);
         shopImage = (ImageView) view.findViewById(R.id.shopImage);
+        shopName = (TextView) view.findViewById(R.id.shopName);
         editProfile = (Button) view.findViewById(R.id.editProfile);
         storeLocation = view.findViewById(R.id.storeLocation);
         progressBar = view.findViewById(R.id.progressBar);
         pDialog = new ProgressDialog(getActivity());
         body = view.findViewById(R.id.body);
+        back = view.findViewById(R.id.btnBack);
 
         UserID = UserSharedPreferences.read(UserSharedPreferences.userID, null);
         Log.d(TAG, "User ID =" + UserID);
 
-        shopName = UserSharedPreferences.read(UserSharedPreferences.userName, null);
+        shopName.setText(UserSharedPreferences.read(UserSharedPreferences.userName, null));;
         storeProfile = new ArrayList<>();
         Bundle bundle = getArguments();
         selectedStoreID = bundle.getString("storeID");
-        getActivity().setTitle(bundle.getString("storeName"));
-        shopName = selectedStoreID;
+        shopName.setText(selectedStoreID);
 
         final Date d = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("HHmm");
@@ -197,7 +192,12 @@ public class StoreProfile extends Fragment{
             }
         });
 
-
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getFragmentManager().popBackStack();
+            }
+        });
 
         popUpRating = new Dialog(getActivity());
 
@@ -499,7 +499,7 @@ public class StoreProfile extends Fragment{
 
         }
 
-        shopName = storeProfile.get(0).getStoreName();
+        shopName.setText(storeProfile.get(0).getStoreName());
         Picasso.with(getActivity()).load(storeProfile.get(0).getStoreImage()).memoryPolicy(MemoryPolicy.NO_CACHE).networkPolicy(NetworkPolicy.NO_CACHE).transform(new CircleTransform()).into(shopImage);
         getAvgRating();
         avgRating.setText(String.format("%.2f", avgRate));

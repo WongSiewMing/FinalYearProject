@@ -122,6 +122,8 @@ public class MakeAppointment extends Fragment {
         startTime = view.findViewById(R.id.availableStartTime);
         endTime = view.findViewById(R.id.availableEndTime);
 
+        populateView();
+
         mqttAndroidClient.setCallback(new MqttCallbackExtended() {
             @Override
             public void connectComplete(boolean reconnect, String serverURI) {
@@ -141,15 +143,18 @@ public class MakeAppointment extends Fragment {
             @Override
             public void messageArrived(String topic, MqttMessage mqttMessage) throws Exception {
                 try {
-//                    command = "{\"command\": \"30303530305D\", \"reserve\": \"303030303030303030303030303030303030303030303030\", " +
-//                            "\"availableID\": " + "\"" + Conversion.asciiToHex(mData.get(position).getAvailableID()) + "\" ," +
-//                            "\"studentID\": " + "\"" + Conversion.asciiToHex(Navigation.student.getStudentID()) + "\" ," +
-//                            "\"targetUserID\": " + "\"" + Conversion.asciiToHex(mData.get(position).getStudentID()) + "\" ," +
-//                            "\"availableDate\": " + "\"" + Conversion.asciiToHex(holder.appointmentDate.getText().toString().trim()) + "\" ," +
-//                            "\"availableDayOfWeek\": " + "\"" + Conversion.asciiToHex(mData.get(position).getAvailableDate()) + "\" ," +
-//                            "\"startTime\": " + "\"" + Conversion.asciiToHex(holder.startTime.getText().toString().trim()) + "\" ," +
-//                            "\"endTime\": " + "\"" + Conversion.asciiToHex(holder.endTime.getText().toString().trim()) + "\" ," +
-//                            "\"availableStatus\": " + "\"" + Conversion.asciiToHex(mData.get(position).getAvailableStatus()) + "\" }";
+                    /*
+                    command = "{\"command\": \"30303530305D\", \"reserve\": \"303030303030303030303030303030303030303030303030\", " +
+                            "\"availableID\": " + "\"" + Conversion.asciiToHex(mData.get(position).getAvailableID()) + "\" ," +
+                            "\"studentID\": " + "\"" + Conversion.asciiToHex(Navigation.student.getStudentID()) + "\" ," +
+                            "\"targetUserID\": " + "\"" + Conversion.asciiToHex(mData.get(position).getStudentID()) + "\" ," +
+                            "\"availableDate\": " + "\"" + Conversion.asciiToHex(holder.appointmentDate.getText().toString().trim()) + "\" ," +
+                            "\"availableDayOfWeek\": " + "\"" + Conversion.asciiToHex(mData.get(position).getAvailableDate()) + "\" ," +
+                            "\"startTime\": " + "\"" + Conversion.asciiToHex(holder.startTime.getText().toString().trim()) + "\" ," +
+                            "\"endTime\": " + "\"" + Conversion.asciiToHex(holder.endTime.getText().toString().trim()) + "\" ," +
+                            "\"availableStatus\": " + "\"" + Conversion.asciiToHex(mData.get(position).getAvailableStatus()) + "\" }";
+
+                     */
 
                     myjsonObj = new JSONObject(mqttMessage.toString());
                     if (myjsonObj.getString("command").equals("30303530305D")){

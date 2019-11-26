@@ -12,13 +12,11 @@ import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.nfc.tech.NfcA;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.SparseArray;
@@ -119,7 +117,7 @@ public class RequestDetail extends Fragment {
         pahoMqttClient = new PahoMqttClient();
         mqttAndroidClient = pahoMqttClient.getMqttClient(getActivity(), Constant.serverUrl, "MY/TARUC/SSS/000000001/PUB");
 
-        btnBack = view.findViewById(R.id.back);
+        btnBack = view.findViewById(R.id.btnBack);
         stuffOwnerName = view.findViewById(R.id.studentName);
         stuffImage = view.findViewById(R.id.stuffImage);
         progressBar = view.findViewById(R.id.progressBar);

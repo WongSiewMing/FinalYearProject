@@ -7,29 +7,30 @@
     android:background="@color/white">
 
     <RelativeLayout
+        android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="@color/tiffanyblue"
-        android:id="@+id/header">
+        android:background="@color/bgBottomNavigation">
+
         <ImageView
-            android:id="@+id/back"
+            android:id="@+id/btnBack"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:src="@drawable/ic_arrow_back"
-            android:tint="@color/lightgrey"
             android:layout_centerVertical="true"
             android:clickable="true"
-            android:focusable="true"/>
+            android:focusable="true"
+            android:src="@drawable/ic_arrow_back"
+            android:tint="@color/lightgrey" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:layout_toEndOf="@id/btnBack"
             android:text="Appointment Detail"
             android:textColor="@color/black"
-            android:textSize="20sp"
-            android:layout_toEndOf="@id/back"
-            android:layout_marginStart="10dp"
-            android:layout_centerVertical="true"/>
+            android:textSize="20sp" />
 
     </RelativeLayout>
     <ProgressBar

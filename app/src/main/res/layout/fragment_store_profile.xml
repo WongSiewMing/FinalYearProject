@@ -7,14 +7,35 @@
     android:background="@drawable/background"
     tools:context=".StoreProfile">
 
-    <android.support.v7.widget.Toolbar
+    <RelativeLayout
+        android:id="@+id/header"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/update_customAppBar"
+        android:layout_height="60dp"
         android:background="@color/bgBottomNavigation">
 
-    </android.support.v7.widget.Toolbar>
+        <ImageView
+            android:id="@+id/btnBack"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="5dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:src="@drawable/ic_arrow_back"
+            android:tint="@color/lightgrey" />
 
+        <TextView
+            android:id="@+id/shopName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="5dp"
+            android:layout_toEndOf="@id/btnBack"
+            android:text="Shop Name"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -26,7 +47,7 @@
         android:id="@+id/body"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/update_customAppBar"
+        android:layout_below="@id/header"
         android:visibility="invisible">
 
         <ScrollView

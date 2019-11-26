@@ -20,7 +20,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -46,7 +45,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -61,8 +59,6 @@ import Helper.AvailableTimeOB;
 import Helper.Constant;
 import Helper.Conversion;
 import Helper.PahoMqttClient;
-
-import static android.content.Context.INPUT_METHOD_SERVICE;
 
 
 public class EditAvailableTime extends Fragment {
@@ -99,7 +95,7 @@ public class EditAvailableTime extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_edit_available_time, container, false);
-        btnback = view.findViewById(R.id.back);
+        btnback = view.findViewById(R.id.btnBack);
         btnAddTime = view.findViewById(R.id.btnAddTime);
         noTimeIndicator = view.findViewById(R.id.noTimeIndicator);
         progressBar = view.findViewById(R.id.progressBar);

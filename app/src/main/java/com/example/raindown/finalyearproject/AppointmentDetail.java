@@ -50,18 +50,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import Helper.AppointmentOB;
-import Helper.AvailableTimeOB;
 import Helper.Constant;
 import Helper.Conversion;
 import Helper.PahoMqttClient;
@@ -114,7 +111,7 @@ public class AppointmentDetail extends Fragment {
         appointmentOB = (AppointmentOB) bundle.getSerializable("appointmentOB");
         pahoMqttClient = new PahoMqttClient();
         mqttAndroidClient = pahoMqttClient.getMqttClient(getActivity(), Constant.serverUrl, "MY/TARUC/SSS/000000001/PUB");
-        btnBack = view.findViewById(R.id.back);
+        btnBack = view.findViewById(R.id.btnBack);
         stuffImage = view.findViewById(R.id.stuffImage);
         requesterPhoto = view.findViewById(R.id.requesterPhoto);
         progressBar = view.findViewById(R.id.progressBar);
