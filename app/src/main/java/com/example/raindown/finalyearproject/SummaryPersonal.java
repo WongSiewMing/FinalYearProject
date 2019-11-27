@@ -52,10 +52,8 @@ public class SummaryPersonal extends Fragment {
 
     public void populateArraySummaryOption(){
         arraySummaryOption.clear();
-        arraySummaryOption.add(0, new SummaryOption(R.mipmap.icon_overall_sales, "Overall Sales"));
-        arraySummaryOption.add(1, new SummaryOption(R.mipmap.icon_overall_purchase, "Overall Purchase"));
-        arraySummaryOption.add(2, new SummaryOption(R.mipmap.icon_net_gross, "Net Gross"));
-        arraySummaryOption.add(3, new SummaryOption(R.mipmap.icon_top_selling, "Top Selling Stuff"));
+        arraySummaryOption.add(0, new SummaryOption(R.mipmap.icon_net_gross, "Overall Transaction"));
+        arraySummaryOption.add(1, new SummaryOption(R.mipmap.icon_top_selling, "Top Selling Stuff"));
         populateListView();
     }
 
@@ -99,16 +97,10 @@ public class SummaryPersonal extends Fragment {
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("Student", s);
 
-                if (arraySummaryOption.get(position).getSummaryOptionName().equals("Overall Sales")) {
-                    bundle.putString("ReportType", "Overall Sales");
+                if (arraySummaryOption.get(position).getSummaryOptionName().equals("Overall Transaction")) {
+                    bundle.putString("ReportType", "Overall Transaction");
 
-                } else if (arraySummaryOption.get(position).getSummaryOptionName().equals("Overall Purchase")) {
-                    bundle.putString("ReportType", "Overall Purchase");
-
-                } else if (arraySummaryOption.get(position).getSummaryOptionName().equals("Net Gross")){
-                    bundle.putString("ReportType", "Net Gross");
-
-                } else if (arraySummaryOption.get(position).getSummaryOptionName().equals("Top Selling Stuff")){
+                }  else if (arraySummaryOption.get(position).getSummaryOptionName().equals("Top Selling Stuff")){
                     bundle.putString("ReportType", "Top Selling Stuff (Personal)");
 
                 }

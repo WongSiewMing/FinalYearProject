@@ -67,11 +67,12 @@ import static android.app.Activity.RESULT_OK;
 public class StoreProfile extends Fragment {
     View view;
     List<StoreOB> storeProfile;
+
     private TextView avgRating, openTime, closeTime, condition, storeDescription, ratDrscription, popRating, ratSummary, storeLocation;
     private ImageView shopImage;
     private Button editProfile, viewReview;
     private ProgressDialog pDialog = null;
-    private String selectedStoreID, ratingTotalNum, currentTime, UserID, shopName = "";
+    private String selectedStoreID, ratingTotalNum, currentTime, UserID;
     private Dialog popUpRating;
     FragmentManager fragmentManager;
     private MqttAndroidClient mqttAndroidClient;
@@ -101,17 +102,20 @@ public class StoreProfile extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_store_profile, container, false);
+      
         avgRating = (TextView) view.findViewById(R.id.avgRating);
         openTime = (TextView) view.findViewById(R.id.OpenTime);
         closeTime = (TextView) view.findViewById(R.id.CloseTime);
         condition = (TextView) view.findViewById(R.id.storeStatus);
         storeDescription = (TextView) view.findViewById(R.id.storeDescription);
         shopImage = (ImageView) view.findViewById(R.id.shopImage);
+        shopName = (TextView) view.findViewById(R.id.shopName);
         editProfile = (Button) view.findViewById(R.id.editProfile);
         storeLocation = view.findViewById(R.id.storeLocation);
         progressBar = view.findViewById(R.id.progressBar);
         pDialog = new ProgressDialog(getActivity());
         body = view.findViewById(R.id.body);
+
         UserID = UserSharedPreferences.read(UserSharedPreferences.userID, null);
         storeProfile = new ArrayList<>();
         Bundle bundle = getArguments();
@@ -185,7 +189,6 @@ public class StoreProfile extends Fragment {
                         .commit();
             }
         });
-
 
         popUpRating = new Dialog(getActivity());
 

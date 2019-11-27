@@ -46,7 +46,7 @@
         android:background="@color/bgBottomNavigation">
 
         <ImageView
-            android:id="@+id/back"
+            android:id="@+id/btnBack"
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:layout_marginLeft="15dp"
@@ -63,7 +63,7 @@
             android:layout_height="50dp"
             android:src="@mipmap/icon_student"
             android:layout_alignParentTop="true"
-            android:layout_toEndOf="@+id/back"
+            android:layout_toEndOf="@+id/btnBack"
             android:layout_centerVertical="true"/>
 
         <TextView

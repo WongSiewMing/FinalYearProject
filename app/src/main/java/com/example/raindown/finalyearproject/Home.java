@@ -50,6 +50,7 @@ public class Home extends Fragment {
     private String command = "", checkUrl = "", searchKeyword = "";
     private JSONObject jsonObj;
     private ProgressDialog pDialog = null;
+    private TextView txtRecommend;
     private static final String TAG = "Home";
     private boolean SearchHistoryExist, ViewHistoryExist;
 
@@ -90,6 +91,10 @@ public class Home extends Fragment {
         Bundle bundle = getArguments();
         s = (Student) bundle.getSerializable("Home");
         pDialog = new ProgressDialog(getActivity());
+        txtRecommend = (TextView) view.findViewById(R.id.txtRecommend);
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.recommendList);
+        txtRecommend.setVisibility(View.GONE);
+        mRecyclerView.setVisibility(View.GONE);
 
         populateRecommendStuffList();
         populateArrayHomeOption();
@@ -100,16 +105,16 @@ public class Home extends Fragment {
     public void populateRecommendStuffList(){
         SearchHistoryExist = false;
         ViewHistoryExist = false;
+        stuffList.clear();
 
         checkSearchHistory();
-
-        Log.d(TAG, "1 SearchHistory = " + SearchHistoryExist);
-        Log.d(TAG, "1 ViewHistory = " + ViewHistoryExist);
 
         if (!SearchHistoryExist){
             checkViewHistory();
         }
+
         populateRecyclerView();
+
     }
 
     public boolean checkSearchHistory(){
@@ -245,10 +250,11 @@ public class Home extends Fragment {
                                             ViewHistoryExist = true;
                                         }
                                         for (int i = 0; i < viewList.size(); i++){
-                                            stuffList.add(viewList.get(i).getStuffID());
-                                            Log.d(TAG, "Stuff ID = " + stuffList.get(i).getStuffID());
+                                            searchKeyword = viewList.get(i).getStuffID().getStuffName();
+                                            getStuffDetailBySearch();
                                         }
                                         mAdapter.notifyDataSetChanged();
+
 
                                         if (pDialog.isShowing())
                                             pDialog.dismiss();
@@ -318,6 +324,10 @@ public class Home extends Fragment {
                                             Log.d(TAG, "getStuffBySearch = " + stuffList.get(i).getStuffID());
                                         }
                                         mAdapter.notifyDataSetChanged();
+                                        if (!stuffList.isEmpty()){
+                                            txtRecommend.setVisibility(View.VISIBLE);
+                                            mRecyclerView.setVisibility(View.VISIBLE);
+                                        }
                                         if (pDialog.isShowing())
                                             pDialog.dismiss();
                                     } catch (Exception e) {
@@ -366,7 +376,7 @@ public class Home extends Fragment {
 
     public void populateRecyclerView(){
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.recommendList);
+
         mRecyclerView.setHasFixedSize(true);
         mAdapter = new RecommendRecyclerViewAdapter(stuffList);
         mRecyclerView.setLayoutManager(layoutManager);
@@ -390,6 +400,7 @@ public class Home extends Fragment {
                         .commit();
             }
         });
+
     }
 
 

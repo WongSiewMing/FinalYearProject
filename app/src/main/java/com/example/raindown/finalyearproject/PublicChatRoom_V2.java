@@ -12,8 +12,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -113,7 +111,7 @@ public class PublicChatRoom_V2 extends Fragment {
         Log.d(TAG, "Student name =" + myInfo.getStudentName());
         btnSend = view.findViewById(R.id.btnSendMessage);
         editMsg = view.findViewById(R.id.editMessage);
-        back = view.findViewById(R.id.back);
+        back = view.findViewById(R.id.btnBack);
         subjectPhoto = view.findViewById(R.id.subjectPhoto);
         subjectName = view.findViewById(R.id.subjectName);
         messageStatus = view.findViewById(R.id.message_status);
