@@ -3,18 +3,12 @@ package com.example.raindown.finalyearproject;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -35,12 +29,7 @@ import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 
 import Helper.AppointmentOB;
 import Helper.AvailableTimeOB;
@@ -50,10 +39,8 @@ import Helper.PahoMqttClient;
 import Helper.Student;
 import Helper.Stuff;
 import Helper.SummaryItem;
-import Helper.SummaryOption;
 
 public class SummaryReportFragment extends Fragment {
-    public final static List<SummaryOption> arraySummaryOption = new ArrayList<>();
     FragmentManager fragmentManager;
     View view;
     Student s = null;
@@ -62,16 +49,18 @@ public class SummaryReportFragment extends Fragment {
     private MqttAndroidClient mqttAndroidClient;
     private String command = "", report = "", retrieveUrl = "";
     private ArrayList<SummaryItem> itemList = new ArrayList<>();
+    private ArrayList<SummaryItem> salesItemList = new ArrayList<>();
+    private ArrayList<SummaryItem> purchaseItemList = new ArrayList<>();
     private ArrayList<Stuff> stuffList = new ArrayList<>();
     private ArrayList<AppointmentOB> appointmentList = new ArrayList<>();
     private ProgressDialog pDialog = null;
-    private RecyclerView mRecyclerView, summaryInfoList;
-    private SummaryAdapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
-    private TextView txtSummaryTitle, txtSummaryTotal, notice;
-    private ImageView infoIcon;
+    private RecyclerView summaryInfoList, summaryInfo2List;
+    private SummaryAdapter mAdapter, mAdapter2;
+    private RecyclerView.LayoutManager mLayoutManager, mLayoutManager2;
+    private TextView txtSummaryTitle, txtSummaryTotal, txtSummaryTotal2, txtSales, txtPurchase, notice, notice2;
+    private ImageView infoIcon, infoIcon2;
     private JSONObject jsonObj;
-    private Double total = 0.0;
+    private Double total = 0.0, salesTotal = 0.0, purchaseTotal = 0.0;
 
     private static final String TAG = "SummaryReport";
 
@@ -93,10 +82,16 @@ public class SummaryReportFragment extends Fragment {
 
         infoIcon = view.findViewById(R.id.infoIcon);
         notice = view.findViewById(R.id.notice);
+        infoIcon2 =  view.findViewById(R.id.infoIcon2);
+        notice2 = view.findViewById(R.id.notice2);
 
         txtSummaryTitle = view.findViewById(R.id.txtSummaryTitle);
         txtSummaryTotal = view.findViewById(R.id.txtSummaryTotal);
+        txtSummaryTotal2 = view.findViewById(R.id.txtSummaryTotal2);
+        txtSales = view.findViewById(R.id.txtSales);
+        txtPurchase = view.findViewById(R.id.txtPurchase);
         summaryInfoList = view.findViewById(R.id.summaryInfoList);
+        summaryInfo2List = view.findViewById(R.id.summaryInfo2List);
 
         populateItemList();
 
@@ -105,54 +100,14 @@ public class SummaryReportFragment extends Fragment {
 
     public void populateItemList(){
         txtSummaryTitle.setText(report);
-        if (report.equals("Overall Sales")){
+        if (report.equals("Overall Transaction")){
 
-            command = "{\"command\": \"303035303091\", \"reserve\": \"303030303030303030303030303030303030303030303030\", " +
-                    "\"studentID\": " + "\"" + Conversion.asciiToHex(s.getStudentID()) + "\"}";
-
-            pahoMqttClient = new PahoMqttClient();
-            mqttAndroidClient = pahoMqttClient.getMqttClient(getActivity(), Constant.serverUrl, command, "MY/TARUC/SSS/000000001/PUB");
-
-            itemList.clear();
-            itemList.add(new SummaryItem("1", getURLForResource(R.mipmap.icon_book), "", "Books", "0.00"));
-            itemList.add(new SummaryItem("2", getURLForResource(R.mipmap.icon_electronics), "", "Electronics", "0.00"));
-            itemList.add(new SummaryItem("3", getURLForResource(R.mipmap.icon_furnitures), "", "Furnitures", "0.00"));
-            itemList.add(new SummaryItem("4", getURLForResource(R.mipmap.icon_miscellaneous), "", "Miscellaneous", "0.00"));
-
+            salesItemList.clear();
+            purchaseItemList.clear();
             stuffList.clear();
             total = 0.0;
-            getOverallSales();
-
-        } else if (report.equals("Overall Purchase")){
-
-            command = "{\"command\": \"303035303092\", \"reserve\": \"303030303030303030303030303030303030303030303030\", " +
-                    "\"studentID\": " + "\"" + Conversion.asciiToHex(s.getStudentID()) + "\"}";
-
-            pahoMqttClient = new PahoMqttClient();
-            mqttAndroidClient = pahoMqttClient.getMqttClient(getActivity(), Constant.serverUrl, command, "MY/TARUC/SSS/000000001/PUB");
-
-            itemList.clear();
-            itemList.add(new SummaryItem("1", getURLForResource(R.mipmap.icon_book), "", "Books", "0.00"));
-            itemList.add(new SummaryItem("2", getURLForResource(R.mipmap.icon_electronics), "", "Electronics", "0.00"));
-            itemList.add(new SummaryItem("3", getURLForResource(R.mipmap.icon_furnitures), "", "Furnitures", "0.00"));
-            itemList.add(new SummaryItem("4", getURLForResource(R.mipmap.icon_miscellaneous), "", "Miscellaneous", "0.00"));
-
-            stuffList.clear();
-            total = 0.0;
-            appointmentList.clear();
-            getOverallPurchase();
-
-
-        } else if (report.equals("Net Gross")){
-
-            itemList.clear();
-            itemList.add(new SummaryItem("1", getURLForResource(R.mipmap.icon_book), "", "Books", "0.00"));
-            itemList.add(new SummaryItem("2", getURLForResource(R.mipmap.icon_electronics), "", "Electronics", "0.00"));
-            itemList.add(new SummaryItem("3", getURLForResource(R.mipmap.icon_furnitures), "", "Furnitures", "0.00"));
-            itemList.add(new SummaryItem("4", getURLForResource(R.mipmap.icon_miscellaneous), "", "Miscellaneous", "0.00"));
-
-            stuffList.clear();
-            total = 0.0;
+            salesTotal = 0.0;
+            purchaseTotal = 0.0;
             appointmentList.clear();
 
             command = "{\"command\": \"303035303091\", \"reserve\": \"303030303030303030303030303030303030303030303030\", " +
@@ -182,6 +137,7 @@ public class SummaryReportFragment extends Fragment {
 
             getTopSellingSelf();
 
+            populateItemAdapterView();
         } else if (report.equals("Top Selling Stuff (Overall)")){
             command = "{\"command\": \"303035303093\", \"reserve\": \"303030303030303030303030303030303030303030303030\", " +
                     "\"studentID\": " + "\"" + Conversion.asciiToHex(s.getStudentID()) + "\"}";
@@ -191,6 +147,8 @@ public class SummaryReportFragment extends Fragment {
 
             getTopSellingOverall();
 
+            populateItemAdapterView();
+
         } else if (report.equals("Top Requested Stuff")){
             command = "{\"command\": \"303035303094\", \"reserve\": \"303030303030303030303030303030303030303030303030\"}";
 
@@ -198,6 +156,8 @@ public class SummaryReportFragment extends Fragment {
             mqttAndroidClient = pahoMqttClient.getMqttClient(getActivity(), Constant.serverUrl, command, "MY/TARUC/SSS/000000001/PUB");
 
             getTopRequest();
+
+            populateItemAdapterView();
 
         } else if (report.equals("Most Sold Stuff Category")){
             itemList.clear();
@@ -215,6 +175,8 @@ public class SummaryReportFragment extends Fragment {
             stuffList.clear();
             total = 0.0;
             getTopSoldStuffCategory();
+
+            populateItemAdapterView();
         }
     }
 
@@ -252,30 +214,11 @@ public class SummaryReportFragment extends Fragment {
                                                     myStuffResponse.getString("stuffDescription"), myStuffResponse.getString("stuffCategory"), myStuffResponse.getString("stuffCondition"),
                                                     myStuffResponse.getDouble("stuffPrice"), myStuffResponse.getInt("stuffQuantity"), myStuffResponse.getString("validStartDate"),
                                                     myStuffResponse.getString("validEndDate"), myStuffResponse.getString("stuffStatus")));
-                                            Log.d(TAG, "Stuff ID fetched (stuffList) =" + stuffList.get(i).getStuffID());
+                                            Log.d(TAG, "Stuff ID fetched (getSales) =" + stuffList.get(i).getStuffID());
 
-                                            Double price = 0.0;
-                                            if (stuffList.get(i).getStuffCategory().equals("Books")){
-                                                price = Double.parseDouble(itemList.get(0).getItemAmount()) + stuffList.get(i).getStuffPrice();
-                                                itemList.set(0, new SummaryItem("1", getURLForResource(R.mipmap.icon_book), "", "Books", String.format("%.2f", price)));
-                                                total += price;
+                                            salesItemList.add(new SummaryItem(String.format("%d", i + 1), myStuffResponse.getString("stuffImage"), myStuffResponse.getString("stuffID"), myStuffResponse.getString("stuffName"), myStuffResponse.getString("stuffPrice")));
 
-                                            } else if (stuffList.get(i).getStuffCategory().equals("Electronics")){
-                                                price = Double.parseDouble(itemList.get(1).getItemAmount()) + stuffList.get(i).getStuffPrice();
-                                                itemList.set(1, new SummaryItem("2", getURLForResource(R.mipmap.icon_electronics), "", "Electronics", String.format("%.2f", price)));
-                                                total += price;
-
-                                            } else if (stuffList.get(i).getStuffCategory().equals("Furnitures")){
-                                                price = Double.parseDouble(itemList.get(2).getItemAmount()) + stuffList.get(i).getStuffPrice();
-                                                itemList.set(2, new SummaryItem("3", getURLForResource(R.mipmap.icon_furnitures), "", "Furnitures",String.format("%.2f", price)));
-                                                total += price;
-
-                                            } else if (stuffList.get(i).getStuffCategory().equals("Miscellaneous")){
-                                                price = Double.parseDouble(itemList.get(3).getItemAmount()) + stuffList.get(i).getStuffPrice();
-                                                itemList.set(3, new SummaryItem("4", getURLForResource(R.mipmap.icon_miscellaneous), "", "Miscellaneous", String.format("%.2f", price)));
-                                                total += price;
-                                            }
-
+                                            salesTotal += stuffList.get(i).getStuffPrice();
                                         }
                                         populateItemAdapterView();
 
@@ -328,10 +271,10 @@ public class SummaryReportFragment extends Fragment {
                                 @Override
                                 public void onResponse(JSONArray response) {
                                     if (response.toString().equals("[]") && !report.equals("Net Gross")) {
-                                        infoIcon.setVisibility(view.VISIBLE);
-                                        notice.setVisibility(view.VISIBLE);
-                                        txtSummaryTotal.setVisibility(View.GONE);
-                                        summaryInfoList.setVisibility(View.GONE);
+                                        infoIcon2.setVisibility(view.VISIBLE);
+                                        notice2.setVisibility(view.VISIBLE);
+                                        txtSummaryTotal2.setVisibility(View.GONE);
+                                        summaryInfo2List.setVisibility(View.GONE);
                                     }
                                     try {
                                         for (int i = 0; i < response.length(); i++) {
@@ -412,6 +355,7 @@ public class SummaryReportFragment extends Fragment {
                             @Override
                             public void onResponse(JSONArray response) {
                                 try {
+                                    stuffList.clear();
                                     for (int i = 0; i < response.length(); i++) {
                                         JSONObject stuffResponse = (JSONObject) response.get(i);
                                         stuffList.add(new Stuff(stuffResponse.getString("stuffID"),
@@ -433,28 +377,13 @@ public class SummaryReportFragment extends Fragment {
                                                 stuffResponse.getString("validEndDate"),
                                                 stuffResponse.getString("stuffStatus")));
 
-                                        Double price = 0.0;
-                                        if (stuffList.get(i).getStuffCategory().equals("Books")){
-                                            price = Double.parseDouble(itemList.get(0).getItemAmount()) - stuffList.get(i).getStuffPrice();
-                                            itemList.set(0, new SummaryItem("1", getURLForResource(R.mipmap.icon_book), "", "Books", String.format("%.2f", price)));
-                                            total += price;
+                                        Log.d(TAG, "Stuff ID fetched (getPurchase) =" + stuffList.get(i).getStuffID());
 
-                                        } else if (stuffList.get(i).getStuffCategory().equals("Electronics")){
-                                            price = Double.parseDouble(itemList.get(1).getItemAmount()) - stuffList.get(i).getStuffPrice();
-                                            itemList.set(1, new SummaryItem("2", getURLForResource(R.mipmap.icon_electronics), "", "Electronics", String.format("%.2f", price)));
-                                            total += price;
+                                        purchaseItemList.add(new SummaryItem(String.format("%d", i + 1), stuffResponse.getString("stuffImage"), stuffResponse.getString("stuffID"), stuffResponse.getString("stuffName"), stuffResponse.getString("stuffPrice")));
 
-                                        } else if (stuffList.get(i).getStuffCategory().equals("Furnitures")){
-                                            price = Double.parseDouble(itemList.get(2).getItemAmount()) - stuffList.get(i).getStuffPrice();
-                                            itemList.set(2, new SummaryItem("3", getURLForResource(R.mipmap.icon_furnitures), "", "Furnitures",String.format("%.2f", price)));
-                                            total += price;
-
-                                        } else if (stuffList.get(i).getStuffCategory().equals("Miscellaneous")){
-                                            price = Double.parseDouble(itemList.get(3).getItemAmount()) - stuffList.get(i).getStuffPrice();
-                                            itemList.set(3, new SummaryItem("4", getURLForResource(R.mipmap.icon_miscellaneous), "", "Miscellaneous", String.format("%.2f", price)));
-                                            total += price;
-                                        }
+                                        purchaseTotal += stuffResponse.getDouble("stuffPrice");
                                     }
+
                                     populateItemAdapterView();
 
 
@@ -502,7 +431,10 @@ public class SummaryReportFragment extends Fragment {
                                         infoIcon.setVisibility(view.VISIBLE);
                                         notice.setVisibility(view.VISIBLE);
                                         txtSummaryTotal.setVisibility(View.GONE);
+                                        txtSummaryTotal2.setVisibility(View.GONE);
                                         summaryInfoList.setVisibility(View.GONE);
+                                        txtSales.setVisibility(View.GONE);
+                                        txtPurchase.setVisibility(View.GONE);
                                     }
                                     try {
                                         itemList.clear();
@@ -510,8 +442,9 @@ public class SummaryReportFragment extends Fragment {
                                             JSONObject myStuffResponse = (JSONObject) response.get(i);
                                             itemList.add(new SummaryItem(String.format("%d", i + 1), myStuffResponse.getString("stuffImage"), myStuffResponse.getString("stuffID"), myStuffResponse.getString("stuffName"), ""));
 
-                                            populateItemAdapterView();
                                         }
+
+                                        mAdapter.notifyDataSetChanged();
 
                                         if (pDialog.isShowing()) {
                                             pDialog.dismiss();
@@ -565,7 +498,10 @@ public class SummaryReportFragment extends Fragment {
                                         infoIcon.setVisibility(view.VISIBLE);
                                         notice.setVisibility(view.VISIBLE);
                                         txtSummaryTotal.setVisibility(View.GONE);
+                                        txtSummaryTotal2.setVisibility(View.GONE);
                                         summaryInfoList.setVisibility(View.GONE);
+                                        txtSales.setVisibility(View.GONE);
+                                        txtPurchase.setVisibility(View.GONE);
                                     }
                                     try {
                                         itemList.clear();
@@ -573,8 +509,8 @@ public class SummaryReportFragment extends Fragment {
                                             JSONObject myStuffResponse = (JSONObject) response.get(i);
                                             itemList.add(new SummaryItem(String.format("%d", i + 1), myStuffResponse.getString("stuffImage"), myStuffResponse.getString("stuffID"), myStuffResponse.getString("stuffName"), ""));
 
-                                            populateItemAdapterView();
                                         }
+                                        mAdapter.notifyDataSetChanged();
 
                                         if (pDialog.isShowing()) {
                                             pDialog.dismiss();
@@ -628,7 +564,10 @@ public class SummaryReportFragment extends Fragment {
                                         infoIcon.setVisibility(view.VISIBLE);
                                         notice.setVisibility(view.VISIBLE);
                                         txtSummaryTotal.setVisibility(View.GONE);
+                                        txtSummaryTotal2.setVisibility(View.GONE);
                                         summaryInfoList.setVisibility(View.GONE);
+                                        txtSales.setVisibility(View.GONE);
+                                        txtPurchase.setVisibility(View.GONE);
                                     }
                                     try {
                                         itemList.clear();
@@ -636,8 +575,8 @@ public class SummaryReportFragment extends Fragment {
                                             JSONObject myStuffResponse = (JSONObject) response.get(i);
                                             itemList.add(new SummaryItem(String.format("%d", i + 1), myStuffResponse.getString("stuffImage"), myStuffResponse.getString("requeststuffID"), myStuffResponse.getString("stuffName"), ""));
 
-                                            populateItemAdapterView();
                                         }
+                                        mAdapter.notifyDataSetChanged();
 
                                         if (pDialog.isShowing()) {
                                             pDialog.dismiss();
@@ -691,7 +630,10 @@ public class SummaryReportFragment extends Fragment {
                                         infoIcon.setVisibility(view.VISIBLE);
                                         notice.setVisibility(view.VISIBLE);
                                         txtSummaryTotal.setVisibility(View.GONE);
+                                        txtSummaryTotal2.setVisibility(View.GONE);
                                         summaryInfoList.setVisibility(View.GONE);
+                                        txtSales.setVisibility(View.GONE);
+                                        txtPurchase.setVisibility(View.GONE);
                                     }
                                     try {
                                         for (int i = 0; i < response.length(); i++) {
@@ -725,9 +667,8 @@ public class SummaryReportFragment extends Fragment {
                                                 itemList.set(3, new SummaryItem("4", getURLForResource(R.mipmap.icon_miscellaneous), "", "Miscellaneous", String.format("%.0f", count)));
                                                 total += count;
                                             }
-
-                                            populateItemAdapterView();
                                         }
+                                        mAdapter.notifyDataSetChanged();
 
                                         if (pDialog.isShowing()) {
                                             pDialog.dismiss();
@@ -765,28 +706,59 @@ public class SummaryReportFragment extends Fragment {
     }
 
     public void populateItemAdapterView(){
-        mRecyclerView = view.findViewById(R.id.summaryInfoList);
-        txtSummaryTotal.setText("Total : RM " + String.format("%.2f", total));
-        mRecyclerView.setHasFixedSize(true);
-        mLayoutManager = new LinearLayoutManager(getActivity());
-        mAdapter = new SummaryAdapter(itemList);
 
-        if (report.equals("Overall Sales")){
-            mAdapter.hideNumTextView(true);
-            mAdapter.setGreenAmount(true);
-        } else if (report.equals("Overall Purchase")){
-            mAdapter.hideNumTextView(true);
-            mAdapter.setRedAmount(true);
-        } else if (report.equals("Top Selling Stuff (Personal)") || report.equals("Top Selling Stuff (Overall)") || report.equals("Top Requested Stuff")){
+
+        if (report.equals("Top Selling Stuff (Personal)") || report.equals("Top Selling Stuff (Overall)") || report.equals("Top Requested Stuff")){
+            mAdapter = new SummaryAdapter(itemList);
+            txtSummaryTotal.setText("Total : RM " + String.format("%.2f", total));
+            summaryInfoList.setHasFixedSize(true);
+
+
             mAdapter.hideAmountTextView(true);
             txtSummaryTotal.setVisibility(View.GONE);
+            txtSales.setVisibility(View.GONE);
+            txtPurchase.setVisibility(View.GONE);
+            summaryInfo2List.setVisibility(View.GONE);
+            txtSummaryTotal2.setVisibility(View.GONE);
+
+            summaryInfoList.setLayoutManager(new LinearLayoutManager(getActivity()));
+            summaryInfoList.setAdapter(mAdapter);
+
         } else if (report.equals("Most Sold Stuff Category")){
+            mAdapter = new SummaryAdapter(itemList);
+            txtSummaryTotal.setText("Total : RM " + String.format("%.2f", total));
+            summaryInfoList.setHasFixedSize(true);
+
             mAdapter.setCountAmount(true);
             txtSummaryTotal.setVisibility(View.GONE);
+            txtSales.setVisibility(View.GONE);
+            txtPurchase.setVisibility(View.GONE);
+            summaryInfo2List.setVisibility(View.GONE);
+            txtSummaryTotal2.setVisibility(View.GONE);
+
+            summaryInfoList.setLayoutManager(new LinearLayoutManager(getActivity()));
+            summaryInfoList.setAdapter(mAdapter);
+
+        } else if (report.equals("Overall Transaction")){
+            mAdapter = new SummaryAdapter(salesItemList);
+            mAdapter2 = new SummaryAdapter(purchaseItemList);
+            txtSummaryTotal.setText("Total : RM " + String.format("%.2f", salesTotal));
+            txtSummaryTotal2.setText("Total : RM " + String.format("%.2f", purchaseTotal));
+
+            Log.d(TAG, "Sales List size =" + salesItemList.size());
+            Log.d(TAG, "Purchase List size =" + purchaseItemList.size());
+
+            mAdapter.setGreenAmount(true);
+            mAdapter2.setRedAmount(true);
+
+            summaryInfoList.setLayoutManager(new LinearLayoutManager(getActivity()));
+            summaryInfoList.setAdapter(mAdapter);
+            summaryInfo2List.setLayoutManager(new LinearLayoutManager(getActivity()));
+            summaryInfo2List.setAdapter(mAdapter2);
+
         }
 
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.setAdapter(mAdapter);
+
     }
 
     @Override

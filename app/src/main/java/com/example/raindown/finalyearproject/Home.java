@@ -105,6 +105,7 @@ public class Home extends Fragment {
     public void populateRecommendStuffList(){
         SearchHistoryExist = false;
         ViewHistoryExist = false;
+        stuffList.clear();
 
         checkSearchHistory();
 
@@ -249,14 +250,11 @@ public class Home extends Fragment {
                                             ViewHistoryExist = true;
                                         }
                                         for (int i = 0; i < viewList.size(); i++){
-                                            stuffList.add(viewList.get(i).getStuffID());
-                                            Log.d(TAG, "Stuff ID = " + stuffList.get(i).getStuffID());
+                                            searchKeyword = viewList.get(i).getStuffID().getStuffName();
+                                            getStuffDetailBySearch();
                                         }
                                         mAdapter.notifyDataSetChanged();
-                                        if (!stuffList.isEmpty()){
-                                            txtRecommend.setVisibility(View.VISIBLE);
-                                            mRecyclerView.setVisibility(View.VISIBLE);
-                                        }
+
 
                                         if (pDialog.isShowing())
                                             pDialog.dismiss();
