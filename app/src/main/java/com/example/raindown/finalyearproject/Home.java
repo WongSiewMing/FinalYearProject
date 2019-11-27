@@ -51,7 +51,7 @@ public class Home extends Fragment {
     private JSONObject jsonObj;
     private ProgressDialog pDialog = null;
     private static final String TAG = "Home";
-    private boolean SearchHistoryExist = false, ViewHistoryExist = false;
+    private boolean SearchHistoryExist, ViewHistoryExist;
 
     @Override
     public void onAttach(Context context) {
@@ -98,19 +98,18 @@ public class Home extends Fragment {
     }
 
     public void populateRecommendStuffList(){
+        SearchHistoryExist = false;
+        ViewHistoryExist = false;
+
         checkSearchHistory();
+
+        Log.d(TAG, "1 SearchHistory = " + SearchHistoryExist);
+        Log.d(TAG, "1 ViewHistory = " + ViewHistoryExist);
+
         if (!SearchHistoryExist){
             checkViewHistory();
         }
-        if (!SearchHistoryExist && !ViewHistoryExist){
-            command = "{\"command\": \"303035303093\", \"reserve\": \"303030303030303030303030303030303030303030303030\", " +
-                    "\"studentID\": " + "\"" + Conversion.asciiToHex(s.getStudentID()) + "\"}";
-
-            pahoMqttClient = new PahoMqttClient();
-            mqttAndroidClient = pahoMqttClient.getMqttClient(getActivity(), Constant.serverUrl, command, "MY/TARUC/SSS/000000001/PUB");
-
-            getAllStuff();
-        }
+        populateRecyclerView();
     }
 
     public boolean checkSearchHistory(){
@@ -154,9 +153,9 @@ public class Home extends Fragment {
                                                     existResponse.getString("Time"),
                                                     existResponse.getString("SearchKeyword"),
                                                     existResponse.getString("status")));
-                                            Log.d(TAG, "Search ID = " + searchList.get(i).getSearchHistoryID());
+                                            Log.d(TAG, "Search ID = " + searchList.get(i).getSearchKeyword());
                                         }
-                                        if (searchList.size() == 0) {
+                                        if (searchList.isEmpty()) {
                                             Log.d(TAG, "Check Search History = Not Exist");
                                             SearchHistoryExist = false;
                                         } else {
@@ -168,8 +167,6 @@ public class Home extends Fragment {
                                             searchKeyword = searchList.get(i).getSearchKeyword();
                                             getStuffDetailBySearch();
                                         }
-                                        populateRecyclerView();
-
                                         if (pDialog.isShowing())
                                             pDialog.dismiss();
                                     } catch (Exception e) {
@@ -251,7 +248,7 @@ public class Home extends Fragment {
                                             stuffList.add(viewList.get(i).getStuffID());
                                             Log.d(TAG, "Stuff ID = " + stuffList.get(i).getStuffID());
                                         }
-                                        populateRecyclerView();
+                                        mAdapter.notifyDataSetChanged();
 
                                         if (pDialog.isShowing())
                                             pDialog.dismiss();
@@ -281,98 +278,6 @@ public class Home extends Fragment {
                     Toast.LENGTH_LONG).show();
         }
         return ViewHistoryExist;
-    }
-
-    public void getAllStuff(){
-        try{
-            ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-            Boolean isConnected = networkInfo != null && networkInfo.isConnectedOrConnecting();
-
-            if (isConnected){
-                RequestQueue queue = Volley.newRequestQueue(getActivity());
-                if (!pDialog.isShowing()){
-                    pDialog.setMessage("Sync with server...");
-                }
-                pDialog.show();
-                jsonObj = new JSONObject(command);
-                if (jsonObj.getString("command").equals("303035303093")){
-                    JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Constant.serverFile + "getAllStuff.php",
-                            new Response.Listener<JSONArray>() {
-                                @Override
-                                public void onResponse(JSONArray response) {
-                                    try {
-                                        tempStuffList.clear();
-                                        for (int i = 0; i < response.length(); i++) {
-                                            JSONObject myStuffResponse = (JSONObject) response.get(i);
-                                            tempStuffList.add(new Stuff(myStuffResponse.getString("stuffID"), new Student(myStuffResponse.getString("studentID"),
-                                                    myStuffResponse.getString("clientID"), myStuffResponse.getString("photo"), myStuffResponse.getString("studentName"),
-                                                    myStuffResponse.getString("icNo"), myStuffResponse.getString("studentProgramme"), myStuffResponse.getString("studentFaculty"),
-                                                    myStuffResponse.getInt("yearOfStudy")), myStuffResponse.getString("stuffName"), myStuffResponse.getString("stuffImage"),
-                                                    myStuffResponse.getString("stuffDescription"), myStuffResponse.getString("stuffCategory"), myStuffResponse.getString("stuffCondition"),
-                                                    myStuffResponse.getDouble("stuffPrice"), myStuffResponse.getInt("stuffQuantity"), myStuffResponse.getString("validStartDate"),
-                                                    myStuffResponse.getString("validEndDate"), myStuffResponse.getString("stuffStatus")));
-                                        }
-                                        Random rand = new Random();
-
-                                        int rand_category = rand.nextInt(4);
-
-                                        if (rand_category == 0){
-                                            for (Stuff stuff: tempStuffList){
-                                                if (stuff.getStuffCategory().equals("Books")){
-                                                    stuffList.add(stuff);
-                                                }
-                                            }
-                                        } else if (rand_category == 1){
-                                            for (Stuff stuff: tempStuffList){
-                                                if (stuff.getStuffCategory().equals("Electronics")){
-                                                    stuffList.add(stuff);
-                                                }
-                                            }
-                                        } else if (rand_category == 2){
-                                            for (Stuff stuff: tempStuffList){
-                                                if (stuff.getStuffCategory().equals("Furnitures")){
-                                                    stuffList.add(stuff);
-                                                }
-                                            }
-                                        } else if (rand_category == 3){
-                                            for (Stuff stuff: tempStuffList){
-                                                if (stuff.getStuffCategory().equals("Miscellaneous")){
-                                                    stuffList.add(stuff);
-                                                }
-                                            }
-                                        }
-
-                                        populateRecyclerView();
-
-                                        if (pDialog.isShowing()) {
-                                            pDialog.dismiss();
-                                        }
-
-
-                                    } catch (Exception e) {
-
-                                    }
-                                }
-                            },
-                            new Response.ErrorListener() {
-                                @Override
-                                public void onErrorResponse(VolleyError volleyError) {
-                                    if (pDialog.isShowing()){
-                                        pDialog.dismiss();
-                                    }
-                                }
-                            });
-                    queue.add(jsonObjectRequest);
-                }
-
-            } else {
-                Toast.makeText(getActivity().getApplication(), "Network is NOT available", Toast.LENGTH_LONG).show();
-            }
-
-        } catch (Exception e){
-            Toast.makeText(getActivity().getApplication(), "Error Reading Record : " + e.getMessage(), Toast.LENGTH_LONG).show();
-        }
     }
 
     public void getStuffDetailBySearch(){
@@ -410,8 +315,9 @@ public class Home extends Fragment {
                                                     existResponse.getString("stuffDescription"), existResponse.getString("stuffCategory"), existResponse.getString("stuffCondition"),
                                                     existResponse.getDouble("stuffPrice"), existResponse.getInt("stuffQuantity"), existResponse.getString("validStartDate"),
                                                     existResponse.getString("validEndDate"), existResponse.getString("stuffStatus")));
+                                            Log.d(TAG, "getStuffBySearch = " + stuffList.get(i).getStuffID());
                                         }
-
+                                        mAdapter.notifyDataSetChanged();
                                         if (pDialog.isShowing())
                                             pDialog.dismiss();
                                     } catch (Exception e) {

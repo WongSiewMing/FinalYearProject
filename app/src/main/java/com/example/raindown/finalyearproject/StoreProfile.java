@@ -19,6 +19,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -70,7 +71,7 @@ public class StoreProfile extends Fragment {
     private ImageView shopImage;
     private Button editProfile, viewReview;
     private ProgressDialog pDialog = null;
-    private String selectedStoreID, ratingTotalNum, currentTime, UserID;
+    private String selectedStoreID, ratingTotalNum, currentTime, UserID, shopName = "";
     private Dialog popUpRating;
     FragmentManager fragmentManager;
     private MqttAndroidClient mqttAndroidClient;
@@ -80,6 +81,7 @@ public class StoreProfile extends Fragment {
     private Double totalRate, avgRate;
     private ProgressBar progressBar;
     private RelativeLayout body;
+    private Toolbar toolbar;
 
     private RecyclerView mRecycleView;
     private StoreStuffAdapter mAdapter;
@@ -92,7 +94,7 @@ public class StoreProfile extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActivity().setTitle("Store Profile");
+       getActivity().setTitle("Shop Profile");
     }
 
     @Override
@@ -107,18 +109,13 @@ public class StoreProfile extends Fragment {
         shopImage = (ImageView) view.findViewById(R.id.shopImage);
         editProfile = (Button) view.findViewById(R.id.editProfile);
         storeLocation = view.findViewById(R.id.storeLocation);
-
         progressBar = view.findViewById(R.id.progressBar);
         pDialog = new ProgressDialog(getActivity());
         body = view.findViewById(R.id.body);
         UserID = UserSharedPreferences.read(UserSharedPreferences.userID, null);
-
-        //shopName.setText(UserSharedPreferences.read(UserSharedPreferences.userName, null));
         storeProfile = new ArrayList<>();
         Bundle bundle = getArguments();
         selectedStoreID = bundle.getString("storeID");
-        //shopName.setText(selectedStoreID);
-
         final Date d = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("HHmm");
         currentTime = sdf.format(d);
@@ -485,7 +482,6 @@ public class StoreProfile extends Fragment {
 
         }
 
-        //shopName.setText(storeProfile.get(0).getStoreName());
         Picasso.with(getActivity()).load(storeProfile.get(0).getStoreImage()).memoryPolicy(MemoryPolicy.NO_CACHE).networkPolicy(NetworkPolicy.NO_CACHE).transform(new CircleTransform()).into(shopImage);
         getAvgRating();
         avgRating.setText(String.format("%.2f", avgRate));

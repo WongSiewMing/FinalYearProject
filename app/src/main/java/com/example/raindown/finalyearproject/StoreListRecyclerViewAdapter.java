@@ -60,6 +60,7 @@ public class StoreListRecyclerViewAdapter extends RecyclerView.Adapter<StoreList
                 StoreProfile frag = new StoreProfile();
                 Bundle bundle = new Bundle();
                 bundle.putString("storeID", mData.get(position).getStoreID());
+                bundle.putString("storeName", mData.get(position).getStoreName());
                 frag.setArguments(bundle);
 
                 fragmentManager = ((AppCompatActivity) view.getContext()).getSupportFragmentManager();
