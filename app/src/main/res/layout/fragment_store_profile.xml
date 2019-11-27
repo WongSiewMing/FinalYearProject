@@ -7,15 +7,6 @@
     android:background="@drawable/background"
     tools:context=".StoreProfile">
 
-    <android.support.v7.widget.Toolbar
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/update_customAppBar"
-        android:background="@color/bgBottomNavigation">
-
-    </android.support.v7.widget.Toolbar>
-
-
     <ProgressBar
         android:id="@+id/progressBar"
         android:layout_width="wrap_content"
@@ -26,7 +17,8 @@
         android:id="@+id/body"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/update_customAppBar"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="0dp"
         android:visibility="invisible">
 
         <ScrollView

@@ -8,46 +8,59 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Day of week"
-            android:textColor="@color/black"
-            android:layout_marginStart="10dp"
-            android:id="@+id/availableDate"
-            android:layout_alignParentTop="true"
-            android:layout_marginTop="10dp"/>
 
         <TextView
+            android:id="@+id/availableDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="From time :"
-            android:layout_toEndOf="@id/availableDate"
-            android:layout_alignTop="@id/availableDate"
+            android:layout_alignParentTop="true"
             android:layout_marginStart="10dp"
-            android:id="@+id/text1"/>
+            android:layout_marginTop="30dp"
+            android:fontFamily="sans-serif-smallcaps"
+            android:text="Day of week"
+            android:textStyle="bold"
+            android:textColor="@color/black" />
+
+        <TextView
+            android:id="@+id/text1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/availableDate"
+            android:layout_marginStart="21dp"
+            android:layout_marginTop="-9dp"
+            android:layout_toEndOf="@id/availableDate"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif-smallcaps"
+            android:text="From time :" />
 
         <TextView
             android:id="@+id/availableStartTime"
+            android:textStyle="bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="time"
-            android:textColor="@color/black"
-            android:layout_toEndOf="@id/text1"
             android:layout_alignTop="@id/availableDate"
-            android:layout_marginStart="5dp"/>
+            android:layout_marginStart="11dp"
+            android:layout_marginTop="-8dp"
+            android:layout_toEndOf="@id/text1"
+            android:fontFamily="sans-serif-smallcaps"
+            android:text="time"
+            android:textColor="@color/black" />
 
         <TextView
             android:layout_width="wrap_content"
+            android:textStyle="bold"
             android:layout_height="wrap_content"
             android:text="To time :"
+            android:fontFamily="sans-serif-smallcaps"
             android:layout_below="@id/text1"
             android:layout_alignStart="@id/text1"
             android:id="@+id/text2"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textStyle="bold"
             android:text="time"
+            android:fontFamily="sans-serif-smallcaps"
             android:textColor="@color/black"
             android:layout_toEndOf="@id/text2"
             android:layout_alignTop="@id/text2"
@@ -55,16 +68,43 @@
             android:id="@+id/availableEndTime"/>
 
         <TextView
+            android:id="@+id/availableStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/availableDate"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="24dp"
+            android:layout_toStartOf="@+id/editAvailableTime"
+            android:fontFamily="sans-serif-smallcaps"
             android:text="Active"
             android:textColor="@color/lightgreen"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/editAvailableTime"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="28dp"
+            android:layout_marginEnd="12dp"
+            android:layout_toStartOf="@+id/deleteAvailableTime"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_edit" />
+
+        <ImageView
+            android:id="@+id/deleteAvailableTime"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
-            android:layout_alignTop="@+id/availableDate"
-            android:layout_marginEnd="10dp"
-            android:id="@+id/availableStatus"/>
-
-
+            android:layout_marginTop="28dp"
+            android:layout_marginEnd="11dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_delete" />
 
     </RelativeLayout>
 

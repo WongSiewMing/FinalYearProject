@@ -80,7 +80,7 @@ public class RequestDetail extends Fragment {
     private final static String TAG = "RequestDetail";
     private View view;
 
-    private ImageView btnBack, stuffImage;
+    private ImageView stuffImage;
     private ProgressBar progressBar;
     private RelativeLayout fragmentBody;
     private TextView stuffOwnerName, stuffName, stuffDescription, stuffPrice, stuffQuantity, stuffCategory, stuffCondition, stuffValidity;
@@ -106,7 +106,7 @@ public class RequestDetail extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        getActivity().setTitle("Appointment Detail");
     }
 
     @Override
@@ -119,7 +119,6 @@ public class RequestDetail extends Fragment {
         pahoMqttClient = new PahoMqttClient();
         mqttAndroidClient = pahoMqttClient.getMqttClient(getActivity(), Constant.serverUrl, "MY/TARUC/SSS/000000001/PUB");
 
-        btnBack = view.findViewById(R.id.back);
         stuffOwnerName = view.findViewById(R.id.studentName);
         stuffImage = view.findViewById(R.id.stuffImage);
         progressBar = view.findViewById(R.id.progressBar);
@@ -254,13 +253,7 @@ public class RequestDetail extends Fragment {
 
         });
 
-
-        btnBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getFragmentManager().popBackStack();
-            }
-        });
+        getStuffDetail();
 
         mqttAndroidClient.setCallback(new MqttCallbackExtended() {
             @Override
@@ -638,15 +631,11 @@ public class RequestDetail extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
-        // Log.d(TAG,"Welcome back");
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        ((AppCompatActivity) getActivity()).getSupportActionBar().show();
-        Log.d(TAG, "You leaved 1");
 
     }
 

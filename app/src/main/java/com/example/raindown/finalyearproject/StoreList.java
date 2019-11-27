@@ -38,6 +38,7 @@ import Helper.Constant;
 import Helper.Conversion;
 import Helper.PahoMqttClient;
 import Helper.StoreBasicInfoOB;
+import Helper.Student;
 
 /*Author : Lee Thian Xin
 Programme : RSD3
@@ -46,7 +47,6 @@ Year : 2018*/
 public class StoreList extends Fragment {
     List<StoreBasicInfoOB> storeInfoList;
     View view;
-    private TextView shopname;
     private String category, categoryType;
     private MqttAndroidClient mqttAndroidClient;
     private PahoMqttClient pahoMqttClient;
@@ -56,9 +56,7 @@ public class StoreList extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActivity().setTitle("Shop List");
-
-
+        getActivity().setTitle("Store");
     }
 
     @Override
@@ -68,7 +66,6 @@ public class StoreList extends Fragment {
 
         storeInfoList = new ArrayList<>();
 
-        //shopname = (TextView) view.findViewById(R.id.shopname);
         Bundle bundle = getArguments();
         category = bundle.getString("Category");
         noRecordIndicator = view.findViewById(R.id.noRecordIndicator);
@@ -79,9 +76,10 @@ public class StoreList extends Fragment {
             categoryType = "grocery";
         }else if (category == "Stationary"){
             categoryType = "stationary";
-        }else if (category == "Stall"){
+        }else if (category == "Event Stall"){
             categoryType = "stall";
         }
+
         pahoMqttClient = new PahoMqttClient();
         mqttAndroidClient = pahoMqttClient.getMqttClient(getContext(), Constant.serverUrl);
         mqttAndroidClient.setCallback(new MqttCallbackExtended() {
@@ -136,7 +134,8 @@ public class StoreList extends Fragment {
                                                 storeResponse.getString("StoreImage"),
                                                 storeResponse.getString("StoreName"),
                                                 storeResponse.getString("StoreDescription"),
-                                                storeResponse.getString("StudentID")));
+                                                new Student(storeResponse.getString("StudentID"),
+                                                        storeResponse.getString("StudentName"))));
                                     }
                                     if (response.length() == 0){
                                         noRecordIndicator.setVisibility(View.VISIBLE);

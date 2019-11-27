@@ -93,7 +93,7 @@ public class ChatRoom_V2 extends Fragment {
     View view;
     private MqttAndroidClient mqttAndroidClient;
     private PahoMqttClient pahoMqttClient;
-    private String command;
+    private String command, jsonURL, deleteCommand;
     private JSONObject jsonObj;
     private Intent cameraIntent, photoPickerIntent, CropIntent;
     public static final int CAMERA_REQUEST = 10;
@@ -102,7 +102,7 @@ public class ChatRoom_V2 extends Fragment {
     private Student myInfo;
     private String opponentID;
     private FloatingActionButton btnSendMessage;
-    private ImageView btnSendImage, sendImagePreview;
+    private ImageView btnSendImage, sendImagePreview, btnRemoveImage, btnDeleteAllChat;
     private EditText editMessage;
     private ImageView opponentPhoto, btnBack;
     private TextView opponentName, opponentStatus, messageStatus, sendImageCaption;
@@ -120,12 +120,14 @@ public class ChatRoom_V2 extends Fragment {
     private int RequestCameraPermissionID = 1001;
     private Bitmap imagePreview;
     private String converted = "";
+    private FragmentManager fragmentManager;
 
     private static final String TAG = "Chat Room in";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         pahoMqttClient = new PahoMqttClient();
         mqttAndroidClient = pahoMqttClient.getMqttClient(getActivity(), Constant.serverUrl, "MY/TARUC/SSS/000000001/PUB");
 
@@ -152,6 +154,8 @@ public class ChatRoom_V2 extends Fragment {
         messageProgressBar = view.findViewById(R.id.messageProgressBar);
         messageStatus = view.findViewById(R.id.message_status);
         sendImageCaption = view.findViewById(R.id.send_image_caption);
+        btnRemoveImage = view.findViewById(R.id.btnRemoveImage);
+        btnDeleteAllChat = view.findViewById(R.id.btnDeleteAllMessage);
 
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -161,7 +165,7 @@ public class ChatRoom_V2 extends Fragment {
                 bundle1.putSerializable("chatRoomList_v2", myInfo);
                 chatRoomList_v2.setArguments(bundle1);
                 getFragmentManager()
-                .beginTransaction()
+                        .beginTransaction()
                         .replace(R.id.update_fragmentHolder, chatRoomList_v2)
                         .addToBackStack(null)
                         .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
@@ -173,6 +177,7 @@ public class ChatRoom_V2 extends Fragment {
         getOpponentBasicInfo();
         sendImagePreview.setVisibility(View.INVISIBLE);
         sendImageCaption.setVisibility(View.INVISIBLE);
+        btnRemoveImage.setVisibility(View.INVISIBLE);
 
         btnSendMessage.setEnabled(false);
         editMessage.addTextChangedListener(msgTextWatcher);
@@ -197,6 +202,49 @@ public class ChatRoom_V2 extends Fragment {
                 }
 
 
+            }
+        });
+
+        btnDeleteAllChat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which) {
+                            case DialogInterface.BUTTON_POSITIVE:
+
+                                deleteCommand = "{\"command\": \"303035303082\", \"reserve\": \"303030303030303030303030303030303030303030303030\", " +
+                                        "\"StudentID\": " + "\"" + Conversion.asciiToHex(myInfo.getStudentID()) + "\" ," +
+                                        "\"OpponentID\": " + "\"" + Conversion.asciiToHex(opponentID) + "\"}";
+
+                                pahoMqttClient = new PahoMqttClient();
+                                mqttAndroidClient = pahoMqttClient.getMqttClient(getActivity(), Constant.serverUrl, deleteCommand, "MY/TARUC/SSS/000000001/PUB");
+
+                                removeAllChatMessage();
+
+                                break;
+                            case DialogInterface.BUTTON_NEGATIVE:
+                                break;
+                        }
+                    }
+                };
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
+                builder.setMessage("Remove All Chat Message ?").setPositiveButton("Yes", dialogClickListener)
+                        .setNegativeButton("No", dialogClickListener).show();
+            }
+        });
+
+        btnRemoveImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editMessage.setText("");
+                editMessage.setFocusableInTouchMode(true);
+                sendImagePreview.setVisibility(view.INVISIBLE);
+                sendImageCaption.setVisibility(view.INVISIBLE);
+                btnRemoveImage.setVisibility(view.INVISIBLE);
+                sendImagePreview.setImageResource(R.drawable.ic_camera);
             }
         });
 
@@ -272,9 +320,7 @@ public class ChatRoom_V2 extends Fragment {
 
                         if (Conversion.hexToAscii(myjsonObj.getString("studentID")).equals(myInfo.getStudentID())
                                 && Conversion.hexToAscii(myjsonObj.getString("recipient")).equals(opponentID)
-                        && !Conversion.hexToAscii(myjsonObj.getString("message")).equals("")) {
-                            Log.d(TAG, "This is message that I send");
-                            Log.d(TAG, "Array size =" + arrayPrivateChat.size());
+                                && !Conversion.hexToAscii(myjsonObj.getString("message")).equals("")) {
                             arrayPrivateChat.add(new PrivateChatOB(
                                     Conversion.hexToAscii(myjsonObj.getString("privateID")),
                                     Conversion.hexToAscii(myjsonObj.getString("studentID")),
@@ -298,18 +344,14 @@ public class ChatRoom_V2 extends Fragment {
                                     Conversion.hexToAscii(myjsonObj.getString("postTime"))));
                             populateChatRecyclerView();
 
-                        } else {
+                        } else if ((Conversion.hexToAscii(myjsonObj.getString("studentID")).equals(myInfo.getStudentID())
+                                && Conversion.hexToAscii(myjsonObj.getString("recipient")).equals(opponentID))
+                                || (Conversion.hexToAscii(myjsonObj.getString("studentID")).equals(opponentID)
+                                && Conversion.hexToAscii(myjsonObj.getString("recipient")).equals(myInfo.getStudentID()))
+                                && Conversion.hexToAscii(myjsonObj.getString("message")).equals("")) {
 
-                            ChatRoom_V2 fg = new ChatRoom_V2();
-                            Bundle bundle = new Bundle();
-                            bundle.putSerializable("UserData", myInfo);//own data
-                            bundle.putString("ClickedUserID", opponentID);
-                            fg.setArguments(bundle);
+                            reloadFragment();
 
-                            getFragmentManager()
-                                    .beginTransaction()
-                                    .replace(R.id.update_fragmentHolder, fg)
-                                    .commit();
                         }
 
 
@@ -321,17 +363,6 @@ public class ChatRoom_V2 extends Fragment {
                                 opponentStatus.setTextColor(getResources().getColor(R.color.brightgreeen));
                             }
                         }
-                    } else if (myjsonObj.getString("command").equals("303035303056")) {
-                        if (Conversion.hexToAscii(myjsonObj.getString("recipient")).equals(UpdateNavigation.student.getStudentID())) {
-                            for (int i = 0; i < arrayPrivateChat.size(); i++) {
-                                if (arrayPrivateChat.get(i).getPriChatID().equals(Conversion.hexToAscii(myjsonObj.getString("privateID")))) {
-                                    Log.d(TAG, "Delete msg");
-                                    arrayPrivateChat.remove(i);
-                                    populateChatRecyclerView();
-                                }
-                            }
-                        }
-
                     }
 
                 } catch (JSONException e) {
@@ -436,11 +467,11 @@ public class ChatRoom_V2 extends Fragment {
             if (sendImagePreview.getDrawable().getConstantState() == getResources().getDrawable(R.drawable.ic_camera).getConstantState()) {
                 insertMessageUrl = Constant.serverFile + "insertPrivateData.php?privateID=" + newChatID + "&studentID=" + myInfo.getStudentID() + "&recipient=" +
                         opponentID + "&message=" + encodedMessage + "&image=" + "empty" + "&postDate=" + formattedDate + "&postTime=" +
-                        formattedTime;
+                        formattedTime + "&hiddenUser1=None" + "&hiddenUser2=None";
             } else {
                 insertMessageUrl = Constant.serverFile + "insertPrivateData.php?privateID=" + newChatID + "&studentID=" + myInfo.getStudentID() + "&recipient=" +
                         opponentID + "&message=" + "[Image]" + "&image=" + "" + "&postDate=" + formattedDate + "&postTime=" +
-                        formattedTime;
+                        formattedTime + "&hiddenUser1=None" + "&hiddenUser2=None";
             }
 
             RequestQueue queue = Volley.newRequestQueue(getActivity());
@@ -468,6 +499,7 @@ public class ChatRoom_V2 extends Fragment {
                                     editMessage.setFocusableInTouchMode(true);
                                     sendImagePreview.setVisibility(view.INVISIBLE);
                                     sendImageCaption.setVisibility(view.INVISIBLE);
+                                    btnRemoveImage.setVisibility(view.INVISIBLE);
                                     sendImagePreview.setImageResource(R.drawable.ic_camera);
 
                                 } catch (JSONException e) {
@@ -493,7 +525,8 @@ public class ChatRoom_V2 extends Fragment {
                         params.put("image", converted);
                         params.put("postDate", formattedDate);
                         params.put("postTime", formattedTime);
-
+                        params.put("hiddenUser1", "None");
+                        params.put("hiddenUser2", "None");
                         return params;
                     }
 
@@ -721,6 +754,7 @@ public class ChatRoom_V2 extends Fragment {
                 imagePreview.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
                 sendImagePreview.setVisibility(View.VISIBLE);
                 sendImageCaption.setVisibility(View.VISIBLE);
+                btnRemoveImage.setVisibility(View.VISIBLE);
                 sendImagePreview.setImageBitmap(imagePreview);
                 editMessage.setText("");
                 editMessage.setFocusable(false);
@@ -737,6 +771,7 @@ public class ChatRoom_V2 extends Fragment {
                         sendImagePreview.setImageBitmap(getResizedBitmap(bm, 500, 500));
                         sendImagePreview.setVisibility(View.VISIBLE);
                         sendImageCaption.setVisibility(View.VISIBLE);
+                        btnRemoveImage.setVisibility(View.VISIBLE);
                         converted = bitmapToString(getResizedBitmap(bm, 500, 500));
                         editMessage.setText("");
                         editMessage.setFocusable(false);
@@ -791,4 +826,112 @@ public class ChatRoom_V2 extends Fragment {
         }
     };
 
+    public void reloadFragment() {
+
+        ChatRoom_V2 fg = new ChatRoom_V2();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("UserData", myInfo);//own data
+        bundle.putString("ClickedUserID", opponentID);
+        fg.setArguments(bundle);
+
+        getFragmentManager()
+                .beginTransaction()
+                .replace(R.id.update_fragmentHolder, fg)
+                .commit();
+    }
+
+    public void removeAllChatMessage(){
+
+        try {
+            ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+            Boolean isConnected = networkInfo != null && networkInfo.isConnectedOrConnecting();
+            if (isConnected) {
+                try {
+                    jsonObj = new JSONObject(deleteCommand);
+                    if (jsonObj.getString("command").equals("303035303082")) {
+
+                        jsonURL = Constant.serverFile + "removeAllPrivateChatMessage.php?StudentID=" + Conversion.hexToAscii(jsonObj.getString("StudentID")) + "&OpponentID=" + Conversion.hexToAscii(jsonObj.getString("OpponentID"));
+
+                        Log.d(TAG, jsonURL);
+
+                        RequestQueue queue = Volley.newRequestQueue(getActivity());
+                        try {
+                            StringRequest postRequest = new StringRequest(
+                                    Request.Method.POST,
+                                    jsonURL,
+                                    new Response.Listener<String>() {
+                                        @Override
+                                        public void onResponse(String response) {
+                                            if (isAdded()) {
+                                            }
+                                            JSONObject jsonObject = null;
+                                            try {
+                                                jsonObject = new JSONObject(response);
+                                                String success = jsonObject.getString("success");
+                                                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                                                if (success.equals("1")) {
+                                                    reloadFragment();
+                                                } else {
+                                                    builder.setTitle("Oops !");
+                                                    builder.setMessage("Something Wrong. Please Try Again.");
+                                                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(DialogInterface dialog, int which) {
+                                                        }
+                                                    });
+                                                    builder.show();
+                                                }
+                                            } catch (JSONException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    },
+                                    new Response.ErrorListener() {
+                                        @Override
+                                        public void onErrorResponse(VolleyError error) {
+                                            if (isAdded()) {
+                                            }
+
+                                        }
+                                    }) {
+                                @Override
+                                protected Map<String, String> getParams() {
+                                    Map<String, String> params = new HashMap<>();
+                                    try {
+                                        params.put("StudentID", Conversion.hexToAscii(jsonObj.getString("StudentID")));
+                                        params.put("OpponentID", Conversion.hexToAscii(jsonObj.getString("OpponentID")));
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                    return params;
+                                }
+
+                                @Override
+                                public Map<String, String> getHeaders() throws AuthFailureError {
+                                    Map<String, String> params = new HashMap<>();
+                                    params.put("Content-Type", "application/x-www-form-urlencoded");
+                                    return params;
+                                }
+                            };
+                            queue.add(postRequest);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    if (isAdded()) {
+                    }
+                }
+
+            }
+
+        } catch (Exception e) {
+            Toast.makeText(getActivity().getApplication(),
+                    "Error reading record:" + e.getMessage(),
+                    Toast.LENGTH_LONG).show();
+        }
+    }
 }

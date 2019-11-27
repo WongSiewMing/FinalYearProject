@@ -77,7 +77,7 @@ public class ManageAppointment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActivity().setTitle("Manage appointment");
+        getActivity().setTitle("Appointment Request");
 
     }
 
@@ -102,11 +102,13 @@ public class ManageAppointment extends Fragment {
         appointmentList = new ArrayList<>();
         appointmentList.clear();
 
+        getAppointmentList();
+
         mqttAndroidClient.setCallback(new MqttCallbackExtended() {
             @Override
             public void connectComplete(boolean reconnect, String serverURI) {
                 connection = "Connected";
-                getAppointmentList();
+
 
             }
 

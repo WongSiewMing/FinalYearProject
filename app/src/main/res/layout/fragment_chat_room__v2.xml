@@ -113,6 +113,18 @@
             android:clickable="true"
             android:src="@drawable/ic_camera_white" />
 
+        <ImageView
+            android:id="@+id/btnDeleteAllMessage"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="14dp"
+            android:layout_toStartOf="@+id/btnSendImage"
+            android:clickable="true"
+            android:src="@drawable/ic_delete"
+            android:tint="@color/white" />
+
     </RelativeLayout>
 
     <ProgressBar
@@ -163,5 +175,17 @@
         android:textColor="@color/white"
         android:textSize="12dp"
         android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/btnRemoveImage"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignTop="@+id/send_image_preview"
+        android:layout_alignEnd="@+id/send_image_preview"
+        android:layout_marginTop="6dp"
+        android:layout_marginEnd="9dp"
+        android:clickable="true"
+        android:src="@drawable/ic_close"
+        android:tint="@color/white" />
 
 </RelativeLayout>
