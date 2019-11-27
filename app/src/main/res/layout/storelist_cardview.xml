@@ -24,16 +24,16 @@
             android:layout_marginEnd="15dp"
             android:layout_marginBottom="59dp"
             android:layout_toEndOf="@+id/storeList_img"
-            android:background="@color/lightorange"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/store_detail"
                 android:layout_width="wrap_content"
+                android:fontFamily="sans-serif-smallcaps"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
-                android:maxLength="30"
-                android:maxLines="2"
+                android:maxLength="900"
+                android:maxLines="10"
                 android:text="Shop Detail" />
 
         </LinearLayout>
@@ -59,6 +59,7 @@
             android:layout_marginEnd="13dp"
             android:layout_toEndOf="@id/storeList_img"
             android:text="Shop Name"
+            android:fontFamily="sans-serif-smallcaps"
             android:textColor="@color/black"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -72,6 +73,9 @@
             android:layout_marginStart="21dp"
             android:layout_marginEnd="17dp"
             android:layout_marginBottom="8dp"
+            android:fontFamily="sans-serif-smallcaps"
+            android:textColor="@color/black"
+            android:textStyle="bold"
             android:layout_toEndOf="@id/storeList_img"
             android:text="Creator" />
 

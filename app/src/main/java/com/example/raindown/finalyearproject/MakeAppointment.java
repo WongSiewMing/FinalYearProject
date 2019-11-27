@@ -69,7 +69,7 @@ public class MakeAppointment extends Fragment {
     private JSONObject jsonObj;
     private FragmentManager fragmentManager;
     private String connection = "Disconnect";
-    private ImageView btnBack, stuffImage;
+    private ImageView stuffImage;
     private Button btnMakeAppointment;
     private ProgressBar progressBar;
     private ScrollView body;
@@ -91,7 +91,7 @@ public class MakeAppointment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        getActivity().setTitle("Make Appointment");
     }
 
     @Override
@@ -103,7 +103,6 @@ public class MakeAppointment extends Fragment {
         mqttAndroidClient = pahoMqttClient.getMqttClient(getActivity(), Constant.serverUrl, "MY/TARUC/SSS/000000001/PUB");
         Bundle bundle = getArguments();
         stuff = (Stuff) bundle.getSerializable("ClickedStuff");
-        btnBack = view.findViewById(R.id.back);
         stuffImage = view.findViewById(R.id.stuffImage);
         btnMakeAppointment = view.findViewById(R.id.btnMakeAppointment);
         progressBar = view.findViewById(R.id.progressBar);
@@ -143,18 +142,6 @@ public class MakeAppointment extends Fragment {
             @Override
             public void messageArrived(String topic, MqttMessage mqttMessage) throws Exception {
                 try {
-                    /*
-                    command = "{\"command\": \"30303530305D\", \"reserve\": \"303030303030303030303030303030303030303030303030\", " +
-                            "\"availableID\": " + "\"" + Conversion.asciiToHex(mData.get(position).getAvailableID()) + "\" ," +
-                            "\"studentID\": " + "\"" + Conversion.asciiToHex(Navigation.student.getStudentID()) + "\" ," +
-                            "\"targetUserID\": " + "\"" + Conversion.asciiToHex(mData.get(position).getStudentID()) + "\" ," +
-                            "\"availableDate\": " + "\"" + Conversion.asciiToHex(holder.appointmentDate.getText().toString().trim()) + "\" ," +
-                            "\"availableDayOfWeek\": " + "\"" + Conversion.asciiToHex(mData.get(position).getAvailableDate()) + "\" ," +
-                            "\"startTime\": " + "\"" + Conversion.asciiToHex(holder.startTime.getText().toString().trim()) + "\" ," +
-                            "\"endTime\": " + "\"" + Conversion.asciiToHex(holder.endTime.getText().toString().trim()) + "\" ," +
-                            "\"availableStatus\": " + "\"" + Conversion.asciiToHex(mData.get(position).getAvailableStatus()) + "\" }";
-
-                     */
 
                     myjsonObj = new JSONObject(mqttMessage.toString());
                     if (myjsonObj.getString("command").equals("30303530305D")){
@@ -185,12 +172,6 @@ public class MakeAppointment extends Fragment {
             Toast.makeText(getActivity().getApplicationContext(), "No wifi access", Toast.LENGTH_LONG).show();
 
         }
-        btnBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getFragmentManager().popBackStack();
-            }
-        });
 
         selectTimeDialog = new Dialog(getActivity());
 
@@ -531,14 +512,11 @@ public class MakeAppointment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
-        // Log.d(TAG,"Welcome back");
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        ((AppCompatActivity) getActivity()).getSupportActionBar().show();
 
     }
     @Override

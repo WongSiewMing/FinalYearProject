@@ -149,16 +149,16 @@ public class ChatRoom_V2_Adapter extends RecyclerView.Adapter {
                 @Override
                 public boolean onLongClick(View v) {
                     Log.d(TAG, "LONG pressed detected");
-                    if (senderMessage.getText().toString().equals("Message unsended")){
+                    if (senderMessage.getText().toString().equals("Message removed")){
 
                     }else {
-                        final CharSequence[] options = {"Unsend Message", "Cancel"};
+                        final CharSequence[] options = {"Remove Message", "Cancel"};
                         final AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
                         builder.setTitle("Choose your action");
                         builder.setItems(options, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                if (options[which] == "Unsend Message"){
+                                if (options[which] == "Remove Message"){
                                     UnsendMsg(message, senderMessage);
 
                                 }else if (options[which] == "Cancel"){
@@ -194,6 +194,32 @@ public class ChatRoom_V2_Adapter extends RecyclerView.Adapter {
         void bind(final PrivateChatOB message){
             Picasso.with(mContext).load(message.getImage()).memoryPolicy(MemoryPolicy.NO_CACHE).networkPolicy(NetworkPolicy.NO_CACHE).into(senderImage);
             sendTime.setText(message.getPostTime());
+
+            userMsgCardView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    if (senderImage.getDrawable().getConstantState() != mContext.getResources().getDrawable(R.drawable.ic_image_delete).getConstantState()){
+                        final CharSequence[] options = {"Remove Message", "Cancel"};
+                        final AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
+                        builder.setTitle("Choose your action");
+                        builder.setItems(options, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                if (options[which] == "Remove Message"){
+                                    removeImageMsg(message, senderImage);
+
+                                }else if (options[which] == "Cancel"){
+                                    dialog.dismiss();
+                                }
+
+                            }
+                        });
+                        builder.show();
+                    }
+
+                    return true;
+                }
+            });
         }
     }
 
@@ -211,12 +237,8 @@ public class ChatRoom_V2_Adapter extends RecyclerView.Adapter {
             pahoMqttClient = new PahoMqttClient();
 
             pahoMqttClient.publishMessage(mqttAndroidClient, command, 1, "MY/TARUC/SSS/000000001/PUB");
-            //http://192.168.0.108/raindown/removePrivateChatMessage.php?privateID=PRI1001
 
-
-            jsonURL = Constant.serverFile + "removePrivateChatMessage.php?privateID=" + msg.getPriChatID();
-
-            Log.d(TAG,"Delete msg URL = " + jsonURL);
+            jsonURL = Constant.serverFile + "removePrivateChatMessage.php?privateID=" + msg.getPriChatID() + "&hiddenUserID=" + UserSharedPreferences.read(UserSharedPreferences.userID, null);
 
             RequestQueue queue = Volley.newRequestQueue(mContext);
             try {
@@ -231,12 +253,12 @@ public class ChatRoom_V2_Adapter extends RecyclerView.Adapter {
                                     jsonObject = new JSONObject(response);
                                     String ID = jsonObject.getString("ID");
                                     if(ID.equals("0")){
-                                        senderMsg.setText("Message unsended");
-                                        senderMsg.setTextColor(mContext.getResources().getColor(R.color.red));
-                                        Toast.makeText(mContext.getApplicationContext(), "Message recalled",
+                                        senderMsg.setText("Message removed");
+                                        senderMsg.setTextColor(mContext.getResources().getColor(R.color.white));
+                                        Toast.makeText(mContext.getApplicationContext(), "Message removed",
                                                 Toast.LENGTH_LONG).show();
                                     }else {
-                                        Toast.makeText(mContext.getApplicationContext(), "Failed to recall message",
+                                        Toast.makeText(mContext.getApplicationContext(), "Failed to remove message",
                                                 Toast.LENGTH_LONG).show();
                                     }
 
@@ -255,7 +277,83 @@ public class ChatRoom_V2_Adapter extends RecyclerView.Adapter {
                     protected Map<String, String> getParams() {
                         Map<String, String> params = new HashMap<>();
                         params.put("privateID", msg.getPriChatID());
+                        params.put("hiddenUserID", UserSharedPreferences.read(UserSharedPreferences.userID, null));
+                        return params;
+                    }
 
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        Map<String, String> params = new HashMap<>();
+                        params.put("Content-Type", "application/x-www-form-urlencoded");
+                        return params;
+                    }
+                };
+                queue.add(postRequest);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void removeImageMsg(final PrivateChatOB msg, final ImageView imgMsg) {
+        try {
+
+            command = "{\"command\": \"303035303083\", \"reserve\": \"303030303030303030303030303030303030303030303030\", " +
+                    "\"privateID\": " + "\"" + Conversion.asciiToHex(msg.getPriChatID()) + "\" ," +
+                    "\"studentID\": " + "\"" + Conversion.asciiToHex(msg.getStudentID()) + "\" ," +
+                    "\"recipient\": " + "\"" + Conversion.asciiToHex(msg.getRecipient()) + "\" ," +
+                    "\"message\": " + "\"" + Conversion.asciiToHex(msg.getMessage()) + "\" ," +
+                    "\"image\": " + "\"" + Conversion.asciiToHex(msg.getImage()) + "\" ," +
+                    "\"postDate\": " + "\"" + Conversion.asciiToHex(msg.getPostDate()) + "\" ," +
+                    "\"postTime\": " + "\"" + Conversion.asciiToHex(msg.getPostTime()) + "\" }";
+            pahoMqttClient = new PahoMqttClient();
+
+            pahoMqttClient.publishMessage(mqttAndroidClient, command, 1, "MY/TARUC/SSS/000000001/PUB");
+
+            jsonURL = Constant.serverFile + "removePrivateChatMessage.php?privateID=" + msg.getPriChatID() + "&hiddenUserID=" + UserSharedPreferences.read(UserSharedPreferences.userID, null);
+
+            RequestQueue queue = Volley.newRequestQueue(mContext);
+            try {
+                StringRequest postRequest = new StringRequest(
+                        Request.Method.POST,
+                        jsonURL,
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                JSONObject jsonObject = null;
+                                try {
+                                    jsonObject = new JSONObject(response);
+                                    String ID = jsonObject.getString("ID");
+                                    if(ID.equals("0")){
+                                        imgMsg.setImageResource(R.drawable.ic_image_delete);
+                                        Toast.makeText(mContext.getApplicationContext(), "Message removed",
+                                                Toast.LENGTH_LONG).show();
+                                    }else {
+                                        Toast.makeText(mContext.getApplicationContext(), "Failed to remove message",
+                                                Toast.LENGTH_LONG).show();
+                                    }
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+
+                            }
+                        }) {
+                    @Override
+                    protected Map<String, String> getParams() {
+                        Map<String, String> params = new HashMap<>();
+                        params.put("privateID", msg.getPriChatID());
+                        params.put("hiddenUserID", UserSharedPreferences.read(UserSharedPreferences.userID, null));
                         return params;
                     }
 
@@ -280,6 +378,7 @@ public class ChatRoom_V2_Adapter extends RecyclerView.Adapter {
 
     private class ReceivedMessageHolder extends RecyclerView.ViewHolder {
 
+        CardView receivedMsgCardView;
         ImageView opponentPhoto;
         TextView opponentName, opponentMessage,opponentMsgReceivedTime;
 
@@ -289,18 +388,49 @@ public class ChatRoom_V2_Adapter extends RecyclerView.Adapter {
             opponentName = itemView.findViewById(R.id.Opponent_name);
             opponentMessage = itemView.findViewById(R.id.Opponent_message);
             opponentMsgReceivedTime = itemView.findViewById(R.id.Opponent_msg_received_time);
+            receivedMsgCardView = itemView.findViewById(R.id.receivedMessage_CardView);
         }
 
-        void bind(PrivateChatOB message){
+        void bind(final PrivateChatOB message){
             Picasso.with(mContext).load(photo).memoryPolicy(MemoryPolicy.NO_CACHE).networkPolicy(NetworkPolicy.NO_CACHE).into(opponentPhoto);
             opponentName.setText(message.getStudentName());
             opponentMessage.setText(message.getMessage());
             opponentMsgReceivedTime.setText(message.getPostTime());
+
+            receivedMsgCardView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    if (opponentMessage.getText().toString().equals("Message removed")){
+
+                    }else {
+                        final CharSequence[] options = {"Remove Message", "Cancel"};
+                        final AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
+                        builder.setTitle("Choose your action");
+                        builder.setItems(options, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                if (options[which] == "Remove Message"){
+                                    UnsendMsg(message, opponentMessage);
+
+                                }else if (options[which] == "Cancel"){
+                                    dialog.dismiss();
+                                }
+
+                            }
+                        });
+                        builder.show();
+                    }
+
+
+                    return true;
+                }
+            });
         }
     }
 
     private class ReceivedImageHolder extends RecyclerView.ViewHolder {
 
+        CardView receivedImageCardView;
         ImageView opponentPhoto, opponentImage;
         TextView opponentName, opponentMsgReceivedTime;
 
@@ -310,13 +440,40 @@ public class ChatRoom_V2_Adapter extends RecyclerView.Adapter {
             opponentName = itemView.findViewById(R.id.Opponent_name_image);
             opponentImage = itemView.findViewById(R.id.received_image_view);
             opponentMsgReceivedTime = itemView.findViewById(R.id.Opponent_msg_received_time_image);
+            receivedImageCardView = itemView.findViewById(R.id.receivedImage_CardView);
         }
 
-        void bind(PrivateChatOB message){
+        void bind(final PrivateChatOB message){
             Picasso.with(mContext).load(photo).memoryPolicy(MemoryPolicy.NO_CACHE).networkPolicy(NetworkPolicy.NO_CACHE).into(opponentPhoto);
             opponentName.setText(message.getStudentName());
             Picasso.with(mContext).load(message.getImage()).memoryPolicy(MemoryPolicy.NO_CACHE).networkPolicy(NetworkPolicy.NO_CACHE).into(opponentImage);
             opponentMsgReceivedTime.setText(message.getPostTime());
+
+            receivedImageCardView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    if (opponentImage.getDrawable().getConstantState() != mContext.getResources().getDrawable(R.drawable.ic_image_delete).getConstantState()){
+                        final CharSequence[] options = {"Remove Message", "Cancel"};
+                        final AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
+                        builder.setTitle("Choose your action");
+                        builder.setItems(options, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                if (options[which] == "Remove Message"){
+                                    removeImageMsg(message, opponentImage);
+
+                                }else if (options[which] == "Cancel"){
+                                    dialog.dismiss();
+                                }
+
+                            }
+                        });
+                        builder.show();
+                    }
+
+                    return true;
+                }
+            });
         }
     }
 

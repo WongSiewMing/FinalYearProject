@@ -52,7 +52,7 @@ public class StoreListRecyclerViewAdapter extends RecyclerView.Adapter<StoreList
         Picasso.with(mContext).load(mData.get(position).getStoreImg()).memoryPolicy(MemoryPolicy.NO_CACHE).networkPolicy(NetworkPolicy.NO_CACHE).into(holder.shop_image);
         holder.shop_name.setText(mData.get(position).getStoreName());
         holder.shop_detail.setText(mData.get(position).getStoreDetail());
-        holder.shop_creator.setText(mData.get(position).getStudentID());
+        holder.shop_creator.setText(mData.get(position).getStudentID().getStudentName());
         holder.shoplist_cardview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -78,7 +78,7 @@ public class AppointmentDetail extends Fragment {
     private JSONObject myjsonObj;
 
     private AppointmentOB appointmentOB;
-    private ImageView btnBack, stuffImage, requesterPhoto;
+    private ImageView stuffImage, requesterPhoto;
     private ProgressBar progressBar;
     private RelativeLayout fragmentBody;
     private TextView stuffName, stuffDescription, stuffPrice, stuffQuantity, stuffCategory, stuffCondition, stuffValidity, requesterName;
@@ -99,7 +99,7 @@ public class AppointmentDetail extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        getActivity().setTitle("Appointment Detail");
     }
 
     @Override
@@ -111,7 +111,7 @@ public class AppointmentDetail extends Fragment {
         appointmentOB = (AppointmentOB) bundle.getSerializable("appointmentOB");
         pahoMqttClient = new PahoMqttClient();
         mqttAndroidClient = pahoMqttClient.getMqttClient(getActivity(), Constant.serverUrl, "MY/TARUC/SSS/000000001/PUB");
-        btnBack = view.findViewById(R.id.btnBack);
+
         stuffImage = view.findViewById(R.id.stuffImage);
         requesterPhoto = view.findViewById(R.id.requesterPhoto);
         progressBar = view.findViewById(R.id.progressBar);
@@ -136,12 +136,7 @@ public class AppointmentDetail extends Fragment {
         btnReject.setVisibility(View.GONE);
         btnAppointmentStatus.setVisibility(View.GONE);
         fragmentBody.setVisibility(View.GONE);
-        btnBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getFragmentManager().popBackStack();
-            }
-        });
+
         progressBar.setVisibility(View.VISIBLE);
         btnAppointmentStatus.setClickable(false);
         btnAppointmentStatus.setFocusable(false);
@@ -609,22 +604,18 @@ public class AppointmentDetail extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
-        // Log.d(TAG,"Welcome back");
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        ((AppCompatActivity) getActivity()).getSupportActionBar().show();
-        Log.d(TAG, "You leaved 1");
 
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, "You leaved");
+
         try {
             pahoMqttClient.unSubscribe(mqttAndroidClient, "MY/TARUC/SSS/000000001/PUB");
             pahoMqttClient.disconnect(mqttAndroidClient);
@@ -638,7 +629,7 @@ public class AppointmentDetail extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        Log.d(TAG, "You leaved");
+        
         try {
             pahoMqttClient.unSubscribe(mqttAndroidClient, "MY/TARUC/SSS/000000001/PUB");
             pahoMqttClient.disconnect(mqttAndroidClient);

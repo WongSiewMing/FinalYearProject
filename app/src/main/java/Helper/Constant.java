@@ -10,5 +10,4 @@ public class Constant {
    public static final String serverFile = "http://192.168.0.111/raindown/";
     public static final String serverUrl = "tcp://192.168.0.111:1883";
 
-
 }

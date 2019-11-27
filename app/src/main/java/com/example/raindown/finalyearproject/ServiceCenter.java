@@ -95,17 +95,12 @@ public class ServiceCenter extends Service {
                                 notificationTitle = "New message from " + privateChat.getStudentName();
                                 notificationMessage = privateChat.getStudentName() + " had sent you an image file";
                             }
-
-
                             pushNotification(notificationTitle, notificationMessage);
-
-
                         }
 
                     }else if (myjsonObj.getString("command").equals("303035303054")){
                         if (Conversion.hexToAscii(myjsonObj.getString("recipient")).equals(UserID)){
                             String recipient = Conversion.hexToAscii(myjsonObj.getString("studentID"));
-                           // Log.d(TAG, "Recipient ID = " + recipient);
                             String statusCommand = "{\"command\": \"303035303055\", \"reserve\": \"303030303030303030303030303030303030303030303030\", " +
                                     "\"studentID\": " + "\"" + Conversion.asciiToHex(UserID) + "\" ," +
                                     "\"recipient\": " + "\"" + Conversion.asciiToHex(recipient) + "\" ," +
@@ -121,10 +116,30 @@ public class ServiceCenter extends Service {
                             appointmentNotification(notificationTitle, notificationMessage);
                         }
                     }else if (myjsonObj.getString("command").equals("303035303062")){
-                        Log.d(TAG,"Message in here");
                         if (Conversion.hexToAscii(myjsonObj.getString("studentID")).equals(UserID)){
                             notificationTitle = "Appointment request notification.";
                             notificationMessage = "Your appointment request is " + Conversion.hexToAscii(myjsonObj.getString("appointmentStatus")).toLowerCase();
+
+                            appointmentNotification(notificationTitle, notificationMessage);
+                        }
+                    } else if (myjsonObj.getString("command").equals("303035303073")){
+                        if (Conversion.hexToAscii(myjsonObj.getString("StudentID")).equals(UserID)){
+                            notificationTitle = "Item trade request notification.";
+                            notificationMessage = "Your item trade request is being accepted !";
+
+                            appointmentNotification(notificationTitle, notificationMessage);
+                        }
+                    } else if (myjsonObj.getString("command").equals("303035303074")){
+                        if (Conversion.hexToAscii(myjsonObj.getString("StudentID")).equals(UserID)){
+                            notificationTitle = "Item trade request notification.";
+                            notificationMessage = "Your item trade request is being rejected !";
+
+                            appointmentNotification(notificationTitle, notificationMessage);
+                        }
+                    } else if (myjsonObj.getString("command").equals("303035303072")){
+                        if (Conversion.hexToAscii(myjsonObj.getString("SellerID")).equals(UserID)){
+                            notificationTitle = "Item trade request notification.";
+                            notificationMessage = "New item trade request arrived.";
 
                             appointmentNotification(notificationTitle, notificationMessage);
                         }
@@ -149,7 +164,7 @@ public class ServiceCenter extends Service {
 
     private void appointmentNotification(String notificationTitle, String notificationMessage) {
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_1_ID)
-                .setSmallIcon(R.drawable.ic_privatechat)
+                .setSmallIcon(R.drawable.applogo)
                 .setContentTitle(notificationTitle)
                 .setContentText(notificationMessage)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)

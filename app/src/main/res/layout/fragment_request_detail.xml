@@ -6,33 +6,6 @@
     tools:context=".AppointmentDetail"
     android:background="@color/white">
 
-    <RelativeLayout
-        android:id="@+id/header"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="@color/bgBottomNavigation">
-
-        <ImageView
-            android:id="@+id/btnBack"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_centerVertical="true"
-            android:clickable="true"
-            android:focusable="true"
-            android:src="@drawable/ic_arrow_back"
-            android:tint="@color/lightgrey" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="10dp"
-            android:layout_toEndOf="@id/btnBack"
-            android:text="Appointment Detail"
-            android:textColor="@color/black"
-            android:textSize="20sp" />
-
-    </RelativeLayout>
     <ProgressBar
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -43,7 +16,6 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/header"
         android:id="@+id/body">
         <ImageView
             android:id="@+id/stuffImage"
@@ -316,7 +288,6 @@
             android:text="Request Time"
             android:textColor="@color/black"
             android:layout_below="@id/devider1"
-            android:layout_toEndOf="@id/requesterPhoto"
             android:layout_marginStart="5dp"
             android:id="@+id/text1"/>
         <RelativeLayout
@@ -324,7 +295,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/text1"
-            android:layout_toEndOf="@id/requesterPhoto"
             android:layout_margin="5dp">
             <TextView
                 android:layout_width="wrap_content"

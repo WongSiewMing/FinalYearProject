@@ -3,11 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".EditAvailableTime"
+    tools:context=".UpdateAvailableTime"
     android:background="@color/white">
 
     <RelativeLayout
-
         android:id="@+id/body"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -24,7 +23,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
             android:layout_marginTop="10dp"
-            android:text="Add new available time"
+            android:text="Edit available time"
             android:textStyle="bold"
             android:fontFamily="sans-serif-smallcaps"
             android:textColor="@color/black" />
@@ -54,7 +53,7 @@
             android:textStyle="bold" />
 
         <Spinner
-            android:id="@+id/dayOfWeek"
+            android:id="@+id/dayOfWeek_edit"
             android:layout_width="150dp"
             android:layout_height="35dp"
             android:layout_below="@id/devider3"
@@ -73,14 +72,14 @@
             android:fontFamily="sans-serif-smallcaps"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/dayOfWeek"
+            android:layout_below="@id/dayOfWeek_edit"
             android:layout_marginStart="5dp"
             android:layout_marginTop="20dp"
             android:text="From time :"
             android:textColor="@color/black" />
 
         <TextView
-            android:id="@+id/startTime"
+            android:id="@+id/startTime_edit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignTop="@id/text3"
@@ -108,7 +107,7 @@
 
 
         <TextView
-            android:id="@+id/endTime"
+            android:id="@+id/endTime_edit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignTop="@id/text4"
@@ -122,53 +121,19 @@
             android:textSize="18dp" />
 
         <Button
-            android:id="@+id/btnAddTime"
+            android:id="@+id/btnEditTime"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginTop="20dp"
             android:background="#ffbb6d"
             android:layout_below="@id/text4"
             android:fontFamily="sans-serif-smallcaps"
-            android:text="Add Available Time"
+            android:text="Update Available Time"
             android:textSize="15dp"
             android:textStyle="bold" />
 
-        <View
-            android:id="@+id/devider2"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_below="@id/btnAddTime"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="5dp"
-            android:background="@color/black" />
-
 
     </RelativeLayout>
-
-    <TextView
-        android:id="@+id/noTimeIndicator"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="No time set"
-        android:layout_centerInParent="true"
-        android:visibility="invisible"/>
-
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"/>
-
-    <android.support.v7.widget.RecyclerView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/body"
-        android:id="@+id/availableTimeRV"
-        android:visibility="invisible">
-
-    </android.support.v7.widget.RecyclerView>
 
 
 </RelativeLayout>

@@ -12,6 +12,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,6 +22,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
@@ -71,12 +73,12 @@ public class EditAvailableTime extends Fragment {
     private JSONObject myjsonObj;
     private List<AvailableTimeOB> arrayAvailableTime = new ArrayList<>();
 
-    private ImageView btnback, btnAddTime;
     private TextView noTimeIndicator, startTime, endTime;
     private ProgressBar progressBar;
     private RecyclerView availableTimeRV;
     private Spinner dayOfWeek;
     private AvailableTimeAdapter adapter;
+    private Button btnAddTime;
 
     private Date c;
     private SimpleDateFormat df;
@@ -88,14 +90,14 @@ public class EditAvailableTime extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        getActivity().setTitle("Manage Available Time");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_edit_available_time, container, false);
-        btnback = view.findViewById(R.id.btnBack);
+
         btnAddTime = view.findViewById(R.id.btnAddTime);
         noTimeIndicator = view.findViewById(R.id.noTimeIndicator);
         progressBar = view.findViewById(R.id.progressBar);
@@ -106,6 +108,8 @@ public class EditAvailableTime extends Fragment {
         pahoMqttClient = new PahoMqttClient();
         mqttAndroidClient = pahoMqttClient.getMqttClient(getActivity(), Constant.serverUrl, "MY/TARUC/SSS/000000001/PUB");
         pDialog = new ProgressDialog(getActivity());
+
+        populateAvailableList();
 
         mqttAndroidClient.setCallback(new MqttCallbackExtended() {
             @Override
@@ -122,9 +126,6 @@ public class EditAvailableTime extends Fragment {
             @Override
             public void messageArrived(String topic, MqttMessage mqttMessage) throws Exception {
                 myjsonObj = new JSONObject(mqttMessage.toString());
-                Log.d(TAG,"HEREHERE " + mqttMessage.toString());
-                Log.d(TAG, "Array size =" +arrayAvailableTime.size());
-
 
                 if (myjsonObj.getString("command").equals("30303530305C")){
                     for (int i = 0; i< arrayAvailableTime.size(); i++){
@@ -141,13 +142,6 @@ public class EditAvailableTime extends Fragment {
             @Override
             public void deliveryComplete(IMqttDeliveryToken token) {
 
-            }
-        });
-
-        btnback.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getFragmentManager().popBackStack();
             }
         });
 
@@ -236,7 +230,6 @@ public class EditAvailableTime extends Fragment {
             if (isConnected) {
 
                 RequestQueue queue = Volley.newRequestQueue(getActivity());
-                //http://192.168.0.103/raindown/getAvailableTimeList.php?studentID=17wmr05969
                 JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Constant.serverFile + "getAvailableTimeList.php?studentID=" + UpdateNavigation.student.getStudentID(),
                         new Response.Listener<JSONArray>() {
                             @Override
@@ -262,7 +255,6 @@ public class EditAvailableTime extends Fragment {
                                         noTimeIndicator.setVisibility(View.VISIBLE);
                                         Log.d(TAG, "Respond length =" + response.length());
                                     } else {
-                                        // Log.d(TAG, "Student Name =" + commmentList.get(0).getStudentID().getStudentName());
                                         populateRecycleView();
                                     }
 
@@ -311,7 +303,6 @@ public class EditAvailableTime extends Fragment {
                 if (!pDialog.isShowing())
                     pDialog.setMessage("Sync with server...");
                 pDialog.show();
-                //192.168.0.107/raindown/getCommentID.php
 
                 JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Constant.serverFile + "getAvailableID.php",
                         new Response.Listener<JSONArray>() {
@@ -389,10 +380,7 @@ public class EditAvailableTime extends Fragment {
             }catch (ParseException e){
                 e.printStackTrace();
             }
-            Log.d(TAG,"start" + newStartTimeFormat);
-            Log.d(TAG,"end" + newEndTimeFormat);
 
-            //http://192.168.0.103/raindown/insertAvailableTime.php?availableID=avai1002&studentID=17WMR05969&availableDate=Thursday&startTime=0300&endTime=0625
             insertAvailableTimeUrl = Constant.serverFile + "insertAvailableTime.php?availableID=" + newAvailableID
                     + "&studentID=" + UpdateNavigation.student.getStudentID()
                     + "&availableDate=" + dayOfWeek.getSelectedItem().toString().trim()
@@ -434,8 +422,8 @@ public class EditAvailableTime extends Fragment {
                                                     case DialogInterface.BUTTON_POSITIVE:
 
                                                         dayOfWeek.setSelection(0);
-                                                        startTime.setText("click me to select start time");
-                                                        endTime.setText("click me to select end time");
+                                                        startTime.setText("click to select start time");
+                                                        endTime.setText("click to select end time");
 
                                                         break;
                                                 }
@@ -505,7 +493,7 @@ public class EditAvailableTime extends Fragment {
         Date start = new Date();
         Date end= new Date();
 
-        if (startTime.getText().toString().trim().equals("click me to select start time") || endTime.getText().toString().trim().equals("click me to select end time")){
+        if (startTime.getText().toString().trim().equals("click to select start time") || endTime.getText().toString().trim().equals("click to select end time")){
             error += "- Time not selected.\n";
             indicator = false;
         }else {
@@ -522,7 +510,7 @@ public class EditAvailableTime extends Fragment {
             }
         }
 
-        if (dayOfWeek.getSelectedItem().toString().equals("--ChooseDay--")){
+        if (dayOfWeek.getSelectedItem().toString().equals("--Choose Day--")){
             error += "- Day of week is require.\n";
             indicator = false;
         }
@@ -557,15 +545,12 @@ public class EditAvailableTime extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
-        // Log.d(TAG,"Welcome back");
+
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        ((AppCompatActivity) getActivity()).getSupportActionBar().show();
-        Log.d(TAG, "You leaved 1");
 
     }
 

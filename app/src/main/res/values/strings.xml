@@ -22,7 +22,7 @@
         <item>Stall</item>
     </string-array>
     <string-array name="dayOfWeek">
-        <item>--ChooseDay--</item>
+        <item>--Choose Day--</item>
         <item>Monday</item>
         <item>Tuesday</item>
         <item>Wednesday</item>

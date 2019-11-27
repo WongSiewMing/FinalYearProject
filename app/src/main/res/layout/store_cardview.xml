@@ -3,7 +3,7 @@
     xmlns:cardview="http://schemas.android.com/apk/res-auto"
     android:id="@+id/storeCardView"
     android:layout_width="match_parent"
-    android:layout_height="190dp"
+    android:layout_height="250dp"
     android:layout_margin="5dp"
     android:clickable="true"
     cardview:cardCornerRadius="10dp">
@@ -16,7 +16,7 @@
         <ImageView
             android:id="@+id/store_img"
             android:layout_width="match_parent"
-            android:layout_height="160dp"
+            android:layout_height="180dp"
             android:background="@color/black"
             android:scaleType="centerCrop" />
 
@@ -26,8 +26,10 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="Shop Title"
+            android:fontFamily="sans-serif-smallcaps"
+            android:textStyle="bold"
             android:textColor="#2d2d2d"
-            android:textSize="13sp" />
+            android:textSize="20sp" />
     </LinearLayout>
 
 </android.support.v7.widget.CardView>
