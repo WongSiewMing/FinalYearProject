@@ -109,7 +109,6 @@ public class StoreProfile extends Fragment {
         condition = (TextView) view.findViewById(R.id.storeStatus);
         storeDescription = (TextView) view.findViewById(R.id.storeDescription);
         shopImage = (ImageView) view.findViewById(R.id.shopImage);
-        shopName = (TextView) view.findViewById(R.id.shopName);
         editProfile = (Button) view.findViewById(R.id.editProfile);
         storeLocation = view.findViewById(R.id.storeLocation);
         progressBar = view.findViewById(R.id.progressBar);
