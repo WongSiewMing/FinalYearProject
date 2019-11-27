@@ -189,6 +189,7 @@ public class TradeRequestDetail extends Fragment {
                             case DialogInterface.BUTTON_POSITIVE:
 
                                 command = "{\"command\": \"303035303073\", \"reserve\": \"303030303030303030303030303030303030303030303030\", " +
+                                        "\"StudentID\": " + "\"" + Conversion.asciiToHex(tradeRequest.getStudentID().getStudentID()) + "\" ," +
                                         "\"TradeID\": " + "\"" + Conversion.asciiToHex(tradeRequest.getTradeID()) + "\"}";
 
                                 pahoMqttClient = new PahoMqttClient();
@@ -237,6 +238,7 @@ public class TradeRequestDetail extends Fragment {
                                 formattedTime = dateFormat.format(date);
 
                                 command = "{\"command\": \"303035303074\", \"reserve\": \"303030303030303030303030303030303030303030303030\", " +
+                                        "\"StudentID\": " + "\"" + Conversion.asciiToHex(tradeRequest.getStudentID().getStudentID()) + "\" ," +
                                         "\"TradeID\": " + "\"" + Conversion.asciiToHex(tradeRequest.getTradeID()) + "\"}";
 
                                 pahoMqttClient = new PahoMqttClient();

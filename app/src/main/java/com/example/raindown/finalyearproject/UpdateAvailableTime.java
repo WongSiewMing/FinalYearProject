@@ -152,7 +152,6 @@ public class UpdateAvailableTime extends Fragment {
                 Calendar c = Calendar.getInstance();
                 c.setTime(endDate);
                 df = new SimpleDateFormat("hh:mm a");
-                //startTime.setText(df.format(c));
                 int mhour = c.get(Calendar.HOUR_OF_DAY);
                 int mminute = c.get(Calendar.MINUTE);
                 timePickerDialog = new TimePickerDialog(getActivity(), new TimePickerDialog.OnTimeSetListener() {
@@ -294,8 +293,6 @@ public class UpdateAvailableTime extends Fragment {
                                 + "&availableDate=" + Conversion.hexToAscii(jsonObj.getString("availableDate"))
                                 + "&startTime=" + Conversion.hexToAscii(jsonObj.getString("startTime"))
                                 + "&endTime=" + Conversion.hexToAscii(jsonObj.getString("endTime"));
-
-                        Log.d("Hi", jsonURL);
 
                         RequestQueue queue = Volley.newRequestQueue(getActivity());
                         try {
