@@ -29,7 +29,7 @@ public class StoreCategory extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActivity().setTitle("Shop Category");
+        getActivity().setTitle("Store");
 
     }
 
@@ -41,19 +41,16 @@ public class StoreCategory extends Fragment {
         lstStoreOption.add(new StoreOption(R.drawable.foodstore, "Food"));
         lstStoreOption.add(new StoreOption(R.drawable.grocery,"Grocery"));
         lstStoreOption.add(new StoreOption(R.drawable.stationary, "Stationary"));
-        lstStoreOption.add(new StoreOption(R.drawable.stall, "Stall"));
+        lstStoreOption.add(new StoreOption(R.drawable.stall, "Event Stall"));
 
         RecyclerView storerv = (RecyclerView) view.findViewById(R.id.storeCategoryrv);
         StoreRecyclerViewAdapter storeAdapter = new StoreRecyclerViewAdapter(getActivity(), lstStoreOption);
-        storerv.setLayoutManager(new GridLayoutManager(getActivity(), 3));
+        storerv.setLayoutManager(new GridLayoutManager(getActivity(), 2));
         storerv.setAdapter(storeAdapter);
-
-
 
         return view;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
 
     }
@@ -72,7 +69,6 @@ public class StoreCategory extends Fragment {
 
 
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 }

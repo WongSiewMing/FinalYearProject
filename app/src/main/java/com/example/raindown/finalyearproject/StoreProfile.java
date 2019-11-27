@@ -2,6 +2,7 @@ package com.example.raindown.finalyearproject;
 /*Author : Lee Thian Xin
    Programme : RSD3
    Year : 2018*/
+
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -30,6 +31,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -45,10 +47,12 @@ import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 import Helper.Constant;
 import Helper.Conversion;
 import Helper.PahoMqttClient;
@@ -59,11 +63,11 @@ import Helper.Stuff;
 import static android.app.Activity.RESULT_OK;
 
 
-public class StoreProfile extends Fragment{
+public class StoreProfile extends Fragment {
     View view;
     List<StoreOB> storeProfile;
-    private TextView shopName, avgRating, openTime, closeTime, condition, storeDescription, ratDrscription, popRating, ratSummary, storeLocation;
-    private ImageView shopImage, back;
+    private TextView avgRating, openTime, closeTime, condition, storeDescription, ratDrscription, popRating, ratSummary, storeLocation;
+    private ImageView shopImage;
     private Button editProfile, viewReview;
     private ProgressDialog pDialog = null;
     private String selectedStoreID, ratingTotalNum, currentTime, UserID;
@@ -88,15 +92,13 @@ public class StoreProfile extends Fragment{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       getActivity().setTitle("Shop Profile");
-
+        getActivity().setTitle("Store Profile");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_store_profile, container, false);
-        shopName = (TextView) view.findViewById(R.id.shopName);
         avgRating = (TextView) view.findViewById(R.id.avgRating);
         openTime = (TextView) view.findViewById(R.id.OpenTime);
         closeTime = (TextView) view.findViewById(R.id.CloseTime);
@@ -105,24 +107,17 @@ public class StoreProfile extends Fragment{
         shopImage = (ImageView) view.findViewById(R.id.shopImage);
         editProfile = (Button) view.findViewById(R.id.editProfile);
         storeLocation = view.findViewById(R.id.storeLocation);
-        back = view.findViewById(R.id.back);
+
         progressBar = view.findViewById(R.id.progressBar);
         pDialog = new ProgressDialog(getActivity());
         body = view.findViewById(R.id.body);
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getFragmentManager().popBackStack();
-            }
-        });
         UserID = UserSharedPreferences.read(UserSharedPreferences.userID, null);
-        Log.d(TAG, "User ID =" + UserID);
 
-        shopName.setText(UserSharedPreferences.read(UserSharedPreferences.userName, null));
+        //shopName.setText(UserSharedPreferences.read(UserSharedPreferences.userName, null));
         storeProfile = new ArrayList<>();
         Bundle bundle = getArguments();
         selectedStoreID = bundle.getString("storeID");
-        shopName.setText(selectedStoreID);
+        //shopName.setText(selectedStoreID);
 
         final Date d = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("HHmm");
@@ -161,7 +156,6 @@ public class StoreProfile extends Fragment{
         });
 
 
-
         //review bottom sheet
         viewReview = (Button) view.findViewById(R.id.viewReview);
         viewReview.setOnClickListener(new View.OnClickListener() {
@@ -196,7 +190,6 @@ public class StoreProfile extends Fragment{
         });
 
 
-
         popUpRating = new Dialog(getActivity());
 
         avgRating.setOnClickListener(new View.OnClickListener() {
@@ -221,9 +214,9 @@ public class StoreProfile extends Fragment{
 
                                             JSONObject storeReviewResponse = (JSONObject) response.get(0);
                                             ratingTotalNum = storeReviewResponse.getString("reviewCount");
-                                            if (ratingTotalNum.equals("0")){
+                                            if (ratingTotalNum.equals("0")) {
                                                 ratDrscription.setText("No review yet...");
-                                            }else {
+                                            } else {
                                                 ratDrscription.setText("Number of review received: " + ratingTotalNum);
                                                 popRating.setText(String.format("%.2f", avgRate));
                                                 ratSummary.setText(String.format("%.2f", avgRate) + " out of 5.");
@@ -231,7 +224,7 @@ public class StoreProfile extends Fragment{
                                                 avgRating.setText(String.format("%.2f", avgRate));
                                             }
 
-                                        }catch (Exception e){
+                                        } catch (Exception e) {
 
                                         }
 
@@ -255,14 +248,13 @@ public class StoreProfile extends Fragment{
                 }
 
                 //make changes here (popRating & ratSummary)
-                 popRating.setText(avgRating.getText().toString());
+                popRating.setText(avgRating.getText().toString());
                 ratSummary.setText(avgRating.getText() + " out of 5.");
 
                 popUpRating.show();
 
             }
         });
-
 
 
         return view;
@@ -275,7 +267,6 @@ public class StoreProfile extends Fragment{
 
         try {
             RequestQueue queue = Volley.newRequestQueue(getActivity());
-            //http://192.168.0.107/raindown/getStoreAvgRating.php?storeID=str1003
 
             jsonObj = new JSONObject(command);
             if (jsonObj.getString("command").equals("303035303057")) {
@@ -338,7 +329,7 @@ public class StoreProfile extends Fragment{
                             public void onResponse(JSONArray response) {
                                 try {
                                     storeProfile.clear();
-                                    for (int i = 0; i < response.length(); i++){
+                                    for (int i = 0; i < response.length(); i++) {
                                         JSONObject storeResponse = (JSONObject) response.get(i);
                                         storeProfile.add(new StoreOB(storeResponse.getString("StoreID"),
                                                 storeResponse.getString("StudentID"),
@@ -353,7 +344,7 @@ public class StoreProfile extends Fragment{
 
                                     }
                                     populateView();
-                                }catch (Exception e){
+                                } catch (Exception e) {
 
                                 }
 
@@ -380,51 +371,51 @@ public class StoreProfile extends Fragment{
     private void populateStoreStuffListInfo() {
         command = "{\"command\": \"303035303087\", \"reserve\": \"303030303030303030303030303030303030303030303030\", " +
                 "\"storeID\": " + "\"" + Conversion.asciiToHex(selectedStoreID) + "\"}";
-        try{
+        try {
             ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
             Boolean isConnected = networkInfo != null && networkInfo.isConnectedOrConnecting();
 
-            if (isConnected){
+            if (isConnected) {
                 RequestQueue queue = Volley.newRequestQueue(getActivity());
-                if (!pDialog.isShowing()){
+                if (!pDialog.isShowing()) {
                     pDialog.setMessage("Sync with server...");
                 }
                 pDialog.show();
                 jsonObj = new JSONObject(command);
-                if (jsonObj.getString("command").equals("303035303087")){
+                if (jsonObj.getString("command").equals("303035303087")) {
                     JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Constant.serverFile + "getStoreStuffList.php?storeID=" + selectedStoreID,
                             new Response.Listener<JSONArray>() {
-                        @Override
-                        public void onResponse(JSONArray response) {
-                            try {
-                                stuffList.clear();
-                                for (int i = 0; i < response.length(); i++) {
-                                    JSONObject myStuffResponse = (JSONObject) response.get(i);
-                                    stuffList.add(new Stuff(myStuffResponse.getString("stuffID"), new Student(myStuffResponse.getString("studentID"),
-                                            myStuffResponse.getString("clientID"), myStuffResponse.getString("photo"), myStuffResponse.getString("studentName"),
-                                            myStuffResponse.getString("icNo"), myStuffResponse.getString("studentProgramme"), myStuffResponse.getString("studentFaculty"),
-                                            myStuffResponse.getInt("yearOfStudy")), myStuffResponse.getString("stuffName"), myStuffResponse.getString("stuffImage"),
-                                            myStuffResponse.getString("stuffDescription"), myStuffResponse.getString("stuffCategory"), myStuffResponse.getString("stuffCondition"),
-                                            myStuffResponse.getDouble("stuffPrice"), myStuffResponse.getInt("stuffQuantity"), myStuffResponse.getString("validStartDate"),
-                                            myStuffResponse.getString("validEndDate"), myStuffResponse.getString("stuffStatus")));
-                                    Log.d(TAG, "Stuff ID fetched (stuffList) =" + stuffList.get(i).getStuffID());
+                                @Override
+                                public void onResponse(JSONArray response) {
+                                    try {
+                                        stuffList.clear();
+                                        for (int i = 0; i < response.length(); i++) {
+                                            JSONObject myStuffResponse = (JSONObject) response.get(i);
+                                            stuffList.add(new Stuff(myStuffResponse.getString("stuffID"), new Student(myStuffResponse.getString("studentID"),
+                                                    myStuffResponse.getString("clientID"), myStuffResponse.getString("photo"), myStuffResponse.getString("studentName"),
+                                                    myStuffResponse.getString("icNo"), myStuffResponse.getString("studentProgramme"), myStuffResponse.getString("studentFaculty"),
+                                                    myStuffResponse.getInt("yearOfStudy")), myStuffResponse.getString("stuffName"), myStuffResponse.getString("stuffImage"),
+                                                    myStuffResponse.getString("stuffDescription"), myStuffResponse.getString("stuffCategory"), myStuffResponse.getString("stuffCondition"),
+                                                    myStuffResponse.getDouble("stuffPrice"), myStuffResponse.getInt("stuffQuantity"), myStuffResponse.getString("validStartDate"),
+                                                    myStuffResponse.getString("validEndDate"), myStuffResponse.getString("stuffStatus")));
+                                            Log.d(TAG, "Stuff ID fetched (stuffList) =" + stuffList.get(i).getStuffID());
+                                        }
+
+                                        if (pDialog.isShowing()) {
+                                            pDialog.dismiss();
+                                        }
+
+                                        populateStuffAdapterView();
+                                    } catch (Exception e) {
+
+                                    }
                                 }
-
-                                if (pDialog.isShowing()) {
-                                    pDialog.dismiss();
-                                }
-
-                                populateStuffAdapterView();
-                            } catch (Exception e) {
-
-                            }
-                        }
-                    },
+                            },
                             new Response.ErrorListener() {
                                 @Override
                                 public void onErrorResponse(VolleyError volleyError) {
-                                    if (pDialog.isShowing()){
+                                    if (pDialog.isShowing()) {
                                         pDialog.dismiss();
                                     }
                                 }
@@ -436,12 +427,12 @@ public class StoreProfile extends Fragment{
                 Toast.makeText(getActivity().getApplication(), "Network is NOT available", Toast.LENGTH_LONG).show();
             }
 
-        } catch (Exception e){
+        } catch (Exception e) {
             Toast.makeText(getActivity().getApplication(), "Error Reading Record : " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 
-    private void populateStuffAdapterView(){
+    private void populateStuffAdapterView() {
         mRecycleView = view.findViewById(R.id.storeProfileStuffLL);
 
         mRecycleView.setHasFixedSize(true);
@@ -475,29 +466,26 @@ public class StoreProfile extends Fragment{
             }
 
             @Override
-            public void onEditClick(int position){
+            public void onEditClick(int position) {
                 //Leave here empty
             }
         });
     }
 
 
-
     private void populateView() {
         String a = storeProfile.get(0).getStudentID();
         String b = UserID;
 
-        Log.d(TAG,"ID GET = " + a);
-        Log.d(TAG,"ID Original = " + b);
-        if (a.equals(b)){
-            Log.d(TAG,"Owner");
+        if (a.equals(b)) {
+            Log.d(TAG, "Owner");
             editProfile.setVisibility(View.VISIBLE);
-        }else {
+        } else {
             Log.d(TAG, "Not Owner");
 
         }
 
-        shopName.setText(storeProfile.get(0).getStoreName());
+        //shopName.setText(storeProfile.get(0).getStoreName());
         Picasso.with(getActivity()).load(storeProfile.get(0).getStoreImage()).memoryPolicy(MemoryPolicy.NO_CACHE).networkPolicy(NetworkPolicy.NO_CACHE).transform(new CircleTransform()).into(shopImage);
         getAvgRating();
         avgRating.setText(String.format("%.2f", avgRate));
@@ -509,9 +497,9 @@ public class StoreProfile extends Fragment{
         storeLocation.setText(storeProfile.get(0).getStoreLocation());
 
         if (Integer.parseInt(currentTime) < Integer.parseInt(storeProfile.get(0).getCloseTime()) && Integer.parseInt(currentTime) >=
-                Integer.parseInt(storeProfile.get(0).getOpenTime())){
+                Integer.parseInt(storeProfile.get(0).getOpenTime())) {
             condition.setText("Open now");
-        }else {
+        } else {
             condition.setText("Closed");
             condition.setTextColor(ContextCompat.getColor(getContext(), R.color.red));
         }
@@ -537,24 +525,18 @@ public class StoreProfile extends Fragment{
     @Override
     public void onResume() {
         super.onResume();
-        Log.d(TAG, "This is onResume");
-        ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
-
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        Log.d(TAG, "This is onStop");
-        ((AppCompatActivity) getActivity()).getSupportActionBar().show();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, "You leaved");
         try {
-           pahoMqttClient.unSubscribe(mqttAndroidClient, "MY/TARUC/SSS/000000001/PUB");
+            pahoMqttClient.unSubscribe(mqttAndroidClient, "MY/TARUC/SSS/000000001/PUB");
             pahoMqttClient.disconnect(mqttAndroidClient);
         } catch (Exception e) {
 
@@ -566,7 +548,6 @@ public class StoreProfile extends Fragment{
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        Log.d(TAG, "You leaved");
         try {
             pahoMqttClient.unSubscribe(mqttAndroidClient, "MY/TARUC/SSS/000000001/PUB");
             pahoMqttClient.disconnect(mqttAndroidClient);

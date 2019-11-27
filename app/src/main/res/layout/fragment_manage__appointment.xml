@@ -11,9 +11,11 @@
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="50dp"
     android:layout_marginVertical="5dp"
-    android:background="@color/grey"
-    android:textColor="@color/white"
-    android:text="MODIFY AVAILABLE TIME"
+    android:background="#ffbb6d"
+    android:textColor="@color/black"
+    android:text="MANAGE AVAILABLE TIME"
+    android:fontFamily="sans-serif-smallcaps"
+    android:textStyle="bold"
     android:clickable="true"
     android:focusable="true"/>
     <RelativeLayout

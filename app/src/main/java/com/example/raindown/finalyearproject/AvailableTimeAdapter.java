@@ -4,8 +4,12 @@ Programme : RSD3
 Year : 2018*/
 
 import android.app.AlertDialog;
+import android.support.v4.app.FragmentManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,6 +17,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.AuthFailureError;
@@ -56,6 +61,7 @@ public class AvailableTimeAdapter extends RecyclerView.Adapter<AvailableTimeAdap
     private String updateAvailableTimeURL = "", deleteAvailableTimeURL = "";
     private final static String TAG = "avaiableTime adapter";
     private String encodedAvailableStatus;
+    private FragmentManager fragmentManager;
 
     public AvailableTimeAdapter(Context mContext, List<AvailableTimeOB> mData, MqttAndroidClient mqttAndroidClient) {
         this.mContext = mContext;
@@ -90,8 +96,6 @@ public class AvailableTimeAdapter extends RecyclerView.Adapter<AvailableTimeAdap
             e.printStackTrace();
         }
 
-//        holder.startTime.setText(mData.get(position).getStartTime());
-//        holder.endTime.setText(mData.get(position).getEndTime());
         if (mData.get(position).getAvailableStatus().equals("ACTIVE")) {
             holder.availableStatus.setText("Active");
             holder.availableStatus.setTextColor(mContext.getResources().getColor(R.color.lightgreen));
@@ -106,38 +110,51 @@ public class AvailableTimeAdapter extends RecyclerView.Adapter<AvailableTimeAdap
                 updateAvailableStatus(position, holder);
             }
         });
-        holder.availableTimeCardView.setOnLongClickListener(new View.OnLongClickListener() {
+
+        holder.deleteAvailableTime.setOnClickListener(new View.OnClickListener() {
+
             @Override
-            public boolean onLongClick(View v) {
-                Log.d(TAG, "Long pressed detected!");
-                final CharSequence[] options = {"Delete", "Cancel"};
-                final AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
-                builder.setTitle("Choose your action");
-                builder.setItems(options, new DialogInterface.OnClickListener() {
+            public void onClick(View v) {
+                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if (options[which] == "Delete") {
-                            Log.d(TAG, "position Problem " + position);
-                            Log.d(TAG, "array length =" + mData.size());
-                            deleteAvailableTime(position);
+                        switch (which) {
+                            case DialogInterface.BUTTON_POSITIVE:
 
-
-                        } else if (options[which] == "Cancel") {
-                            dialog.dismiss();
+                                deleteAvailableTime(position);
+                                break;
+                            case DialogInterface.BUTTON_NEGATIVE:
+                                break;
                         }
                     }
-                });
-                builder.show();
+                };
 
-                return true;
+                AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
+                builder.setMessage("Delete Available Time ?").setPositiveButton("Yes", dialogClickListener)
+                        .setNegativeButton("No", dialogClickListener).show();
             }
         });
 
+        holder.editAvailableTime.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                UpdateAvailableTime updateAvailableTime = new UpdateAvailableTime();
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("EditAvailableTime", mData.get(position));
+                updateAvailableTime.setArguments(bundle);
+                fragmentManager = ((AppCompatActivity)mContext).getSupportFragmentManager();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.update_fragmentHolder, updateAvailableTime)
+                        .addToBackStack(null)
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                        .commit();
+            }
+        });
     }
 
     private void deleteAvailableTime(final int position) {
         try {
-            //http://192.168.0.103/raindown/updateAvailableTime.php?availableID=avai1002&availableStatus=DEACTIVE
 
             command = "{\"command\": \"30303530305C\", \"reserve\": \"303030303030303030303030303030303030303030303030\", " +
                     "\"availableID\": " + "\"" + Conversion.asciiToHex(mData.get(position).getAvailableID()) + "\" ," +
@@ -147,9 +164,6 @@ public class AvailableTimeAdapter extends RecyclerView.Adapter<AvailableTimeAdap
 
             deleteAvailableTimeURL = Constant.serverFile + "deleteAvailableTime.php?availableID=" + mData.get(position).getAvailableID()
                     + "&recordStatus=" + "DELETED";
-
-
-            Log.d(TAG, "Delete available time url = " + deleteAvailableTimeURL);
 
 
             RequestQueue queue = Volley.newRequestQueue(mContext);
@@ -231,7 +245,6 @@ public class AvailableTimeAdapter extends RecyclerView.Adapter<AvailableTimeAdap
 
     private void updateAvailableStatus(final int position, final MyviewHolder holder) {
         try {
-            //http://192.168.0.103/raindown/updateAvailableTime.php?availableID=avai1002&availableStatus=DEACTIVE
             if (holder.availableStatus.getText().toString().trim().equals("Active")) {
                 command = "{\"command\": \"30303530305B\", \"reserve\": \"303030303030303030303030303030303030303030303030\", " +
                         "\"availableID\": " + "\"" + Conversion.asciiToHex(mData.get(position).getAvailableID()) + "\" ," +
@@ -351,7 +364,7 @@ public class AvailableTimeAdapter extends RecyclerView.Adapter<AvailableTimeAdap
 
         CardView availableTimeCardView;
         TextView availableDate, startTime, endTime, availableStatus;
-
+        ImageView editAvailableTime, deleteAvailableTime;
 
         public MyviewHolder(View itemView) {
             super(itemView);
@@ -360,6 +373,8 @@ public class AvailableTimeAdapter extends RecyclerView.Adapter<AvailableTimeAdap
             startTime = itemView.findViewById(R.id.availableStartTime);
             endTime = itemView.findViewById(R.id.availableEndTime);
             availableStatus = itemView.findViewById(R.id.availableStatus);
+            editAvailableTime = itemView.findViewById(R.id.editAvailableTime);
+            deleteAvailableTime = itemView.findViewById(R.id.deleteAvailableTime);
         }
     }
 }
