@@ -180,8 +180,10 @@ public class UserActivity extends Fragment {
 
                                     pahoMqttClient.publishMessage(mqttAndroidClient, command, 1, "MY/TARUC/SSS/000000001/PUB");
                                     if (response.length() > 0) {
+                                        activityListrv.setVisibility(View.VISIBLE);
                                         populateRecycleView();
                                     }else{
+                                        activityListrv.setVisibility(View.GONE);
                                         Toast.makeText(getActivity().getApplication(), "Seem like no one posted anything...", Toast.LENGTH_LONG).show();
                                     }
 
@@ -215,8 +217,6 @@ public class UserActivity extends Fragment {
             NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
             Boolean isConnected = networkInfo != null && networkInfo.isConnectedOrConnecting();
             if (isConnected) {
-
-
                 RequestQueue queue = Volley.newRequestQueue(getActivity());
                 Log.d(TAG, "User ID = " + UserID);
 
@@ -241,8 +241,10 @@ public class UserActivity extends Fragment {
 
                                     pahoMqttClient.publishMessage(mqttAndroidClient, command, 1, "MY/TARUC/SSS/000000001/PUB");
                                     if (response.length() > 0) {
+                                        activityListrv.setVisibility(View.VISIBLE);
                                         populateRecycleView();
                                     }else{
+                                        activityListrv.setVisibility(View.GONE);
                                         Toast.makeText(getActivity().getApplication(), "Seem like no one posted anything...", Toast.LENGTH_LONG).show();
                                     }
 

@@ -275,8 +275,19 @@ public class ChangePassword extends AppCompatActivity {
             });
             sent.show();
             newPassword.setText("");
-        }
-        else{
+        } else if (password.equals("")){
+            AlertDialog.Builder sent = new AlertDialog.Builder(ChangePassword.this);
+            sent.setTitle("Invalid Password");
+            sent.setMessage("Please enter a valid password.");
+            sent.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+            });
+            sent.show();
+            newPassword.setText("");
+        } else {
             instruction.setText("2. Confirm Your New Password");
             newPassword.setFocusable(true);
             btnEdit.setVisibility(View.VISIBLE);

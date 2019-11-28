@@ -42,12 +42,13 @@ public class Home extends Fragment {
     RecommendRecyclerViewAdapter mAdapter;
     ArrayList<Stuff> stuffList = new ArrayList<>();
     ArrayList<Stuff> tempStuffList = new ArrayList<>();
+    Set<String> stuffIDList = new HashSet<>();
     ArrayList<SearchHistoryOB> searchList = new ArrayList<>();
     ArrayList<ViewHistoryOB> viewList = new ArrayList<>();
 
     private MqttAndroidClient mqttAndroidClient;
     private PahoMqttClient pahoMqttClient;
-    private String command = "", checkUrl = "", searchKeyword = "";
+    private String command = "", checkUrl = "", searchKeyword = "", stuffCategory = "";
     private JSONObject jsonObj;
     private ProgressDialog pDialog = null;
     private TextView txtRecommend;
@@ -98,6 +99,7 @@ public class Home extends Fragment {
 
         populateRecommendStuffList();
         populateArrayHomeOption();
+
         registerClickCallBack();
         return view;
     }
@@ -114,6 +116,7 @@ public class Home extends Fragment {
         }
 
         populateRecyclerView();
+
 
     }
 
@@ -253,8 +256,6 @@ public class Home extends Fragment {
                                             searchKeyword = viewList.get(i).getStuffID().getStuffName();
                                             getStuffDetailBySearch();
                                         }
-                                        mAdapter.notifyDataSetChanged();
-
 
                                         if (pDialog.isShowing())
                                             pDialog.dismiss();
@@ -284,6 +285,80 @@ public class Home extends Fragment {
                     Toast.LENGTH_LONG).show();
         }
         return ViewHistoryExist;
+    }
+
+    public void getStuffDetailByCategory(){
+        try {
+            Log.d(TAG, "Enter getStuffByCategory 1");
+            ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+            Boolean isConnected = networkInfo != null && networkInfo.isConnectedOrConnecting();
+            if (isConnected) {
+                RequestQueue queue = Volley.newRequestQueue(getActivity());
+                if (!pDialog.isShowing()){
+                    pDialog.setMessage("Sync with server...");
+                }
+
+                checkUrl = Constant.serverFile + "getStuffListAccordingToCategory.php?stuffCategory=" + stuffCategory;
+                Log.d(TAG, "Check Stuff Detail Url = " + checkUrl);
+
+                pDialog.show();
+
+                Log.d(TAG, "Enter getStuffByCategory 2");
+
+                try {
+                    JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Constant.serverFile + "getStuffListAccordingToCategory.php?stuffCategory=" + stuffCategory,
+                            new Response.Listener<JSONArray>() {
+                                @Override
+                                public void onResponse(JSONArray response) {
+                                    try {
+                                        Log.d(TAG, "Enter getStuffByCategory 3");
+                                        for (int i = 0; i < response.length(); i++) {
+                                            JSONObject existResponse = (JSONObject) response.get(i);
+                                            if (!stuffIDList.contains(existResponse.getString("stuffID"))){
+                                                stuffList.add(new Stuff(existResponse.getString("stuffID"), new Student(existResponse.getString("studentID"),
+                                                        existResponse.getString("clientID"), existResponse.getString("photo"), existResponse.getString("studentName"),
+                                                        existResponse.getString("icNo"), existResponse.getString("studentProgramme"), existResponse.getString("studentFaculty"),
+                                                        existResponse.getInt("yearOfStudy")), existResponse.getString("stuffName"), existResponse.getString("stuffImage"),
+                                                        existResponse.getString("stuffDescription"), existResponse.getString("stuffCategory"), existResponse.getString("stuffCondition"),
+                                                        existResponse.getDouble("stuffPrice"), existResponse.getInt("stuffQuantity"), existResponse.getString("validStartDate"),
+                                                        existResponse.getString("validEndDate"), existResponse.getString("stuffStatus")));
+
+                                                Log.d(TAG, "getStuffByCategory = " + stuffList.get(i).getStuffID());
+                                                stuffIDList.add(stuffList.get(i).getStuffID());
+                                            }
+                                        }
+
+                                        if (!stuffList.isEmpty()){
+                                            txtRecommend.setVisibility(View.VISIBLE);
+                                            mRecyclerView.setVisibility(View.VISIBLE);
+                                        }
+                                        if (pDialog.isShowing())
+                                            pDialog.dismiss();
+                                    } catch (Exception e) {
+                                    }
+                                }
+                            },
+                            new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError volleyError) {
+                                    if (pDialog.isShowing())
+                                        pDialog.dismiss();
+                                }
+                            });
+                    queue.add(jsonObjectRequest);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    if (isAdded()) {
+                    }
+                }
+            }
+        } catch (Exception e){
+            Toast.makeText(getActivity().getApplication(),
+                    "Error reading record:" + e.getMessage(),
+                    Toast.LENGTH_LONG).show();
+        }
     }
 
     public void getStuffDetailBySearch(){
@@ -321,9 +396,16 @@ public class Home extends Fragment {
                                                     existResponse.getString("stuffDescription"), existResponse.getString("stuffCategory"), existResponse.getString("stuffCondition"),
                                                     existResponse.getDouble("stuffPrice"), existResponse.getInt("stuffQuantity"), existResponse.getString("validStartDate"),
                                                     existResponse.getString("validEndDate"), existResponse.getString("stuffStatus")));
+
                                             Log.d(TAG, "getStuffBySearch = " + stuffList.get(i).getStuffID());
+                                            stuffIDList.add(stuffList.get(i).getStuffID());
+                                        }
+                                        for (Stuff stuff: stuffList){
+                                            stuffCategory = stuff.getStuffCategory();
+                                            getStuffDetailByCategory();
                                         }
                                         mAdapter.notifyDataSetChanged();
+
                                         if (!stuffList.isEmpty()){
                                             txtRecommend.setVisibility(View.VISIBLE);
                                             mRecyclerView.setVisibility(View.VISIBLE);
@@ -381,6 +463,8 @@ public class Home extends Fragment {
         mAdapter = new RecommendRecyclerViewAdapter(stuffList);
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setAdapter(mAdapter);
+
+
 
         mAdapter.setOnItemClickListener(new RecommendRecyclerViewAdapter.OnItemClickListener() {
             @Override

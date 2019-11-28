@@ -1,13 +1,14 @@
 package Helper;
 
-public class SummaryItem {
+
+public class SummaryItem{
     private String itemNum;
     private String itemImage;
     private String itemID;
     private String itemName;
-    private String itemAmount;
+    private Double itemAmount;
 
-    public SummaryItem(String itemNum, String itemImage, String itemID, String itemName, String itemAmount){
+    public SummaryItem(String itemNum, String itemImage, String itemID, String itemName, Double itemAmount){
         this.itemNum = itemNum;
         this.itemImage = itemImage;
         this.itemID = itemID;
@@ -23,7 +24,7 @@ public class SummaryItem {
         return itemName;
     }
 
-    public String getItemAmount() {
+    public Double getItemAmount() {
         return itemAmount;
     }
 
