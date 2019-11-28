@@ -41,8 +41,9 @@ public class Home extends Fragment {
     RecyclerView mRecyclerView;
     RecommendRecyclerViewAdapter mAdapter;
     ArrayList<Stuff> stuffList = new ArrayList<>();
-    ArrayList<Stuff> tempStuffList = new ArrayList<>();
+    Set<Stuff> tempStuffList = new HashSet<>();
     Set<String> stuffIDList = new HashSet<>();
+    Set<String> stuffCategoryList = new HashSet<>();
     ArrayList<SearchHistoryOB> searchList = new ArrayList<>();
     ArrayList<ViewHistoryOB> viewList = new ArrayList<>();
 
@@ -108,16 +109,13 @@ public class Home extends Fragment {
         SearchHistoryExist = false;
         ViewHistoryExist = false;
         stuffList.clear();
+        tempStuffList.clear();
 
-        checkSearchHistory();
-
-        if (!SearchHistoryExist){
+        if (!checkSearchHistory()){
             checkViewHistory();
         }
 
         populateRecyclerView();
-
-
     }
 
     public boolean checkSearchHistory(){
@@ -315,20 +313,20 @@ public class Home extends Fragment {
                                         Log.d(TAG, "Enter getStuffByCategory 3");
                                         for (int i = 0; i < response.length(); i++) {
                                             JSONObject existResponse = (JSONObject) response.get(i);
-                                            if (!stuffIDList.contains(existResponse.getString("stuffID"))){
-                                                stuffList.add(new Stuff(existResponse.getString("stuffID"), new Student(existResponse.getString("studentID"),
-                                                        existResponse.getString("clientID"), existResponse.getString("photo"), existResponse.getString("studentName"),
-                                                        existResponse.getString("icNo"), existResponse.getString("studentProgramme"), existResponse.getString("studentFaculty"),
-                                                        existResponse.getInt("yearOfStudy")), existResponse.getString("stuffName"), existResponse.getString("stuffImage"),
-                                                        existResponse.getString("stuffDescription"), existResponse.getString("stuffCategory"), existResponse.getString("stuffCondition"),
-                                                        existResponse.getDouble("stuffPrice"), existResponse.getInt("stuffQuantity"), existResponse.getString("validStartDate"),
-                                                        existResponse.getString("validEndDate"), existResponse.getString("stuffStatus")));
+                                            tempStuffList.add(new Stuff(existResponse.getString("stuffID"), new Student(existResponse.getString("studentID"),
+                                                    existResponse.getString("clientID"), existResponse.getString("photo"), existResponse.getString("studentName"),
+                                                    existResponse.getString("icNo"), existResponse.getString("studentProgramme"), existResponse.getString("studentFaculty"),
+                                                    existResponse.getInt("yearOfStudy")), existResponse.getString("stuffName"), existResponse.getString("stuffImage"),
+                                                    existResponse.getString("stuffDescription"), existResponse.getString("stuffCategory"), existResponse.getString("stuffCondition"),
+                                                    existResponse.getDouble("stuffPrice"), existResponse.getInt("stuffQuantity"), existResponse.getString("validStartDate"),
+                                                    existResponse.getString("validEndDate"), existResponse.getString("stuffStatus")));
 
-                                                Log.d(TAG, "getStuffByCategory = " + stuffList.get(i).getStuffID());
-                                                stuffIDList.add(stuffList.get(i).getStuffID());
-                                            }
+                                            Log.d(TAG, "getStuffByCategory = " + existResponse.getString("stuffID"));
                                         }
 
+                                        stuffList.clear();
+                                        stuffList.addAll(tempStuffList);
+                                        mAdapter.notifyDataSetChanged();
                                         if (!stuffList.isEmpty()){
                                             txtRecommend.setVisibility(View.VISIBLE);
                                             mRecyclerView.setVisibility(View.VISIBLE);
@@ -389,7 +387,7 @@ public class Home extends Fragment {
                                         Log.d(TAG, "Enter getStuffBySearch 3");
                                         for (int i = 0; i < response.length(); i++) {
                                             JSONObject existResponse = (JSONObject) response.get(i);
-                                            stuffList.add(new Stuff(existResponse.getString("stuffID"), new Student(existResponse.getString("studentID"),
+                                            tempStuffList.add(new Stuff(existResponse.getString("stuffID"), new Student(existResponse.getString("studentID"),
                                                     existResponse.getString("clientID"), existResponse.getString("photo"), existResponse.getString("studentName"),
                                                     existResponse.getString("icNo"), existResponse.getString("studentProgramme"), existResponse.getString("studentFaculty"),
                                                     existResponse.getInt("yearOfStudy")), existResponse.getString("stuffName"), existResponse.getString("stuffImage"),
@@ -397,13 +395,17 @@ public class Home extends Fragment {
                                                     existResponse.getDouble("stuffPrice"), existResponse.getInt("stuffQuantity"), existResponse.getString("validStartDate"),
                                                     existResponse.getString("validEndDate"), existResponse.getString("stuffStatus")));
 
-                                            Log.d(TAG, "getStuffBySearch = " + stuffList.get(i).getStuffID());
-                                            stuffIDList.add(stuffList.get(i).getStuffID());
+                                            Log.d(TAG, "getStuffBySearch = " + existResponse.getString("stuffID"));
                                         }
-                                        for (Stuff stuff: stuffList){
-                                            stuffCategory = stuff.getStuffCategory();
-                                            getStuffDetailByCategory();
+                                        for (Stuff stuff: tempStuffList){
+                                            if (!stuffCategoryList.contains(stuff.getStuffCategory())){
+                                                stuffCategory = stuff.getStuffCategory();
+                                                stuffCategoryList.add(stuff.getStuffCategory());
+                                                getStuffDetailByCategory();
+                                            }
                                         }
+                                        stuffList.clear();
+                                        stuffList.addAll(tempStuffList);
                                         mAdapter.notifyDataSetChanged();
 
                                         if (!stuffList.isEmpty()){
