@@ -404,9 +404,6 @@ public class Home extends Fragment {
                                                 getStuffDetailByCategory();
                                             }
                                         }
-                                        stuffList.clear();
-                                        stuffList.addAll(tempStuffList);
-                                        mAdapter.notifyDataSetChanged();
 
                                         if (!stuffList.isEmpty()){
                                             txtRecommend.setVisibility(View.VISIBLE);
