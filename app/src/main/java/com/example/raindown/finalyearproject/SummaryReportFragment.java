@@ -30,6 +30,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 
 import Helper.AppointmentOB;
 import Helper.AvailableTimeOB;
@@ -161,10 +165,10 @@ public class SummaryReportFragment extends Fragment {
 
         } else if (report.equals("Most Sold Stuff Category")){
             itemList.clear();
-            itemList.add(new SummaryItem("1", getURLForResource(R.mipmap.icon_book), "", "Books", "0.00"));
-            itemList.add(new SummaryItem("2", getURLForResource(R.mipmap.icon_electronics), "", "Electronics", "0.00"));
-            itemList.add(new SummaryItem("3", getURLForResource(R.mipmap.icon_furnitures), "", "Furnitures", "0.00"));
-            itemList.add(new SummaryItem("4", getURLForResource(R.mipmap.icon_miscellaneous), "", "Miscellaneous", "0.00"));
+            itemList.add(new SummaryItem("1", getURLForResource(R.mipmap.icon_book), "", "Books", 0.00));
+            itemList.add(new SummaryItem("2", getURLForResource(R.mipmap.icon_electronics), "", "Electronics", 0.00));
+            itemList.add(new SummaryItem("3", getURLForResource(R.mipmap.icon_furnitures), "", "Furnitures", 0.00));
+            itemList.add(new SummaryItem("4", getURLForResource(R.mipmap.icon_miscellaneous), "", "Miscellaneous", 0.00));
 
             command = "{\"command\": \"303035303093\", \"reserve\": \"303030303030303030303030303030303030303030303030\", " +
                     "\"studentID\": " + "\"" + Conversion.asciiToHex(s.getStudentID()) + "\"}";
@@ -216,7 +220,7 @@ public class SummaryReportFragment extends Fragment {
                                                     myStuffResponse.getString("validEndDate"), myStuffResponse.getString("stuffStatus")));
                                             Log.d(TAG, "Stuff ID fetched (getSales) =" + stuffList.get(i).getStuffID());
 
-                                            salesItemList.add(new SummaryItem(String.format("%d", i + 1), myStuffResponse.getString("stuffImage"), myStuffResponse.getString("stuffID"), myStuffResponse.getString("stuffName"), myStuffResponse.getString("stuffPrice")));
+                                            salesItemList.add(new SummaryItem(String.format("%d", i + 1), myStuffResponse.getString("stuffImage"), myStuffResponse.getString("stuffID"), myStuffResponse.getString("stuffName"), myStuffResponse.getDouble("stuffPrice")));
 
                                             salesTotal += stuffList.get(i).getStuffPrice();
                                         }
@@ -379,7 +383,7 @@ public class SummaryReportFragment extends Fragment {
 
                                         Log.d(TAG, "Stuff ID fetched (getPurchase) =" + stuffList.get(i).getStuffID());
 
-                                        purchaseItemList.add(new SummaryItem(String.format("%d", i + 1), stuffResponse.getString("stuffImage"), stuffResponse.getString("stuffID"), stuffResponse.getString("stuffName"), stuffResponse.getString("stuffPrice")));
+                                        purchaseItemList.add(new SummaryItem(String.format("%d", i + 1), stuffResponse.getString("stuffImage"), stuffResponse.getString("stuffID"), stuffResponse.getString("stuffName"), stuffResponse.getDouble("stuffPrice")));
 
                                         purchaseTotal += stuffResponse.getDouble("stuffPrice");
                                     }
@@ -440,7 +444,7 @@ public class SummaryReportFragment extends Fragment {
                                         itemList.clear();
                                         for (int i = 0; i < response.length(); i++) {
                                             JSONObject myStuffResponse = (JSONObject) response.get(i);
-                                            itemList.add(new SummaryItem(String.format("%d", i + 1), myStuffResponse.getString("stuffImage"), myStuffResponse.getString("stuffID"), myStuffResponse.getString("stuffName"), ""));
+                                            itemList.add(new SummaryItem(String.format("%d", i + 1), myStuffResponse.getString("stuffImage"), myStuffResponse.getString("stuffID"), myStuffResponse.getString("stuffName"), 0.0));
 
                                         }
 
@@ -507,7 +511,7 @@ public class SummaryReportFragment extends Fragment {
                                         itemList.clear();
                                         for (int i = 0; i < response.length(); i++) {
                                             JSONObject myStuffResponse = (JSONObject) response.get(i);
-                                            itemList.add(new SummaryItem(String.format("%d", i + 1), myStuffResponse.getString("stuffImage"), myStuffResponse.getString("stuffID"), myStuffResponse.getString("stuffName"), ""));
+                                            itemList.add(new SummaryItem(String.format("%d", i + 1), myStuffResponse.getString("stuffImage"), myStuffResponse.getString("stuffID"), myStuffResponse.getString("stuffName"), 0.0));
 
                                         }
                                         mAdapter.notifyDataSetChanged();
@@ -573,7 +577,7 @@ public class SummaryReportFragment extends Fragment {
                                         itemList.clear();
                                         for (int i = 0; i < response.length(); i++) {
                                             JSONObject myStuffResponse = (JSONObject) response.get(i);
-                                            itemList.add(new SummaryItem(String.format("%d", i + 1), myStuffResponse.getString("stuffImage"), myStuffResponse.getString("requeststuffID"), myStuffResponse.getString("stuffName"), ""));
+                                            itemList.add(new SummaryItem(String.format("%d", i + 1), myStuffResponse.getString("stuffImage"), myStuffResponse.getString("requeststuffID"), myStuffResponse.getString("stuffName"), 0.0));
 
                                         }
                                         mAdapter.notifyDataSetChanged();
@@ -648,23 +652,23 @@ public class SummaryReportFragment extends Fragment {
 
                                             Double count = 0.0;
                                             if (stuffList.get(i).getStuffCategory().equals("Books")){
-                                                count = Double.parseDouble(itemList.get(0).getItemAmount()) + 1;
-                                                itemList.set(0, new SummaryItem("1", getURLForResource(R.mipmap.icon_book), "", "Books",String.format("%.0f", count)));
+                                                count = itemList.get(0).getItemAmount() + 1;
+                                                itemList.set(0, new SummaryItem("1", getURLForResource(R.mipmap.icon_book), "", "Books", count ));
                                                 total += count;
 
                                             } else if (stuffList.get(i).getStuffCategory().equals("Electronics")){
-                                                count = Double.parseDouble(itemList.get(1).getItemAmount()) + 1;
-                                                itemList.set(1, new SummaryItem("2", getURLForResource(R.mipmap.icon_electronics), "", "Electronics",String.format("%.0f", count)));
+                                                count = itemList.get(1).getItemAmount() + 1;
+                                                itemList.set(1, new SummaryItem("2", getURLForResource(R.mipmap.icon_electronics), "", "Electronics",count));
                                                 total += count;
 
                                             } else if (stuffList.get(i).getStuffCategory().equals("Furnitures")){
-                                                count = Double.parseDouble(itemList.get(2).getItemAmount()) + 1;
-                                                itemList.set(2, new SummaryItem("3", getURLForResource(R.mipmap.icon_furnitures), "", "Furnitures",String.format("%.0f", count)));
+                                                count = itemList.get(2).getItemAmount() + 1;
+                                                itemList.set(2, new SummaryItem("3", getURLForResource(R.mipmap.icon_furnitures), "", "Furnitures",count));
                                                 total += count;
 
                                             } else if (stuffList.get(i).getStuffCategory().equals("Miscellaneous")){
-                                                count = Double.parseDouble(itemList.get(3).getItemAmount()) + 1;
-                                                itemList.set(3, new SummaryItem("4", getURLForResource(R.mipmap.icon_miscellaneous), "", "Miscellaneous", String.format("%.0f", count)));
+                                                count = itemList.get(3).getItemAmount() + 1;
+                                                itemList.set(3, new SummaryItem("4", getURLForResource(R.mipmap.icon_miscellaneous), "", "Miscellaneous", count));
                                                 total += count;
                                             }
                                         }
@@ -707,7 +711,6 @@ public class SummaryReportFragment extends Fragment {
 
     public void populateItemAdapterView(){
 
-
         if (report.equals("Top Selling Stuff (Personal)") || report.equals("Top Selling Stuff (Overall)") || report.equals("Top Requested Stuff")){
             mAdapter = new SummaryAdapter(itemList);
             txtSummaryTotal.setText("Total : RM " + String.format("%.2f", total));
@@ -725,6 +728,12 @@ public class SummaryReportFragment extends Fragment {
             summaryInfoList.setAdapter(mAdapter);
 
         } else if (report.equals("Most Sold Stuff Category")){
+            Collections.sort(itemList, new Comparator<SummaryItem>() {
+                @Override
+                public int compare(SummaryItem t1, SummaryItem t2) {
+                    return Double.compare(t1.getItemAmount(), t2.getItemAmount());
+                }
+            });
             mAdapter = new SummaryAdapter(itemList);
             txtSummaryTotal.setText("Total : RM " + String.format("%.2f", total));
             summaryInfoList.setHasFixedSize(true);
