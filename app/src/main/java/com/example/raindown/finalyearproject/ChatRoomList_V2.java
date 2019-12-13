@@ -149,7 +149,7 @@ public class ChatRoomList_V2 extends Fragment {
         });
 
         populatePrivateChatList();
-        
+
         pahoMqttClient = new PahoMqttClient();
         mqttAndroidClient = pahoMqttClient.getMqttClient(getContext(), Constant.serverUrl);
 

@@ -100,7 +100,7 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.SummaryV
             holder.itemAmount.setText("RM " + currentItem.getItemAmount());
         }
         if (countAmount){
-            holder.itemAmount.setText(String.format("%.2f", currentItem.getItemAmount()));
+            holder.itemAmount.setText(String.format("%.0f", currentItem.getItemAmount()));
         }
     }
 

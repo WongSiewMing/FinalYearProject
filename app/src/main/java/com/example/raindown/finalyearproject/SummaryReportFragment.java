@@ -65,6 +65,7 @@ public class SummaryReportFragment extends Fragment {
     private ImageView infoIcon, infoIcon2;
     private JSONObject jsonObj;
     private Double total = 0.0, salesTotal = 0.0, purchaseTotal = 0.0;
+    private int counter = 1;
 
     private static final String TAG = "SummaryReport";
 
@@ -383,8 +384,8 @@ public class SummaryReportFragment extends Fragment {
 
                                         Log.d(TAG, "Stuff ID fetched (getPurchase) =" + stuffList.get(i).getStuffID());
 
-                                        purchaseItemList.add(new SummaryItem(String.format("%d", i + 1), stuffResponse.getString("stuffImage"), stuffResponse.getString("stuffID"), stuffResponse.getString("stuffName"), stuffResponse.getDouble("stuffPrice")));
-
+                                        purchaseItemList.add(new SummaryItem(String.format("%d", counter), stuffResponse.getString("stuffImage"), stuffResponse.getString("stuffID"), stuffResponse.getString("stuffName"), stuffResponse.getDouble("stuffPrice")));
+                                        counter++;
                                         purchaseTotal += stuffResponse.getDouble("stuffPrice");
                                     }
 
@@ -672,6 +673,16 @@ public class SummaryReportFragment extends Fragment {
                                                 total += count;
                                             }
                                         }
+                                        Collections.sort(itemList, new Comparator<SummaryItem>() {
+                                            @Override
+                                            public int compare(SummaryItem t1, SummaryItem t2) {
+                                                return Double.compare(t2.getItemAmount(), t1.getItemAmount());
+                                            }
+                                        });
+                                        for (int i = 0; i < itemList.size(); i++){
+                                            SummaryItem item = itemList.get(i);
+                                            itemList.set(i, new SummaryItem(String.format("%d", i + 1), itemList.get(i).getItemImage(), itemList.get(i).getItemID(), itemList.get(i).getItemName(), itemList.get(i).getItemAmount()));
+                                        }
                                         mAdapter.notifyDataSetChanged();
 
                                         if (pDialog.isShowing()) {
@@ -728,12 +739,6 @@ public class SummaryReportFragment extends Fragment {
             summaryInfoList.setAdapter(mAdapter);
 
         } else if (report.equals("Most Sold Stuff Category")){
-            Collections.sort(itemList, new Comparator<SummaryItem>() {
-                @Override
-                public int compare(SummaryItem t1, SummaryItem t2) {
-                    return Double.compare(t1.getItemAmount(), t2.getItemAmount());
-                }
-            });
             mAdapter = new SummaryAdapter(itemList);
             txtSummaryTotal.setText("Total : RM " + String.format("%.2f", total));
             summaryInfoList.setHasFixedSize(true);
@@ -759,6 +764,9 @@ public class SummaryReportFragment extends Fragment {
 
             mAdapter.setGreenAmount(true);
             mAdapter2.setRedAmount(true);
+
+            summaryInfoList.setHasFixedSize(true);
+            summaryInfo2List.setHasFixedSize(true);
 
             summaryInfoList.setLayoutManager(new LinearLayoutManager(getActivity()));
             summaryInfoList.setAdapter(mAdapter);
